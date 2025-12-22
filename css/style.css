@@ -234,3 +234,22 @@ button:disabled {
   opacity: 1;
   transform: translateY(0);
 }
+#step-5 label {
+  font-weight: bold;
+  margin-top: 10px;
+  display: block;
+  color: #333;
+}
+
+#step-5 input, #step-5 textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#step-5 button {
+  margin-top: 16px;
+}
+
