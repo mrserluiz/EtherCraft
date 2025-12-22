@@ -140,4 +140,25 @@ button:disabled {
 
 #btn-admin:hover {
   background: rgba(0, 0, 0, 0.85);
+  
+}
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #4caf50;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-weight: bold;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
 }
