@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ADM — Amigo Secreto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #3a0ca3);
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #login, #painel {
+      max-width: 900px;
+      margin: auto;
+      margin-top: 40px;
+    }
+
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      color: black;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background: #eee;
+    }
+
+    #copiar {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>PAINEL ADMINISTRATIVO</h1>
+
+<div id="login">
+  <h2>Login ADM</h2>
+  <input type="password" id="senha" placeholder="Senha do administrador">
+  <button id="btn-login">Entrar</button>
+</div>
+
+<div id="painel" style="display:none;">
+  <h2>Resultados do Amigo Secreto</h2>
+
+  <button id="copiar">📋 Copiar tabela</button>
+
+  <table id="tabela">
+    <thead>
+      <tr>
+        <th>Usuário</th>
+        <th>Sorteado</th>
+        <th>Escolha</th>
+        <th>Nome do Item</th>
+        <th>Mensagem</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script type="module" src="painel.js"></script>
+</body>
+</html>
