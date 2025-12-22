@@ -85,6 +85,11 @@ btnReset.onclick = async () => {
     }
     log("Usuários apagados.");
 
+    // 🔄 Resetar localStorage do site (todos usuários)
+    localStorage.removeItem("amigoSecretoEstado");
+    console.log("✅ LocalStorage resetado");
+
+
     // 📥 CARREGAR JSON
     const resp = await fetch("../data/participantes.json");
     const lista = await resp.json();
