@@ -18,24 +18,39 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔑 SENHA ADM (simples, depois podemos melhorar)
-const SENHA_ADM = "1234"; // <<< ALTERE AQUI
+// 🔑 SENHA ADM
+const SENHA_ADM = "1234"; // <<< TROQUE
 
 const loginDiv = document.getElementById("login");
 const painelDiv = document.getElementById("painel");
 const tbody = document.querySelector("#tabela tbody");
 
+// 🔒 Se já estiver logado, pula login
+if (localStorage.getItem("adm_autenticado") === "true") {
+  loginDiv.style.display = "none";
+  painelDiv.style.display = "block";
+  carregarDados();
+}
+
 document.getElementById("btn-login").onclick = async () => {
   const senha = document.getElementById("senha").value;
+
   if (senha !== SENHA_ADM) {
     alert("Senha incorreta");
     return;
   }
 
+  localStorage.setItem("adm_autenticado", "true");
+
   loginDiv.style.display = "none";
   painelDiv.style.display = "block";
 
   carregarDados();
+};
+
+// 🔁 Botão reset
+document.getElementById("ir-reset").onclick = () => {
+  window.location.href = "reset-evento.html";
 };
 
 async function carregarDados() {
