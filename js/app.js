@@ -6,12 +6,10 @@ import {
   where,
   getDocs,
   doc,
-  updateDoc,
-  getDoc
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 /* ================= FIREBASE ================= */
-
 const firebaseConfig = {
   apiKey: "AIzaSyBlWw5nf8tNAX2BpnmxG7TmofIdUyyQ4Yw",
   authDomain: "amigosecreto-32194.firebaseapp.com",
@@ -25,7 +23,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 /* ================= ESTADO ================= */
-
 const STORAGE_KEY = "amigoSecretoEstado";
 
 let estado = {
@@ -34,6 +31,8 @@ let estado = {
   sorteado: null,
   sorteadoId: null,
   escolha: null,
+  item: null,
+  mensagem: null,
   finalizado: false
 };
 
@@ -46,13 +45,7 @@ function carregarEstado() {
   if (data) estado = JSON.parse(data);
 }
 
-function mostrarPasso(id) {
-  document.querySelectorAll(".step").forEach(s => s.style.display = "none");
-  document.getElementById(id).style.display = "block";
-}
-
 /* ================= UTIL ================= */
-
 function normalizarNome(nome) {
   return nome
     .normalize("NFD")
@@ -61,9 +54,26 @@ function normalizarNome(nome) {
     .toLowerCase();
 }
 
-/* ================= INICIAL ================= */
+function mostrarPasso(id) {
+  document.querySelectorAll(".step").forEach(s => s.style.display = "none");
+  document.getElementById(id).style.display = "block";
+}
 
+function showToast(msg, duration = 2500) {
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.classList.add("show"), 50);
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
+
+/* ================= INICIAL ================= */
 carregarEstado();
+const usuarioDocRef = estado.nomeNormalizado ? doc(db, "usuarios", estado.nomeNormalizado) : null;
 
 if (estado.finalizado) {
   mostrarPasso("step-blocked");
@@ -75,10 +85,9 @@ if (estado.finalizado) {
 }
 
 /* ================= PASSO 1 ================= */
-
-document.getElementById("btn-nome").onclick = async () => {
+document.getElementById("btn-nome").onclick = () => {
   const nome = document.getElementById("input-nome").value.trim();
-  if (!nome) return alert("Digite seu nome");
+  if (!nome) return showToast("Digite seu nome!");
 
   estado.nome = nome;
   estado.nomeNormalizado = normalizarNome(nome);
@@ -87,31 +96,23 @@ document.getElementById("btn-nome").onclick = async () => {
   mostrarPasso("step-2");
 };
 
-/* ================= PASSO 2 — SORTEIO REAL ================= */
-
+/* ================= PASSO 2 — SORTEIO ================= */
 document.getElementById("btn-sortear").onclick = async () => {
   if (estado.sorteado) return;
 
-  const q = query(
-    collection(db, "participantes"),
-    where("status", "==", "livre")
-  );
-
+  const q = query(collection(db, "participantes"), where("status", "==", "livre"));
   const snapshot = await getDocs(q);
-  let candidatos = [];
 
+  let candidatos = [];
   snapshot.forEach(docSnap => {
     const data = docSnap.data();
     if (data.nomeNormalizado !== estado.nomeNormalizado) {
-      candidatos.push({
-        id: docSnap.id,
-        nome: data.nomeOriginal
-      });
+      candidatos.push({ id: docSnap.id, nome: data.nomeOriginal });
     }
   });
 
   if (candidatos.length === 0) {
-    alert("Nenhum participante disponível");
+    showToast("Nenhum participante disponível!");
     return;
   }
 
@@ -131,35 +132,27 @@ document.getElementById("btn-sortear").onclick = async () => {
 };
 
 /* ================= PASSO 3 ================= */
-
 document.getElementById("btn-continuar-escolha").onclick = () => {
   mostrarPasso("step-4");
 };
 
-/* ================= PASSO 4 ================= */
-
+/* ================= PASSO 4 — ESCOLHA DE BOTÕES COM IMAGENS ================= */
 const choices = document.querySelectorAll("#step-4 .choice");
 const btnEscolha = document.getElementById("btn-escolha");
-const usuarioDocRef = doc(db, "usuarios", estado.nomeNormalizado);
-
-// Bloquear se já tiver escolha salva
-async function carregarEscolha() {
-  const docSnap = await getDoc(usuarioDocRef);
-  if (docSnap.exists() && docSnap.data().escolha) {
-    estado.escolha = docSnap.data().escolha;
-    salvarEstado();
-    btnEscolha.disabled = true;
-    choices.forEach(c => {
-      if (c.dataset.id === estado.escolha) c.classList.add("active");
-    });
-  }
-}
-carregarEscolha();
-
-// Seleção visual
 let escolhaSelecionada = estado.escolha || null;
 
-choices.forEach(btn => {
+choices.forEach((btn, index) => {
+  // associar imagens (placeholders)
+  btn.style.backgroundImage = `url('https://via.placeholder.com/150?text=Img${index + 1}')`;
+  btn.style.backgroundSize = "cover";
+  btn.style.backgroundPosition = "center";
+  btn.dataset.id = `choice${index + 1}`;
+
+  if (btn.dataset.id === estado.escolha) {
+    btn.classList.add("active");
+    btnEscolha.disabled = true;
+  }
+
   btn.addEventListener("click", () => {
     if (btnEscolha.disabled) return;
     choices.forEach(c => c.classList.remove("active"));
@@ -171,22 +164,22 @@ choices.forEach(btn => {
   });
 });
 
-// Salvar no Firebase ao continuar
 btnEscolha.addEventListener("click", async () => {
-  if (!escolhaSelecionada) return alert("Escolha uma opção");
-  await updateDoc(usuarioDocRef, { escolha: escolhaSelecionada });
+  if (!escolhaSelecionada) return showToast("Escolha uma opção!");
+
+  const usuarioDoc = doc(db, "usuarios", estado.nomeNormalizado);
+  await updateDoc(usuarioDoc, { escolha: escolhaSelecionada });
+
+  showToast("Escolha salva com sucesso!");
   btnEscolha.disabled = true;
-  alert("Escolha salva com sucesso!");
   mostrarPasso("step-5");
 });
 
-/* ================= PASSO 5 — FINALIZA ================= */
-
+/* ================= PASSO 5 — NOME DO ITEM + MENSAGEM ================= */
 const inputItem = document.getElementById("nome-item");
 const textareaMsg = document.getElementById("mensagem");
 const btnConfirmar = document.getElementById("btn-confirmar");
 
-// Carregar valores anteriores se houver (persistência localStorage)
 if (estado.item) inputItem.value = estado.item;
 if (estado.mensagem) textareaMsg.value = estado.mensagem;
 
@@ -194,25 +187,24 @@ btnConfirmar.addEventListener("click", async () => {
   const item = inputItem.value.trim();
   const msg = textareaMsg.value.trim();
 
-  if (!item || !msg) {
-    alert("Preencha o nome do item e a mensagem!");
-    return;
-  }
+  if (!item || !msg) return showToast("Preencha o nome do item e a mensagem!");
 
-  // Atualizar estado local
   estado.item = item;
   estado.mensagem = msg;
   estado.finalizado = true;
   salvarEstado();
 
-  // Atualizar Firebase
-  const usuarioDocRef = doc(db, "usuarios", estado.nomeNormalizado);
-  await updateDoc(usuarioDocRef, {
+  const usuarioDoc = doc(db, "usuarios", estado.nomeNormalizado);
+  await updateDoc(usuarioDoc, {
     item: item,
     mensagem: msg,
-    finalizado: true
+    finalizado: true,
+    escolha: estado.escolha,
+    sorteado: estado.sorteado
   });
 
-  // Bloquear Steps futuros
-  mostrarPasso("step-6"); // Step 6 = tela de confirmação/final
+  showToast("Item e mensagem salvos!");
+  mostrarPasso("step-6");
 });
+
+/* ================= STEP 6 — CONFIRMAÇÃO FINAL ================= */
