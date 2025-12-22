@@ -45,10 +45,15 @@ const normalizar = nome =>
 /* ===========================
    RESET DO EVENTO
 =========================== */
-document.getElementById("btn-reset").onclick = async () => {
+const btnReset = document.getElementById("btn-reset");
+
+const btnReset = document.getElementById("btn-reset");
+
+btnReset.onclick = async () => {
   if (!confirm("Tem certeza que deseja RESETAR o evento?")) return;
 
-  log("Iniciando reset...");
+  btnReset.disabled = true;
+  btnReset.textContent = "⏳ Resetando...";
 
   // 🔥 LIMPAR PARTICIPANTES
   const participantesSnap = await getDocs(collection(db, "participantes"));
@@ -56,6 +61,9 @@ document.getElementById("btn-reset").onclick = async () => {
     await deleteDoc(doc(db, "participantes", d.id));
   }
   log("Participantes apagados.");
+
+  btnReset.disabled = false;
+  btnReset.textContent = "🔥 Resetar Evento";
 
   // 🔥 LIMPAR USUÁRIOS
   const usuariosSnap = await getDocs(collection(db, "usuarios"));
