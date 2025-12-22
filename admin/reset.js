@@ -8,7 +8,9 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// 🔐 CONFIG FIREBASE
+/* ===========================
+   🔐 CONFIG FIREBASE
+=========================== */
 const firebaseConfig = {
   apiKey: "AIzaSyBlWw5nf8tNAX2BpnmxG7TmofIdUyyQ4Yw",
   authDomain: "amigosecreto-32194.firebaseapp.com",
@@ -22,7 +24,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 /* ===========================
-   ⬅️ BOTÃO VOLTAR AO PAINEL
+   ⬅️ VOLTAR AO PAINEL
 =========================== */
 document.getElementById("voltar-painel").addEventListener("click", () => {
   window.location.href = "painel.html";
@@ -42,6 +44,9 @@ const normalizar = nome =>
     .toLowerCase()
     .replace(/\s+/g, "");
 
+/* ===========================
+   🔔 TOAST
+=========================== */
 function mostrarToast(mensagem) {
   const toast = document.getElementById("toast");
   toast.textContent = mensagem;
@@ -52,12 +57,9 @@ function mostrarToast(mensagem) {
   }, 3000);
 }
 
-
 /* ===========================
-   RESET DO EVENTO
+   🔥 RESET DO EVENTO
 =========================== */
-const btnReset = document.getElementById("btn-reset");
-
 const btnReset = document.getElementById("btn-reset");
 
 btnReset.onclick = async () => {
@@ -66,36 +68,45 @@ btnReset.onclick = async () => {
   btnReset.disabled = true;
   btnReset.textContent = "⏳ Resetando...";
 
-  // 🔥 LIMPAR PARTICIPANTES
-  const participantesSnap = await getDocs(collection(db, "participantes"));
-  for (const d of participantesSnap.docs) {
-    await deleteDoc(doc(db, "participantes", d.id));
+  try {
+    log("Iniciando reset...");
+
+    // 🔥 LIMPAR PARTICIPANTES
+    const participantesSnap = await getDocs(collection(db, "participantes"));
+    for (const d of participantesSnap.docs) {
+      await deleteDoc(doc(db, "participantes", d.id));
+    }
+    log("Participantes apagados.");
+
+    // 🔥 LIMPAR USUÁRIOS
+    const usuariosSnap = await getDocs(collection(db, "usuarios"));
+    for (const d of usuariosSnap.docs) {
+      await deleteDoc(doc(db, "usuarios", d.id));
+    }
+    log("Usuários apagados.");
+
+    // 📥 CARREGAR JSON
+    const resp = await fetch("../data/participantes.json");
+    const lista = await resp.json();
+
+    for (const nome of lista) {
+      const id = normalizar(nome);
+      await setDoc(doc(db, "participantes", id), {
+        nomeOriginal: nome,
+        nomeNormalizado: id,
+        status: "livre"
+      });
+    }
+
+    log("Participantes carregados com sucesso!");
+    log("Evento pronto para uso.");
+
+    mostrarToast("✅ Reset concluído com sucesso!");
+  } catch (erro) {
+    console.error(erro);
+    mostrarToast("❌ Erro ao resetar o evento");
+  } finally {
+    btnReset.disabled = false;
+    btnReset.textContent = "🔥 Resetar Evento";
   }
-  log("Participantes apagados.");
-
-  btnReset.disabled = false;
-  btnReset.textContent = "🔥 Resetar Evento";
-
-  // 🔥 LIMPAR USUÁRIOS
-  const usuariosSnap = await getDocs(collection(db, "usuarios"));
-  for (const d of usuariosSnap.docs) {
-    await deleteDoc(doc(db, "usuarios", d.id));
-  }
-  log("Usuários apagados.");
-
-  // 📥 CARREGAR JSON
-  const resp = await fetch("../data/participantes.json");
-  const lista = await resp.json();
-
-  for (const nome of lista) {
-    const id = normalizar(nome);
-    await setDoc(doc(db, "participantes", id), {
-      nomeOriginal: nome,
-      nomeNormalizado: id,
-      status: "livre"
-    });
-  }
-
-  log("Participantes carregados com sucesso!");
-  log("Evento pronto para uso.");
 };
