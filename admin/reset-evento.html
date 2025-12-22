@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ADM — Reset Evento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #2b1055;
+      color: white;
+      padding: 20px;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #log {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      background: rgba(0,0,0,0.3);
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>ADM — Reset do Evento</h1>
+
+<p>Isso irá:</p>
+<ul>
+  <li>Apagar todos os participantes</li>
+  <li>Apagar todos os usuários</li>
+  <li>Recarregar a lista do arquivo JSON</li>
+</ul>
+
+<button id="btn-reset">Recarregar Participantes</button>
+
+<div id="log"></div>
+
+<script type="module" src="reset.js"></script>
+</body>
+</html>
