@@ -5,7 +5,7 @@ import {
   getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// 🔐 CONFIG FIREBASE
+/* 🔐 FIREBASE CONFIG — MESMO DO RESET */
 const firebaseConfig = {
   apiKey: "AIzaSyBlWw5nf8tNAX2BpnmxG7TmofIdUyyQ4Yw",
   authDomain: "amigosecreto-32194.firebaseapp.com",
@@ -18,67 +18,89 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔑 SENHA ADM
-const SENHA_ADM = "1234"; // <<< TROQUE
-
+/* 🔑 ELEMENTOS */
+const senhaInput = document.getElementById("senha");
+const btnLogin = document.getElementById("btn-login");
 const loginDiv = document.getElementById("login");
 const painelDiv = document.getElementById("painel");
-const tbody = document.querySelector("#tabela tbody");
+const tabela = document.getElementById("tabela");
+const btnCopiar = document.getElementById("copiar");
+const btnReset = document.getElementById("ir-reset");
 
-// 🔒 Se já estiver logado, pula login
-if (localStorage.getItem("adm_autenticado") === "true") {
-  loginDiv.style.display = "none";
-  painelDiv.style.display = "block";
-  carregarDados();
-}
+/* 🔐 SENHA ADM (simples, local) */
+const SENHA_ADM = "admin123";
 
-document.getElementById("btn-login").onclick = async () => {
-  const senha = document.getElementById("senha").value;
-
-  if (senha !== SENHA_ADM) {
+/* 🔓 LOGIN */
+btnLogin.onclick = () => {
+  if (senhaInput.value === SENHA_ADM) {
+    loginDiv.style.display = "none";
+    painelDiv.style.display = "block";
+    carregarDados();
+  } else {
     alert("Senha incorreta");
-    return;
   }
-
-  localStorage.setItem("adm_autenticado", "true");
-
-  loginDiv.style.display = "none";
-  painelDiv.style.display = "block";
-
-  carregarDados();
 };
 
-// 🔁 Botão reset
-document.getElementById("ir-reset").onclick = () => {
-  window.location.href = "reset-evento.html";
-};
-
+/* 📊 CARREGAR TABELA + STATUS */
 async function carregarDados() {
-  tbody.innerHTML = "";
+  tabela.innerHTML = `
+    <thead>
+      <tr>
+        <th>Usuário</th>
+        <th>Sorteado</th>
+        <th>Escolha</th>
+        <th>Item</th>
+        <th>Mensagem</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
 
-  const snap = await getDocs(collection(db, "resultados"));
+  const tbody = tabela.querySelector("tbody");
 
-  for (const d of snap.docs) {
-    const r = d.data();
+  const usuariosSnap = await getDocs(collection(db, "usuarios"));
+  let sorteioCompleto = true;
+
+  usuariosSnap.forEach(doc => {
+    const u = doc.data();
+
+    if (!u.sorteado) sorteioCompleto = false;
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${r.usuario}</td>
-      <td>${r.sorteado}</td>
-      <td>${r.escolha}</td>
-      <td>${r.nomeItem}</td>
-      <td>${r.mensagem}</td>
+      <td>${u.nome || "-"}</td>
+      <td>${u.sorteado || "-"}</td>
+      <td>${u.escolha || "-"}</td>
+      <td>${u.item || "-"}</td>
+      <td>${u.mensagem || "-"}</td>
     `;
     tbody.appendChild(tr);
-  }
+  });
+
+  /* 🟢 STATUS DO SORTEIO */
+  const status = document.createElement("p");
+  status.style.marginTop = "15px";
+  status.style.fontWeight = "bold";
+  status.textContent = sorteioCompleto
+    ? "🟢 Sorteio CONCLUÍDO"
+    : "🟡 Sorteio INCOMPLETO";
+
+  painelDiv.insertBefore(status, tabela);
 }
 
-document.getElementById("copiar").onclick = () => {
+/* 📋 COPIAR TABELA */
+btnCopiar.onclick = () => {
   let texto = "";
-  document.querySelectorAll("#tabela tr").forEach(linha => {
-    texto += [...linha.children].map(td => td.innerText).join(" | ") + "\n";
+  tabela.querySelectorAll("tr").forEach(tr => {
+    const linha = [...tr.children].map(td => td.innerText).join("\t");
+    texto += linha + "\n";
   });
 
   navigator.clipboard.writeText(texto);
   alert("Tabela copiada!");
+};
+
+/* 🔁 IR PARA RESET */
+btnReset.onclick = () => {
+  window.location.href = "reset-evento.html";
 };
