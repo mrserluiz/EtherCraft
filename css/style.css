@@ -119,3 +119,25 @@ button:disabled {
     max-width: 600px;
   }
 }
+
+/* ==========================
+   Botão Acesso Administrativo
+   ========================== */
+
+#btn-admin {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 12px;
+  text-decoration: none;
+  border-radius: 6px;
+  z-index: 999;
+  transition: background 0.3s ease;
+}
+
+#btn-admin:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
