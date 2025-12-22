@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Carga de Participantes</title>
+</head>
+<body>
+
+<h2>Carga inicial de participantes</h2>
+<p>Abra o console (F12) para acompanhar o progresso.</p>
+
+<script type="module">
+  // 🔹 Firebase SDK (modo moderno)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
+  // 🔹 CONFIGURAÇÃO DO SEU FIREBASE
+  const firebaseConfig = {
+    apiKey: "AIzaSyBlWw5nf8tNAX2BpnmxG7TmofIdUyyQ4Yw",
+    authDomain: "amigosecreto-32194.firebaseapp.com",
+    projectId: "amigosecreto-32194",
+    storageBucket: "amigosecreto-32194.firebasestorage.app",
+    messagingSenderId: "97403932190",
+    appId: "1:97403932190:web:0a0e6d06c76c68b8c0680f"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 🔹 LISTA DE NOMES (EDITE AQUI)
+  const PARTICIPANTES = [
+    "João",
+    "Maria",
+    "Pedro",
+    "Larissa"
+    // adicione quantos quiser
+  ];
+
+  // 🔹 FUNÇÃO DE NORMALIZAÇÃO
+  function normalizarNome(nome) {
+    return nome
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "")
+      .toLowerCase();
+  }
+
+  async function carregarParticipantes() {
+    for (const nome of PARTICIPANTES) {
+      const normalizado = normalizarNome(nome);
+      const ref = doc(db, "participantes", normalizado);
+      const snap = await getDoc(ref);
+
+      if (snap.exists()) {
+        console.log(`⏭️ Já existe: ${nome}`);
+        continue;
+      }
+
+      await setDoc(ref, {
+        nomeOriginal: nome,
+        nomeNormalizado: normalizado,
+        status: "livre",
+        sorteadoPor: null
+      });
+
+      console.log(`✅ Criado: ${nome}`);
+    }
+
+    console.log("🎉 Carga finalizada");
+  }
+
+  carregarParticipantes();
+</script>
+
+</body>
+</html>
