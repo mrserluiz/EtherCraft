@@ -133,36 +133,45 @@ button:disabled {
 }
 
 /* ===========================
-   GRID DE ESCOLHAS (8 BOTÕES CUBOS)
+   STEP 4 — ESCOLHA DE BOTÕES
    =========================== */
+#step-4 p {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 20px; /* espaço entre título e botões */
+}
+
 .choices-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+  justify-items: center;
   margin-bottom: 16px;
 }
 
 .choice {
-  width: 100%;
-  aspect-ratio: 1/1;
+  width: 100px;
+  height: 100px;
   border-radius: 16px;
-  background-color: #eee;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   background-size: cover;
   background-position: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 3px solid transparent;
+}
+
+.choice:hover {
+  transform: scale(1.05);
+  border-color: #7b2cbf;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .choice.active {
-  border: 3px solid #7b2cbf;
-  transform: scale(1.05);
+  border-color: #5a189a;
+  box-shadow: 0 4px 16px rgba(123, 44, 191, 0.6);
 }
 
-#btn-escolha:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
 
 
 /* ===========================
