@@ -1,0 +1,26 @@
+{
+  "joao": {
+    "nomeOriginal": "João",
+    "nomeNormalizado": "joao",
+    "status": "livre",
+    "sorteadoPor": null
+  },
+  "maria": {
+    "nomeOriginal": "Maria",
+    "nomeNormalizado": "maria",
+    "status": "livre",
+    "sorteadoPor": null
+  },
+  "pedro": {
+    "nomeOriginal": "Pedro",
+    "nomeNormalizado": "pedro",
+    "status": "livre",
+    "sorteadoPor": null
+  },
+  "larissa": {
+    "nomeOriginal": "Larissa",
+    "nomeNormalizado": "larissa",
+    "status": "livre",
+    "sorteadoPor": null
+  }
+}
