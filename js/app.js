@@ -138,34 +138,81 @@ document.getElementById("btn-continuar-escolha").onclick = () => {
 
 /* ================= PASSO 4 ================= */
 
-document.querySelectorAll(".choice").forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll(".choice").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    estado.escolha = btn.innerText;
+const choices = document.querySelectorAll("#step-4 .choice");
+const btnEscolha = document.getElementById("btn-escolha");
+const usuarioDocRef = doc(db, "usuarios", estado.nomeNormalizado);
+
+// Bloquear se já tiver escolha salva
+async function carregarEscolha() {
+  const docSnap = await getDoc(usuarioDocRef);
+  if (docSnap.exists() && docSnap.data().escolha) {
+    estado.escolha = docSnap.data().escolha;
     salvarEstado();
-  };
+    btnEscolha.disabled = true;
+    choices.forEach(c => {
+      if (c.dataset.id === estado.escolha) c.classList.add("active");
+    });
+  }
+}
+carregarEscolha();
+
+// Seleção visual
+let escolhaSelecionada = estado.escolha || null;
+
+choices.forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (btnEscolha.disabled) return;
+    choices.forEach(c => c.classList.remove("active"));
+    btn.classList.add("active");
+    escolhaSelecionada = btn.dataset.id;
+    estado.escolha = escolhaSelecionada;
+    salvarEstado();
+    btnEscolha.disabled = false;
+  });
 });
 
-document.getElementById("btn-escolha").onclick = () => {
-  if (!estado.escolha) return alert("Escolha uma opção");
+// Salvar no Firebase ao continuar
+btnEscolha.addEventListener("click", async () => {
+  if (!escolhaSelecionada) return alert("Escolha uma opção");
+  await updateDoc(usuarioDocRef, { escolha: escolhaSelecionada });
+  btnEscolha.disabled = true;
+  alert("Escolha salva com sucesso!");
   mostrarPasso("step-5");
-};
+});
 
 /* ================= PASSO 5 — FINALIZA ================= */
 
-document.getElementById("btn-confirmar").onclick = async () => {
-  const item = document.getElementById("nome-item").value.trim();
-  const msg = document.getElementById("mensagem").value.trim();
+const inputItem = document.getElementById("nome-item");
+const textareaMsg = document.getElementById("mensagem");
+const btnConfirmar = document.getElementById("btn-confirmar");
 
-  if (!item || !msg) return alert("Preencha tudo");
+// Carregar valores anteriores se houver (persistência localStorage)
+if (estado.item) inputItem.value = estado.item;
+if (estado.mensagem) textareaMsg.value = estado.mensagem;
 
-  await updateDoc(doc(db, "participantes", estado.sorteadoId), {
-    status: "finalizado"
-  });
+btnConfirmar.addEventListener("click", async () => {
+  const item = inputItem.value.trim();
+  const msg = textareaMsg.value.trim();
 
+  if (!item || !msg) {
+    alert("Preencha o nome do item e a mensagem!");
+    return;
+  }
+
+  // Atualizar estado local
+  estado.item = item;
+  estado.mensagem = msg;
   estado.finalizado = true;
   salvarEstado();
 
-  mostrarPasso("step-6");
-};
+  // Atualizar Firebase
+  const usuarioDocRef = doc(db, "usuarios", estado.nomeNormalizado);
+  await updateDoc(usuarioDocRef, {
+    item: item,
+    mensagem: msg,
+    finalizado: true
+  });
+
+  // Bloquear Steps futuros
+  mostrarPasso("step-6"); // Step 6 = tela de confirmação/final
+});
