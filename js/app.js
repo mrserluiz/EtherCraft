@@ -136,55 +136,50 @@ document.getElementById("btn-continuar-escolha").onclick = () => {
   mostrarPasso("step-4");
 };
 
-/* ================= PASSO 4 — ESCOLHA DE BOTÕES COM IMAGENS ================= */
+/* ================= PASSO 4 — ESCOLHA ================= */
 const choices = document.querySelectorAll("#step-4 .choice");
 const btnEscolha = document.getElementById("btn-escolha");
 let escolhaSelecionada = estado.escolha || null;
 
-// Configurar imagens e dataset
-choices.forEach((btn, index) => {
-  btn.style.backgroundImage = `url('https://via.placeholder.com/150?text=Img${index + 1}')`;
-  btn.style.backgroundSize = "cover";
-  btn.style.backgroundPosition = "center";
-  btn.dataset.id = `choice${index + 1}`;
-
-  // Marcar botão ativo se já houver escolha salva
-  if (btn.dataset.id === estado.escolha) {
-    btn.classList.add("active");
-  }
+// Atualiza visualmente se já tiver escolha salva
+choices.forEach(c => {
+  if (c.dataset.id === escolhaSelecionada) c.classList.add("active");
 });
 
-// Função para habilitar botão Continuar
-function atualizarBotaoContinuar() {
-  btnEscolha.disabled = !escolhaSelecionada;
-}
-
-// Clique nos botões de escolha
+// Seleção visual e atualização de estado
 choices.forEach(btn => {
   btn.addEventListener("click", () => {
     choices.forEach(c => c.classList.remove("active"));
     btn.classList.add("active");
+
     escolhaSelecionada = btn.dataset.id;
     estado.escolha = escolhaSelecionada;
     salvarEstado();
-    atualizarBotaoContinuar(); // libera o botão
+
+    // libera o botão continuar
+    btnEscolha.disabled = false;
+
+    // mostra toast de confirmação da escolha
+    showToast("🎉 Escolha selecionada!");
   });
 });
 
-// Clique no botão Continuar
+// Clique do botão continuar — salva no Firebase e vai para Step 5
 btnEscolha.addEventListener("click", async () => {
-  if (!escolhaSelecionada) return showToast("Escolha uma opção!");
+  if (!escolhaSelecionada) {
+    alert("Escolha uma opção antes de continuar");
+    return;
+  }
 
-  const usuarioDoc = doc(db, "usuarios", estado.nomeNormalizado);
-  await updateDoc(usuarioDoc, { escolha: escolhaSelecionada });
+  const usuarioDocRef = doc(db, "usuarios", estado.nomeNormalizado);
+  await updateDoc(usuarioDocRef, { escolha: escolhaSelecionada });
 
-  showToast("Escolha salva com sucesso!");
   btnEscolha.disabled = true;
+  showToast("✅ Escolha salva com sucesso!");
+
+  // Transição para Step 5
   mostrarPasso("step-5");
 });
-
-// Ao carregar página, se já tiver escolha salva, desabilitar botão
-atualizarBotaoContinuar();
 
 
 /* ================= PASSO 5 — NOME DO ITEM + MENSAGEM ================= */
