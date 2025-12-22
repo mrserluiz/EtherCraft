@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import {
   getFirestore,
   collection,
-  getDocs
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* 🔐 FIREBASE CONFIG — MESMO DO RESET */
@@ -35,57 +35,61 @@ btnLogin.onclick = () => {
   if (senhaInput.value === SENHA_ADM) {
     loginDiv.style.display = "none";
     painelDiv.style.display = "block";
-    carregarDados();
+    iniciarAtualizacaoTempoReal();
   } else {
     alert("Senha incorreta");
   }
 };
 
-/* 📊 CARREGAR TABELA + STATUS */
-async function carregarDados() {
-  tabela.innerHTML = `
-    <thead>
-      <tr>
-        <th>Usuário</th>
-        <th>Sorteado</th>
-        <th>Escolha</th>
-        <th>Item</th>
-        <th>Mensagem</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  `;
+/* 🔄 ATUALIZAÇÃO EM TEMPO REAL */
+function iniciarAtualizacaoTempoReal() {
+  const usuariosCol = collection(db, "usuarios");
 
-  const tbody = tabela.querySelector("tbody");
+  onSnapshot(usuariosCol, snap => {
+    const tbody = tabela.querySelector("tbody");
+    tbody.innerHTML = ""; // limpa tabela
 
-  const usuariosSnap = await getDocs(collection(db, "usuarios"));
-  let sorteioCompleto = true;
+    let sorteioCompleto = true;
 
-  usuariosSnap.forEach(doc => {
-    const u = doc.data();
+    snap.forEach(doc => {
+      const u = doc.data();
+      if (!u.sorteado) sorteioCompleto = false;
 
-    if (!u.sorteado) sorteioCompleto = false;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${u.nome || "-"}</td>
+        <td>${u.sorteado || "-"}</td>
+        <td>${u.escolha || "-"}</td>
+        <td>${u.item || "-"}</td>
+        <td>${u.mensagem || "-"}</td>
+      `;
 
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${u.nome || "-"}</td>
-      <td>${u.sorteado || "-"}</td>
-      <td>${u.escolha || "-"}</td>
-      <td>${u.item || "-"}</td>
-      <td>${u.mensagem || "-"}</td>
-    `;
-    tbody.appendChild(tr);
+      // 🔴 Indicador visual
+      if (u.finalizado) {
+        tr.style.backgroundColor = "#d4edda"; // verde claro → finalizado
+      } else if (u.sorteado) {
+        tr.style.backgroundColor = "#fff3cd"; // amarelo → sorteado, mas não finalizou
+      } else {
+        tr.style.backgroundColor = ""; // padrão → ainda não sorteado
+      }
+
+      tbody.appendChild(tr);
+    });
+
+    // Atualiza status do sorteio
+    let statusEvento = document.getElementById("status-evento");
+    if (!statusEvento) {
+      statusEvento = document.createElement("p");
+      statusEvento.id = "status-evento";
+      statusEvento.style.marginTop = "15px";
+      statusEvento.style.fontWeight = "bold";
+      painelDiv.insertBefore(statusEvento, tabela);
+    }
+
+    statusEvento.textContent = sorteioCompleto
+      ? "🟢 Sorteio CONCLUÍDO"
+      : "🟡 Sorteio INCOMPLETO";
   });
-
-  /* 🟢 STATUS DO SORTEIO */
-  const status = document.createElement("p");
-  status.style.marginTop = "15px";
-  status.style.fontWeight = "bold";
-  status.textContent = sorteioCompleto
-    ? "🟢 Sorteio CONCLUÍDO"
-    : "🟡 Sorteio INCOMPLETO";
-
-  painelDiv.insertBefore(status, tabela);
 }
 
 /* 📋 COPIAR TABELA */
