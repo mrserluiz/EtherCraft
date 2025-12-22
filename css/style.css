@@ -1,3 +1,6 @@
+/* ===========================
+   RESET E ESTILOS GERAIS
+   =========================== */
 * {
   margin: 0;
   padding: 0;
@@ -11,14 +14,21 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  padding: 24px 0;
 }
 
+/* ===========================
+   CONTAINER CENTRAL
+   =========================== */
 .container {
   width: 100%;
   max-width: 480px;
   padding: 24px 16px;
 }
 
+/* ===========================
+   CABEÇALHO
+   =========================== */
 .header {
   text-align: center;
   margin-bottom: 24px;
@@ -30,35 +40,55 @@ body {
   height: auto;
   margin: 0 auto 16px;
   display: block;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .site-title {
-  font-size: 1.8rem;
-  font-weight: bold;
+  font-size: 2rem;
+  font-weight: 800;
   color: #ffffff;
   margin-bottom: 8px;
+  text-shadow: 1px 1px 6px rgba(0,0,0,0.4);
 }
 
 .site-subtitle {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #f1e9ff;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.2);
 }
 
+/* ===========================
+   CARDS DE CONTEÚDO
+   =========================== */
 .content-card {
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  padding: 24px 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+  padding: 28px 20px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  transition: all 0.3s ease;
 }
 
-.step {
-  display: none;
+.content-card::before {
+  content: "";
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: linear-gradient(45deg, #d9a7ff, #7b2cbf);
+  border-radius: 16px;
+  z-index: -1;
 }
 
-.step-active {
-  display: block;
+.content-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.25);
 }
 
+/* ===========================
+   FORMULÁRIOS
+   =========================== */
 label {
   font-weight: bold;
   display: block;
@@ -69,23 +99,32 @@ input, textarea {
   width: 100%;
   padding: 10px;
   margin-bottom: 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #ccc;
 }
 
+/* ===========================
+   BOTÕES
+   =========================== */
 button {
   width: 100%;
-  padding: 12px;
-  border-radius: 6px;
+  padding: 14px;
+  border-radius: 8px;
   border: none;
   background: #7b2cbf;
   color: white;
   font-size: 1rem;
   cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 button.primary {
   background: #5a189a;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }
 
 button:disabled {
@@ -93,6 +132,9 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* ===========================
+   GRID DE ESCOLHAS (8 BOTÕES CUBOS)
+   =========================== */
 .choices-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -101,60 +143,84 @@ button:disabled {
 }
 
 .choice {
-  background: #eee;
-  color: #333;
+  width: 100%;
+  aspect-ratio: 1/1; /* cubo perfeito */
+  border-radius: 16px;
+  background-color: #eee;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
 }
 
 .choice.active {
-  background: #7b2cbf;
-  color: white;
+  border: 3px solid #7b2cbf;
+  transform: scale(1.05);
+}
+
+/* ===========================
+   PASSOS
+   =========================== */
+.step {
+  display: none;
+}
+
+.step-active {
+  display: block;
 }
 
 #step-6 {
   text-align: center;
 }
 
+/* ===========================
+   RESPONSIVO
+   =========================== */
 @media (min-width: 768px) {
   .container {
     max-width: 600px;
   }
 }
 
-/* ==========================
-   Botão Acesso Administrativo
-   ========================== */
-
+/* ===========================
+   BOTÃO ACESSO ADMIN
+   =========================== */
 #btn-admin {
   position: fixed;
-  bottom: 15px;
-  right: 15px;
-  background: rgba(0, 0, 0, 0.6);
+  bottom: 20px;
+  right: 20px;
+  background: rgba(123,44,191,0.85);
   color: #fff;
-  padding: 8px 12px;
-  font-size: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: 8px;
   z-index: 999;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 #btn-admin:hover {
-  background: rgba(0, 0, 0, 0.85);
-  
+  background: rgba(123,44,191,1);
+  transform: translateY(-2px);
 }
+
+/* ===========================
+   TOAST
+   =========================== */
 .toast {
   position: fixed;
   bottom: 30px;
   right: 30px;
   background: #4caf50;
   color: white;
-  padding: 14px 20px;
-  border-radius: 10px;
+  padding: 14px 22px;
+  border-radius: 12px;
   font-weight: bold;
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
   z-index: 9999;
 }
 
