@@ -141,29 +141,37 @@ const choices = document.querySelectorAll("#step-4 .choice");
 const btnEscolha = document.getElementById("btn-escolha");
 let escolhaSelecionada = estado.escolha || null;
 
+// Configurar imagens e dataset
 choices.forEach((btn, index) => {
-  // associar imagens (placeholders)
   btn.style.backgroundImage = `url('https://via.placeholder.com/150?text=Img${index + 1}')`;
   btn.style.backgroundSize = "cover";
   btn.style.backgroundPosition = "center";
   btn.dataset.id = `choice${index + 1}`;
 
+  // Marcar botão ativo se já houver escolha salva
   if (btn.dataset.id === estado.escolha) {
     btn.classList.add("active");
-    btnEscolha.disabled = true;
   }
+});
 
+// Função para habilitar botão Continuar
+function atualizarBotaoContinuar() {
+  btnEscolha.disabled = !escolhaSelecionada;
+}
+
+// Clique nos botões de escolha
+choices.forEach(btn => {
   btn.addEventListener("click", () => {
-    if (btnEscolha.disabled) return;
     choices.forEach(c => c.classList.remove("active"));
     btn.classList.add("active");
     escolhaSelecionada = btn.dataset.id;
     estado.escolha = escolhaSelecionada;
     salvarEstado();
-    btnEscolha.disabled = false;
+    atualizarBotaoContinuar(); // libera o botão
   });
 });
 
+// Clique no botão Continuar
 btnEscolha.addEventListener("click", async () => {
   if (!escolhaSelecionada) return showToast("Escolha uma opção!");
 
@@ -174,6 +182,10 @@ btnEscolha.addEventListener("click", async () => {
   btnEscolha.disabled = true;
   mostrarPasso("step-5");
 });
+
+// Ao carregar página, se já tiver escolha salva, desabilitar botão
+atualizarBotaoContinuar();
+
 
 /* ================= PASSO 5 — NOME DO ITEM + MENSAGEM ================= */
 const inputItem = document.getElementById("nome-item");
