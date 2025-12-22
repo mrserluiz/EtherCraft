@@ -1,34 +1,57 @@
-let passoAtual = 1;
-let escolhaAtiva = null;
+let estado = {
+  nome: null,
+  sorteado: null,
+  escolha: null,
+  finalizado: false
+};
 
-function mostrarPasso(numero) {
-  document.querySelectorAll(".step").forEach(step => {
-    step.classList.remove("step-active");
-  });
+const STORAGE_KEY = "amigoSecretoEstado";
 
-  document.getElementById(`step-${numero}`).classList.add("step-active");
-  passoAtual = numero;
+function salvarEstado() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
 }
 
-// PASSO 1 → 2
+function carregarEstado() {
+  const data = localStorage.getItem(STORAGE_KEY);
+  if (data) estado = JSON.parse(data);
+}
+
+function mostrarPasso(id) {
+  document.querySelectorAll(".step").forEach(s => s.style.display = "none");
+  document.getElementById(id).style.display = "block";
+}
+
+// 🔒 Verificação inicial
+carregarEstado();
+
+if (estado.finalizado) {
+  mostrarPasso("step-blocked");
+} else {
+  mostrarPasso("step-1");
+}
+
+// PASSO 1
 document.getElementById("btn-nome").onclick = () => {
   const nome = document.getElementById("input-nome").value.trim();
-  if (!nome) {
-    alert("Digite seu nome");
-    return;
-  }
-  mostrarPasso(2);
+  if (!nome) return alert("Digite seu nome");
+
+  estado.nome = nome;
+  salvarEstado();
+  mostrarPasso("step-2");
 };
 
-// PASSO 2 → 3 (sorteio fake por enquanto)
+// PASSO 2 — sorteio fake
 document.getElementById("btn-sortear").onclick = () => {
-  document.getElementById("resultado-sorteio").innerText = "NOME SORTEADO";
-  mostrarPasso(3);
+  estado.sorteado = "NOME SORTEADO";
+  salvarEstado();
+
+  document.getElementById("resultado-sorteio").innerText = estado.sorteado;
+  mostrarPasso("step-3");
 };
 
-// PASSO 3 → 4
+// PASSO 3
 document.getElementById("btn-continuar-escolha").onclick = () => {
-  mostrarPasso(4);
+  mostrarPasso("step-4");
 };
 
 // PASSO 4 — escolha
@@ -36,27 +59,24 @@ document.querySelectorAll(".choice").forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll(".choice").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
-    escolhaAtiva = btn.innerText;
+    estado.escolha = btn.innerText;
+    salvarEstado();
   };
 });
 
 document.getElementById("btn-escolha").onclick = () => {
-  if (!escolhaAtiva) {
-    alert("Escolha uma opção");
-    return;
-  }
-  mostrarPasso(5);
+  if (!estado.escolha) return alert("Escolha uma opção");
+  mostrarPasso("step-5");
 };
 
-// PASSO 5 → 6
+// PASSO 5 — FINALIZA
 document.getElementById("btn-confirmar").onclick = () => {
-  const nomeItem = document.getElementById("nome-item").value.trim();
-  const mensagem = document.getElementById("mensagem").value.trim();
+  const item = document.getElementById("nome-item").value.trim();
+  const msg = document.getElementById("mensagem").value.trim();
 
-  if (!nomeItem || !mensagem) {
-    alert("Preencha todos os campos");
-    return;
-  }
+  if (!item || !msg) return alert("Preencha tudo");
 
-  mostrarPasso(6);
+  estado.finalizado = true;
+  salvarEstado();
+  mostrarPasso("step-6");
 };
