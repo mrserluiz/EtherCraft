@@ -144,7 +144,7 @@ button:disabled {
 
 .choice {
   width: 100%;
-  aspect-ratio: 1/1; /* cubo perfeito */
+  aspect-ratio: 1/1;
   border-radius: 16px;
   background-color: #eee;
   background-size: cover;
@@ -158,6 +158,12 @@ button:disabled {
   border: 3px solid #7b2cbf;
   transform: scale(1.05);
 }
+
+#btn-escolha:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 
 /* ===========================
    PASSOS
