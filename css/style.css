@@ -7,12 +7,7 @@
 
 body {
   min-height: 100vh;
-  background: linear-gradient(
-    to bottom,
-    #d9a7ff,
-    #7b2cbf
-  );
-
+  background: linear-gradient(to bottom, #d9a7ff, #7b2cbf);
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -56,26 +51,71 @@ body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.placeholder-text {
+.step {
+  display: none;
+}
+
+.step-active {
+  display: block;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  background: #7b2cbf;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button.primary {
+  background: #5a189a;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.choices-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.choice {
+  background: #eee;
+  color: #333;
+}
+
+.choice.active {
+  background: #7b2cbf;
+  color: white;
+}
+
+#step-6 {
   text-align: center;
-  color: #555;
 }
 
 @media (min-width: 768px) {
   .container {
     max-width: 600px;
   }
-
-  .header-image {
-    max-width: 260px;
-  }
-
-  .site-title {
-    font-size: 2.2rem;
-  }
-
-  .site-subtitle {
-    font-size: 1.1rem;
-  }
 }
-
