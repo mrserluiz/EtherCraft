@@ -64,13 +64,15 @@
 
 
     <!-- PASSO 5 -->
-    <div class="step" id="step-5">
-      <label>Nome do Item</label>
-      <input type="text" id="nome-item">
-      <label>Mensagem</label>
-      <textarea id="mensagem" rows="4"></textarea>
-      <button id="btn-confirmar">Confirmar envio</button>
-    </div>
+<div class="step" id="step-5">
+  <label for="nome-item">Nome do Item</label>
+  <input type="text" id="nome-item" maxlength="25" placeholder="Digite o nome do item">
+
+  <label for="mensagem">Deixe sua mensagem aqui:</label>
+  <textarea id="mensagem" maxlength="300" rows="5" placeholder="Digite sua mensagem"></textarea>
+
+  <button id="btn-confirmar">Finalizar</button>
+</div>
 
     <!-- PASSO 6 -->
     <div class="step" id="step-6">
