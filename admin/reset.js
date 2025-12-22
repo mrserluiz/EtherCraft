@@ -21,13 +21,30 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+/* ===========================
+   ⬅️ BOTÃO VOLTAR AO PAINEL
+=========================== */
+document.getElementById("voltar-painel").addEventListener("click", () => {
+  window.location.href = "painel.html";
+});
+
+/* ===========================
+   FUNÇÕES AUXILIARES
+=========================== */
 const log = msg => {
   document.getElementById("log").textContent += msg + "\n";
 };
 
 const normalizar = nome =>
-  nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, "");
+  nome
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, "");
 
+/* ===========================
+   RESET DO EVENTO
+=========================== */
 document.getElementById("btn-reset").onclick = async () => {
   if (!confirm("Tem certeza que deseja RESETAR o evento?")) return;
 
