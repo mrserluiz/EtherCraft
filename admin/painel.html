@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>ADM — Amigo Secreto</title>
+  <title>ADM — EtherCraft</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -11,16 +11,22 @@
       background: linear-gradient(135deg, #6a11cb, #3a0ca3);
       color: white;
       padding: 20px;
+      min-height: 100vh;
     }
 
     h1 {
       text-align: center;
+      margin-bottom: 20px;
     }
 
     #login, #painel {
       max-width: 900px;
       margin: auto;
-      margin-top: 40px;
+      margin-top: 20px;
+      background: rgba(0,0,0,0.3);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
     }
 
     input, button {
@@ -28,10 +34,19 @@
       font-size: 16px;
       margin-top: 10px;
       width: 100%;
+      border-radius: 6px;
+      border: none;
     }
 
     button {
       cursor: pointer;
+      background: #7b2cbf;
+      color: white;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #5a189a;
     }
 
     table {
@@ -52,16 +67,63 @@
       background: #eee;
     }
 
-    #copiar {
-      margin-top: 20px;
+    #copiar, #ir-reset, #btn-voltar-site {
+      margin-top: 10px;
+    }
+
+    /* Botão Voltar */
+    #btn-voltar-site {
+      background: #222;
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      width: auto;
+      padding: 8px 16px;
+    }
+
+    #btn-voltar-site:hover {
+      background: #555;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #4caf50;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 9999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      #login, #painel {
+        padding: 16px;
+      }
+
+      table {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 <body>
 
-<h1>PAINEL ADMINISTRATIVO</h1>
+<h1>Painel Administrativo — EtherCraft</h1>
 
-  <button id="btn-voltar-site" class="primary" style="margin-top: 20px;">🏠 Voltar ao Site</button>
+<!-- Botão voltar para o site -->
+<button id="btn-voltar-site">⬅ Voltar para o site</button>
 
 <div id="login">
   <h2>Login ADM</h2>
@@ -76,27 +138,18 @@
   <button id="ir-reset">🔁 Resetar Evento</button>
 
   <table id="tabela">
-    <!-- tabela gerada via JS -->
-  </table>
-</div>
-
-</body>
-
-  <table id="tabela">
     <thead>
       <tr>
         <th>Usuário</th>
         <th>Sorteado</th>
         <th>Escolha</th>
-        <th>Nome do Item</th>
+        <th>Item</th>
         <th>Mensagem</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 </div>
-  
-<button id="btn-voltar-site">⬅ Voltar para o site</button>
 
 <script type="module" src="painel.js"></script>
 </body>
