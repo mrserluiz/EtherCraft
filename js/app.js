@@ -6,7 +6,8 @@ import {
   where,
   getDocs,
   doc,
-  updateDoc
+  updateDoc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 /* ================= FIREBASE ================= */
@@ -24,7 +25,6 @@ const db = getFirestore(app);
 
 /* ================= ESTADO ================= */
 const STORAGE_KEY = "amigoSecretoEstado";
-
 let estado = {
   nome: null,
   nomeNormalizado: null,
@@ -43,6 +43,21 @@ function salvarEstado() {
 function carregarEstado() {
   const data = localStorage.getItem(STORAGE_KEY);
   if (data) estado = JSON.parse(data);
+}
+
+function resetEstado() {
+  estado = {
+    nome: null,
+    nomeNormalizado: null,
+    sorteado: null,
+    sorteadoId: null,
+    escolha: null,
+    item: null,
+    mensagem: null,
+    finalizado: false
+  };
+  salvarEstado();
+  location.reload();
 }
 
 /* ================= UTIL ================= */
@@ -139,37 +154,40 @@ document.getElementById("btn-continuar-escolha").onclick = () => {
 /* ================= PASSO 4 — ESCOLHA COM IMAGENS ================= */
 const choices = document.querySelectorAll("#step-4 .choice");
 const btnEscolha = document.getElementById("btn-escolha");
-
-// Inicialmente desabilitado até selecionar
-btnEscolha.disabled = !estado.escolha;
-
 let escolhaSelecionada = estado.escolha || null;
 
-// Atualiza visualmente se já houver escolha salva
+// Inicializa visual
 choices.forEach(c => {
   if (c.dataset.id === escolhaSelecionada) c.classList.add("active");
+  else c.classList.remove("active");
 });
+btnEscolha.disabled = !escolhaSelecionada;
 
-// Seleção visual e persistência
+// Reset Step 4 (chamado no reset global)
+function resetStep4() {
+  escolhaSelecionada = null;
+  estado.escolha = null;
+  salvarEstado();
+  btnEscolha.disabled = true;
+  choices.forEach(c => c.classList.remove("active"));
+}
+
+// Seleção
 choices.forEach(btn => {
   btn.addEventListener("click", () => {
     choices.forEach(c => c.classList.remove("active"));
     btn.classList.add("active");
 
-    // Atualiza a escolha selecionada
     escolhaSelecionada = btn.dataset.id;
     estado.escolha = escolhaSelecionada;
     salvarEstado();
 
-    // Libera botão continuar
     btnEscolha.disabled = false;
-
-    // Mostra toast de confirmação
     showToast("🎉 Escolha selecionada!");
   });
 });
 
-// Clique do botão continuar
+// Botão continuar
 btnEscolha.addEventListener("click", async () => {
   if (!escolhaSelecionada) {
     showToast("⚠️ Escolha uma opção antes de continuar!");
@@ -177,25 +195,19 @@ btnEscolha.addEventListener("click", async () => {
   }
 
   try {
-    // Salva a escolha no Firebase
     const usuarioDocRef = doc(db, "usuarios", estado.nomeNormalizado);
     await updateDoc(usuarioDocRef, { escolha: escolhaSelecionada });
 
-    // Bloqueia o botão para evitar múltiplos cliques
     btnEscolha.disabled = true;
-
     showToast("✅ Escolha salva com sucesso!");
-
-    // Transição suave para Step 5
     mostrarPasso("step-5");
   } catch (err) {
-    console.error("Erro ao salvar escolha:", err);
-    showToast("❌ Erro ao salvar. Tente novamente!");
+    console.error(err);
+    showToast("❌ Erro ao salvar escolha.");
   }
 });
 
-
-/* ================= PASSO 5 — NOME DO ITEM + MENSAGEM ================= */
+/* ================= PASSO 5 — ITEM + MENSAGEM ================= */
 const inputItem = document.getElementById("nome-item");
 const textareaMsg = document.getElementById("mensagem");
 const btnConfirmar = document.getElementById("btn-confirmar");
@@ -207,7 +219,7 @@ btnConfirmar.addEventListener("click", async () => {
   const item = inputItem.value.trim();
   const msg = textareaMsg.value.trim();
 
-  if (!item || !msg) return showToast("Preencha o nome do item e a mensagem!");
+  if (!item || !msg) return showToast("Preencha o item e a mensagem!");
 
   estado.item = item;
   estado.mensagem = msg;
@@ -227,4 +239,10 @@ btnConfirmar.addEventListener("click", async () => {
   mostrarPasso("step-6");
 });
 
-/* ================= STEP 6 — CONFIRMAÇÃO FINAL ================= */
+/* ================= BOTÃO RESET ADM ================= */
+document.getElementById("btn-reset").onclick = () => {
+  localStorage.clear();
+  resetStep4();
+  resetEstado(); // reinicia todo o app
+  showToast("🔄 Sistema reiniciado pelo administrador!", 3000);
+};
