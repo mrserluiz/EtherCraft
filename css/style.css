@@ -40,8 +40,8 @@ body {
   height: auto;
   margin: 0 auto 16px;
   display: block;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  border-radius: none;
+  box-shadow: none;
 }
 
 .site-title {
