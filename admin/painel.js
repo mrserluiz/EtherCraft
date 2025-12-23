@@ -55,7 +55,7 @@ function iniciarAtualizacaoTempoReal() {
       const u = doc.data();
       if (!u.sorteado) sorteioCompleto = false;
 
-      const tr = document.createElement("tr");
+      const tr = .createElement("tr");
       tr.innerHTML = `
         <td>${u.nome || "-"}</td>
         <td>${u.sorteado || "-"}</td>
@@ -77,7 +77,7 @@ function iniciarAtualizacaoTempoReal() {
     });
 
     // Atualiza status do sorteio
-    let statusEvento = document.getElementById("status-evento");
+    let statusEvento = .getElementById("status-evento");
     if (!statusEvento) {
       statusEvento = document.createElement("p");
       statusEvento.id = "status-evento";
@@ -108,3 +108,7 @@ btnCopiar.onclick = () => {
 btnReset.onclick = () => {
   window.location.href = "reset-evento.html";
 };
+document.getElementById("btn-voltar-site").onclick = () => {
+  window.location.href = "https://mrserluiz.github.io/EtherCraft/";
+};
+
