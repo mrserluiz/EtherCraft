@@ -151,57 +151,61 @@ document.getElementById("btn-continuar-escolha").onclick = () => {
   mostrarPasso("step-4");
 };
 
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
 /* ================= PASSO 4 — ESCOLHA ================= */
-const step4Choices = document.querySelectorAll("#step-4 .choice");
-const btnContinuarEscolha = document.getElementById("btn-escolha");
+const step4Container = document.querySelector("#step-4");
+const choices = step4Container.querySelectorAll(".choice");
+const btnEscolha = document.getElementById("btn-escolha");
+
 let escolhaSelecionada = estado.escolha || null;
 
-// Atualiza visualmente se já tiver escolha salva
-step4Choices.forEach(btn => {
-  if (btn.dataset.id === escolhaSelecionada) btn.classList.add("active");
+// Atualiza visualmente se já houver escolha salva
+choices.forEach(c => {
+  if (c.dataset.id === escolhaSelecionada) c.classList.add("active");
 });
 
 // Seleção visual e atualização de estado
-step4Choices.forEach(btn => {
+choices.forEach(btn => {
   btn.addEventListener("click", () => {
-    step4Choices.forEach(c => c.classList.remove("active"));
+    choices.forEach(c => c.classList.remove("active"));
     btn.classList.add("active");
 
     escolhaSelecionada = btn.dataset.id;
     estado.escolha = escolhaSelecionada;
     salvarEstado();
 
-    // libera o botão continuar
-    btnContinuarEscolha.disabled = false;
-
-    // mostra toast de confirmação da escolha
-    showToast("🎉 Opção selecionada!");
+    btnEscolha.disabled = false;
+    showToast("🎉 Escolha selecionada!");
   });
 });
 
 // Clique do botão continuar — salva no Firebase e vai para Step 5
-btnContinuarEscolha.addEventListener("click", async () => {
+btnEscolha.addEventListener("click", async () => {
   if (!escolhaSelecionada) {
-    showToast("⚠️ Escolha uma opção antes de continuar!");
+    showToast("⚠️ Escolha uma opção antes de continuar");
     return;
   }
 
   const usuarioDocRef = doc(db, "usuarios", estado.nomeNormalizado);
-  await updateDoc(usuarioDocRef, { escolha: escolhaSelecionada });
 
-  btnContinuarEscolha.disabled = true;
+  // Cria ou atualiza documento com merge
+  await setDoc(usuarioDocRef, { escolha: escolhaSelecionada }, { merge: true });
+
+  btnEscolha.disabled = true;
   showToast("✅ Escolha salva com sucesso!");
 
   // Transição para Step 5
   mostrarPasso("step-5");
 });
 
+/* ================= PASSO 5 — NOME DO ITEM + MENSAGEM ================= */
+const step5Container = document.querySelector("#step-5");
+const inputItem = step5Container.querySelector("#nome-item");
+const textareaMsg = step5Container.querySelector("#mensagem");
+const btnConfirmar = step5Container.querySelector("#btn-confirmar");
 
-/* ================= PASSO 5 — ITEM + MENSAGEM ================= */
-const inputItem = document.getElementById("nome-item");
-const textareaMsg = document.getElementById("mensagem");
-const btnConfirmar = document.getElementById("btn-confirmar");
-
+// Carregar valores anteriores se houver (persistência localStorage)
 if (estado.item) inputItem.value = estado.item;
 if (estado.mensagem) textareaMsg.value = estado.mensagem;
 
@@ -209,25 +213,32 @@ btnConfirmar.addEventListener("click", async () => {
   const item = inputItem.value.trim();
   const msg = textareaMsg.value.trim();
 
-  if (!item || !msg) return showToast("Preencha o item e a mensagem!");
+  if (!item || !msg) {
+    showToast("⚠️ Preencha o nome do item e a mensagem!");
+    return;
+  }
 
+  // Atualiza estado local
   estado.item = item;
   estado.mensagem = msg;
   estado.finalizado = true;
   salvarEstado();
 
-  const usuarioDoc = doc(db, "usuarios", estado.nomeNormalizado);
-  await updateDoc(usuarioDoc, {
+  const usuarioDocRef = doc(db, "usuarios", estado.nomeNormalizado);
+
+  // Cria ou atualiza documento no Firebase com merge
+  await setDoc(usuarioDocRef, {
     item: item,
     mensagem: msg,
     finalizado: true,
     escolha: estado.escolha,
     sorteado: estado.sorteado
-  });
+  }, { merge: true });
 
-  showToast("Item e mensagem salvos!");
-  mostrarPasso("step-6");
+  showToast("🎁 Item e mensagem salvos!");
+  mostrarPasso("step-6"); // Step 6 = tela de confirmação final
 });
+
 
 /* ================= BOTÃO RESET ADM ================= */
 document.getElementById("btn-reset").onclick = () => {
