@@ -151,61 +151,51 @@ document.getElementById("btn-continuar-escolha").onclick = () => {
   mostrarPasso("step-4");
 };
 
-/* ================= PASSO 4 — ESCOLHA COM IMAGENS ================= */
-const choices = document.querySelectorAll("#step-4 .choice");
-const btnEscolha = document.getElementById("btn-escolha");
+/* ================= PASSO 4 — ESCOLHA ================= */
+const step4Choices = document.querySelectorAll("#step-4 .choice");
+const btnContinuarEscolha = document.getElementById("btn-escolha");
 let escolhaSelecionada = estado.escolha || null;
 
-// Inicializa visual
-choices.forEach(c => {
-  if (c.dataset.id === escolhaSelecionada) c.classList.add("active");
-  else c.classList.remove("active");
+// Atualiza visualmente se já tiver escolha salva
+step4Choices.forEach(btn => {
+  if (btn.dataset.id === escolhaSelecionada) btn.classList.add("active");
 });
-btnEscolha.disabled = !escolhaSelecionada;
 
-// Reset Step 4 (chamado no reset global)
-function resetStep4() {
-  escolhaSelecionada = null;
-  estado.escolha = null;
-  salvarEstado();
-  btnEscolha.disabled = true;
-  choices.forEach(c => c.classList.remove("active"));
-}
-
-// Seleção
-choices.forEach(btn => {
+// Seleção visual e atualização de estado
+step4Choices.forEach(btn => {
   btn.addEventListener("click", () => {
-    choices.forEach(c => c.classList.remove("active"));
+    step4Choices.forEach(c => c.classList.remove("active"));
     btn.classList.add("active");
 
     escolhaSelecionada = btn.dataset.id;
     estado.escolha = escolhaSelecionada;
     salvarEstado();
 
-    btnEscolha.disabled = false;
-    showToast("🎉 Escolha selecionada!");
+    // libera o botão continuar
+    btnContinuarEscolha.disabled = false;
+
+    // mostra toast de confirmação da escolha
+    showToast("🎉 Opção selecionada!");
   });
 });
 
-// Botão continuar
-btnEscolha.addEventListener("click", async () => {
+// Clique do botão continuar — salva no Firebase e vai para Step 5
+btnContinuarEscolha.addEventListener("click", async () => {
   if (!escolhaSelecionada) {
     showToast("⚠️ Escolha uma opção antes de continuar!");
     return;
   }
 
-  try {
-    const usuarioDocRef = doc(db, "usuarios", estado.nomeNormalizado);
-    await updateDoc(usuarioDocRef, { escolha: escolhaSelecionada });
+  const usuarioDocRef = doc(db, "usuarios", estado.nomeNormalizado);
+  await updateDoc(usuarioDocRef, { escolha: escolhaSelecionada });
 
-    btnEscolha.disabled = true;
-    showToast("✅ Escolha salva com sucesso!");
-    mostrarPasso("step-5");
-  } catch (err) {
-    console.error(err);
-    showToast("❌ Erro ao salvar escolha.");
-  }
+  btnContinuarEscolha.disabled = true;
+  showToast("✅ Escolha salva com sucesso!");
+
+  // Transição para Step 5
+  mostrarPasso("step-5");
 });
+
 
 /* ================= PASSO 5 — ITEM + MENSAGEM ================= */
 const inputItem = document.getElementById("nome-item");
