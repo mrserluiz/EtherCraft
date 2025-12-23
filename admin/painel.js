@@ -26,6 +26,7 @@ const painelDiv = document.getElementById("painel");
 const tabela = document.getElementById("tabela");
 const btnCopiar = document.getElementById("copiar");
 const btnReset = document.getElementById("ir-reset");
+const btnVoltarSite = document.getElementById("btn-voltar-site");
 
 /* 🔐 SENHA ADM (simples, local) */
 const SENHA_ADM = "admin123";
@@ -55,7 +56,7 @@ function iniciarAtualizacaoTempoReal() {
       const u = doc.data();
       if (!u.sorteado) sorteioCompleto = false;
 
-      const tr = .createElement("tr");
+      const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${u.nome || "-"}</td>
         <td>${u.sorteado || "-"}</td>
@@ -77,7 +78,7 @@ function iniciarAtualizacaoTempoReal() {
     });
 
     // Atualiza status do sorteio
-    let statusEvento = .getElementById("status-evento");
+    let statusEvento = document.getElementById("status-evento");
     if (!statusEvento) {
       statusEvento = document.createElement("p");
       statusEvento.id = "status-evento";
@@ -102,13 +103,4 @@ btnCopiar.onclick = () => {
 
   navigator.clipboard.writeText(texto);
   alert("Tabela copiada!");
-};
-
-/* 🔁 IR PARA RESET */
-btnReset.onclick = () => {
-  window.location.href = "reset-evento.html";
-};
-document.getElementById("btn-voltar-site").onclick = () => {
-  window.location.href = "https://mrserluiz.github.io/EtherCraft/";
-};
-
+}
