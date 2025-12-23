@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnVoltarSite = document.getElementById("btn-voltar-site");
 
   /* 🔐 SENHA ADM */
-  const SENHA_ADM = "admin123";
+  const SENHA_ADM = "LGBZJ";
 
   /* 🔄 FUNÇÃO TOAST */
   function showToast(msg, duration = 2500) {
