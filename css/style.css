@@ -29,6 +29,10 @@ body {
 /* ===========================
    CABEÇALHO
    =========================== */
+.header-top {
+  margin-bottom: 32px; /* controla o espaço entre topo e corpo */
+}
+
 .header {
   text-align: center;
   margin-bottom: 24px;
