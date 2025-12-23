@@ -5,7 +5,7 @@ import {
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* 🔐 FIREBASE CONFIG — MESMO DO RESET */
+/* 🔐 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyBlWw5nf8tNAX2BpnmxG7TmofIdUyyQ4Yw",
   authDomain: "amigosecreto-32194.firebaseapp.com",
@@ -28,7 +28,7 @@ const btnCopiar = document.getElementById("copiar");
 const btnReset = document.getElementById("ir-reset");
 const btnVoltarSite = document.getElementById("btn-voltar-site");
 
-/* 🔐 SENHA ADM (simples, local) */
+/* 🔐 SENHA ADM */
 const SENHA_ADM = "admin123";
 
 /* 🔓 LOGIN */
@@ -52,8 +52,8 @@ function iniciarAtualizacaoTempoReal() {
 
     let sorteioCompleto = true;
 
-    snap.forEach(doc => {
-      const u = doc.data();
+    snap.forEach(docSnap => {
+      const u = docSnap.data();
       if (!u.sorteado) sorteioCompleto = false;
 
       const tr = document.createElement("tr");
@@ -103,4 +103,16 @@ btnCopiar.onclick = () => {
 
   navigator.clipboard.writeText(texto);
   alert("Tabela copiada!");
+};
+
+/* 🔁 IR PARA RESET */
+btnReset.onclick = () => {
+  window.location.href = "reset-evento.html";
+};
+
+/* ⬅ VOLTAR PARA O SITE */
+if (btnVoltarSite) {
+  btnVoltarSite.onclick = () => {
+    window.location.href = "https://mrserluiz.github.io/EtherCraft/";
+  };
 }
