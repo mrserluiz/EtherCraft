@@ -5,6 +5,9 @@ EtherCraft
 │ │ ├── logo.png 
 │ │ ├── banner.jpg 
 │ │ └── backgrounds/ 
+│ │ ├── eventos/
+│ │ │ ├── amigo-secreto/
+│ │ │ │ └── (FOTOS/ICONES-EVENTO)
 │ ├── icons/ 
 │ └── fonts/ 
 │ 
