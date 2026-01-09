@@ -1,0 +1,32 @@
+├── index.html ← SITE PRINCIPAL (novo) 
+├── assets/ 
+│ ├── images/ 
+│ │ ├── logo.png 
+│ │ ├── banner.jpg 
+│ │ └── backgrounds/ 
+│ ├── icons/ 
+│ └── fonts/ 
+│ 
+├── css/ 
+│ ├── reset.css 
+│ ├── base.css ← cores, tipografia, layout 
+│ ├── components.css ← cards, botões, toasts 
+│ ├── pages/ 
+│ │ ├── home.css 
+│ │ ├── regras.css 
+│ │ └── eventos.css 
+│ 
+├── js/ 
+│ ├── main.js ← navegação, UI global 
+│ ├── firebase.js ← config 
+│ └── modules/ 
+│ └── amigo-secreto/ 
+│ ├── index.html 
+│ ├── app.js 
+│ └── style.css 
+│ ├── eventos/ 
+│ └── amigo-secreto/ ← acesso público ao evento 
+│ └── index.html 
+│ 
+└── admin/ 
+└── index.html
