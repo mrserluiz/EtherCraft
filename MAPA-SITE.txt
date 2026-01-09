@@ -33,4 +33,9 @@ EtherCraft
 │ └── index.html 
 │ 
 └── admin/ 
+│ ├── painel.html
+│ ├── painel.js
+│ ├── reset-evento.html
+│ └── reset.js
+│ 
 └── index.html
