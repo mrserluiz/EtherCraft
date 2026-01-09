@@ -1,127 +1,131 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>EtherCraft • Servidor Minecraft</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0f14" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Servidor Minecraft EtherCraft — eventos, diversão, comunidade e aventura.">
+  <title>EtherCraft — Servidor Minecraft Survival RPG</title>
+  <meta name="description" content="EtherCraft é um servidor Minecraft Survival RPG com economia própria, eventos sazonais, pets, jobs e uma comunidade ativa. Jogue no Java e Bedrock." />
+  <meta name="keywords" content="Minecraft, Servidor Minecraft, Survival RPG, EtherCraft, Minecraft Java, Minecraft Bedrock, Geyser" />
+  <meta name="author" content="EtherCraft" />
 
-  <!-- CSS GLOBAL -->
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/pages/home.css">
+  <!-- Open Graph -->
+  <meta property="og:title" content="EtherCraft — Servidor Minecraft Survival RPG" />
+  <meta property="og:description" content="Economia própria, eventos, pets, jobs e progressão RPG. Java e Bedrock." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://mrserluiz.github.io/EtherCraft/" />
+  <meta property="og:image" content="assets/images/Ether_Logo.png" />
+
+  <!-- Performance: preload -->
+  <link rel="preload" href="assets/images/Ether_Logo.png" as="image" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages/home.css" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "EtherCraft",
+    "applicationCategory": "Game",
+    "operatingSystem": "Windows, Linux, macOS",
+    "description": "Servidor Minecraft Survival RPG com economia própria, eventos e progressão.",
+    "url": "https://mrserluiz.github.io/EtherCraft/"
+  }
+  </script>
 </head>
 <body>
 
-<!-- ================= HEADER ================= -->
 <header class="site-header">
-  <div class="header-content">
-    <img src="assets/images/logo.png" alt="EtherCraft" class="logo">
+  <div class="container header-grid">
+    <img src="assets/images/Ether_Logo.png" alt="EtherCraft Logo" class="logo" />
 
-    <nav class="main-nav">
-      <a href="#inicio">Início</a>
-      <a href="#sobre">Sobre</a>
-      <a href="#eventos">Eventos</a>
-      <a href="#regras">Regras</a>
-      <a href="#contato">Contato</a>
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="eventos.html">Eventos</a>
+      <a href="regras.html">Regras</a>
+      <a href="#jogar">Como Jogar</a>
     </nav>
   </div>
 </header>
 
-<!-- ================= HERO ================= -->
-<section class="hero" id="inicio">
-  <div class="hero-content">
-    <h1>EtherCraft</h1>
-    <p>Sua diversão é a nossa missão</p>
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-content">
+      <h1>Bem-vindo ao EtherCraft</h1>
+      <p class="hero-subtitle">Um servidor Minecraft Survival RPG com progressão real, economia viva e eventos únicos.</p>
 
-    <div class="hero-buttons">
-      <a href="#como-entrar" class="btn primary">Como Entrar</a>
-      <a href="#eventos" class="btn secondary">Eventos</a>
+      <div class="hero-actions">
+        <a href="#jogar" class="btn primary">Começar a Jogar</a>
+        <a href="eventos.html" class="btn secondary">Ver Eventos</a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ================= SOBRE ================= -->
-<section class="section" id="sobre">
-  <h2>Sobre o Servidor</h2>
+  <!-- DIFERENCIAIS -->
+  <section class="section">
+    <div class="container">
+      <h2>Diferenciais do Servidor</h2>
 
-  <p>
-    O <strong>EtherCraft</strong> é um servidor Minecraft focado em diversão,
-    eventos especiais, economia equilibrada e uma comunidade respeitosa.
-  </p>
+      <div class="cards-grid">
+        <article class="card">
+          <h3>Economia Própria</h3>
+          <p>Sistema econômico balanceado com lojas, pix interno e integração Vault.</p>
+        </article>
 
-  <div class="features">
-    <div class="feature-card">🌍 Mundo Survival Custom</div>
-    <div class="feature-card">🎉 Eventos Exclusivos</div>
-    <div class="feature-card">💰 Economia Balanceada</div>
-    <div class="feature-card">🛡️ Proteção e Segurança</div>
-  </div>
-</section>
+        <article class="card">
+          <h3>Jobs & Progressão</h3>
+          <p>Trabalhos com metas, áreas específicas e recompensas escaláveis.</p>
+        </article>
 
-<!-- ================= EVENTOS ================= -->
-<section class="section section-alt" id="eventos">
-  <h2>Eventos Ativos</h2>
+        <article class="card">
+          <h3>Eventos Sazonais</h3>
+          <p>Eventos únicos como Amigo Secreto, desafios globais e recompensas especiais.</p>
+        </article>
 
-  <div class="cards">
-
-    <a href="eventos/amigo-secreto/index.html" class="card">
-      <h3>🎁 Amigo Secreto</h3>
-      <p>Participe do sorteio especial da comunidade.</p>
-      <span class="card-link">Participar →</span>
-    </a>
-
-    <div class="card disabled">
-      <h3>⚔️ PvP Arena</h3>
-      <p>Em breve</p>
+        <article class="card">
+          <h3>Java & Bedrock</h3>
+          <p>Compatível com Java Edition e Bedrock via Geyser.</p>
+        </article>
+      </div>
     </div>
+  </section>
 
-    <div class="card disabled">
-      <h3>🏗️ Evento Construção</h3>
-      <p>Em breve</p>
+  <!-- COMO JOGAR -->
+  <section class="section alt" id="jogar">
+    <div class="container">
+      <h2>Como Jogar</h2>
+
+      <ol class="steps">
+        <li>Abra o Minecraft (Java ou Bedrock)</li>
+        <li>Adicione o servidor EtherCraft</li>
+        <li>Entre, escolha seu caminho e evolua</li>
+      </ol>
+
+      <div class="server-info">
+        <p><strong>IP:</strong> jogar.ethercraft.com</p>
+        <p><strong>Versão:</strong> 1.21+</p>
+      </div>
     </div>
+  </section>
+</main>
 
-  </div>
-</section>
-
-<!-- ================= COMO ENTRAR ================= -->
-<section class="section" id="como-entrar">
-  <h2>Como Entrar no Servidor</h2>
-
-  <div class="join-box">
-    <p><strong>IP:</strong> play.ethercraft.com</p>
-    <p><strong>Versão:</strong> Java & Bedrock</p>
-  </div>
-</section>
-
-<!-- ================= REGRAS ================= -->
-<section class="section section-alt" id="regras">
-  <h2>Regras Básicas</h2>
-
-  <ul class="rules-list">
-    <li>❌ Proibido hacks ou trapaças</li>
-    <li>🤝 Respeite todos os jogadores</li>
-    <li>🔥 Grief apenas onde permitido</li>
-    <li>⚠️ Siga as orientações da staff</li>
-  </ul>
-
-  <a href="regras.html" class="btn small">Ver regras completas</a>
-</section>
-
-<!-- ================= FOOTER ================= -->
-<footer class="site-footer" id="contato">
-  <p>© 2026 EtherCraft • Todos os direitos reservados</p>
-
-  <div class="socials">
-    <a href="#">Discord</a>
-    <a href="#">Instagram</a>
-    <a href="#">YouTube</a>
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <p>© 2026 EtherCraft. Todos os direitos reservados.</p>
+    <nav aria-label="Rodapé">
+      <a href="regras.html">Regras</a>
+      <a href="eventos.html">Eventos</a>
+    </nav>
   </div>
 </footer>
 
-<!-- JS GLOBAL -->
-<script src="js/main.js"></script>
-
+<script src="js/main.js" defer></script>
 </body>
 </html>
