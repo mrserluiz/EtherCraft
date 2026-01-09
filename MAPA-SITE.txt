@@ -7,7 +7,7 @@ EtherCraft
 │ │ └── backgrounds/ 
 │ │ ├── eventos/
 │ │ │ ├── amigo-secreto/
-│ │ │ │ └── (FOTOS/ICONES-EVENTO)
+│ │ │ │ └── *(FOTOS/ICONES-EVENTO)
 │ ├── icons/ 
 │ └── fonts/ 
 │ 
