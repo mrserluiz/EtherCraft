@@ -3,7 +3,6 @@ EtherCraft
 ├── assets/ 
 │ ├── images/ 
 │ │ ├── Ether_Logo.png
-│ │ ├── header-placeholder.png
 │ │ └── backgrounds/ 
 │ │ │ └──placeholder.png
 │ │ ├── eventos/
