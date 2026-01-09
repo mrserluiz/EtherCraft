@@ -1,15 +1,17 @@
 EtherCraft
-├── index.html ← SITE PRINCIPAL (novo) 
+│
+├── index.html ← SITE PRINCIPAL (HOME) 
+│
 ├── assets/ 
 │ ├── images/ 
 │ │ ├── Ether_Logo.png
-│ │ └── backgrounds/ 
+│ │ ├── backgrounds/ 
 │ │ │ └──placeholder.png
 │ │ ├── eventos/
 │ │ │ ├── amigo-secreto/
-│ │ │ │ └── *(FOTOS/ICONES-EVENTO)
+│ │ │ │ └── *(IMAGENS-DO-EVENTO)
 │ ├── icons/ 
-│ │ ├── placeholder.png
+│ │ └── placeholder.png
 │ └── fonts/ 
 │ │ └── placeholder.font
 │ 
@@ -22,24 +24,21 @@ EtherCraft
 │ │ ├── regras.css 
 │ │ └── eventos.css 
 │
-│ ├── data/ 
-│ ├── participantes.json
+├── data/ 
+│ └── participantes.json
 │ 
 ├── js/ 
-│ ├── main.js ← navegação, UI global 
+│ ├── main.js     ← navegação, UI global 
 │ ├── firebase.js ← config 
 │ └── modules/ 
-│ └── amigo-secreto/ 
-│ ├── index.html 
-│ ├── app.js 
-│ └── style.css 
-│ ├── eventos/ 
-│ └── amigo-secreto/ ← acesso público ao evento 
-│ └── index.html 
+│ │ └── amigo-secreto/ 
+│ │ │ ├── index.html 
+│ │ │ ├── app.js 
+│ │ │ └── style.css 
 │ 
 └── admin/ 
 │ ├── painel.html
 │ ├── painel.js
 │ ├── reset-evento.html
-│ └── reset.js
+. └── reset.js
 
