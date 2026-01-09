@@ -2,14 +2,17 @@ EtherCraft
 ├── index.html ← SITE PRINCIPAL (novo) 
 ├── assets/ 
 │ ├── images/ 
-│ │ ├── logo.png 
-│ │ ├── banner.jpg 
+│ │ ├── Ether_Logo.png
+│ │ ├── header-placeholder.png
 │ │ └── backgrounds/ 
+│ │ │ └──placeholder.png
 │ │ ├── eventos/
 │ │ │ ├── amigo-secreto/
 │ │ │ │ └── *(FOTOS/ICONES-EVENTO)
 │ ├── icons/ 
+│ │ ├── placeholder.png
 │ └── fonts/ 
+│ │ └── placeholder.font
 │ 
 ├── css/ 
 │ ├── reset.css 
@@ -19,6 +22,9 @@ EtherCraft
 │ │ ├── home.css 
 │ │ ├── regras.css 
 │ │ └── eventos.css 
+│
+│ ├── data/ 
+│ ├── participantes.json
 │ 
 ├── js/ 
 │ ├── main.js ← navegação, UI global 
@@ -37,5 +43,4 @@ EtherCraft
 │ ├── painel.js
 │ ├── reset-evento.html
 │ └── reset.js
-│ 
-└── index.html
+
