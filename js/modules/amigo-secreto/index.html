@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Amigo Secreto • EtherCraft</title>
+
+  <!-- CSS do evento -->
+  <link rel="stylesheet" href="../../js/modules/amigo-secreto/style.css">
+</head>
+<body>
+
+<main class="container">
+
+  <header class="header">
+    <img src="../../assets/images/logo.png" class="header-image">
+    <h1 class="site-title">Amigo Secreto</h1>
+    <p class="site-subtitle">Participe do sorteio 🎁</p>
+  </header>
+
+  <section class="content-card">
+
+    <!-- BLOQUEIO -->
+    <div class="step" id="step-blocked">
+      <h3>Você já participou 🎁</h3>
+      <p>Seu sorteio já foi realizado.</p>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step step-active" id="step-1">
+      <label>Digite seu nome</label>
+      <input type="text" id="input-nome">
+      <button id="btn-nome">Continuar</button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" id="step-2">
+      <button id="btn-sortear" class="primary">Sortear amigo secreto</button>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step" id="step-3">
+      <p>Você tirou:</p>
+      <h2 id="resultado-sorteio"></h2>
+      <button id="btn-continuar-escolha">Continuar</button>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step" id="step-4">
+      <p class="step-title">🎀 Escolha um presente 🎀</p>
+
+      <div class="choices-grid">
+        <button class="choice" data-id="1"><img src="../../assets/images/presentes/1.png"></button>
+        <button class="choice" data-id="2"><img src="../../assets/images/presentes/2.png"></button>
+        <button class="choice" data-id="3"><img src="../../assets/images/presentes/3.png"></button>
+        <button class="choice" data-id="4"><img src="../../assets/images/presentes/4.png"></button>
+      </div>
+
+      <button id="btn-escolha" disabled>Continuar</button>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step" id="step-5">
+      <label>Nome do item</label>
+      <input type="text" id="nome-item">
+
+      <label>Mensagem</label>
+      <textarea id="mensagem"></textarea>
+
+      <button id="btn-confirmar">Finalizar</button>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step" id="step-6">
+      <h3>Envio concluído 🎉</h3>
+      <p>Obrigado por participar!</p>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- JS do evento -->
+<script type="module" src="../../js/modules/amigo-secreto/app.js"></script>
+
+</body>
+</html>
