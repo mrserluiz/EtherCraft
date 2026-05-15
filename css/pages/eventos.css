@@ -1,1 +1,16 @@
-
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/css/pages/eventos.css b/css/pages/eventos.css
+index 8b137891791fe96927ad78e64b0aad7bded08bdc..a8a1920c11af87725996110f32c2b1f2c93baebf 100644
+--- a/css/pages/eventos.css
++++ b/css/pages/eventos.css
+@@ -1 +1,6 @@
+-
++.eventos-hero { padding: 3.6rem 0 2rem; }
++.eventos-lista { display: grid; gap: 1rem; }
++.evento-badge { display: inline-block; background: rgba(143,91,255,.2); color: #e8dcff; padding: .35rem .6rem; border-radius: 999px; font-size: .85rem; margin-bottom: .6rem; }
++.evento-card img { border-radius: 12px; border: 1px solid var(--border); aspect-ratio: 16/9; object-fit: cover; }
++.evento-card .btn { margin-top: .9rem; }
++@media (min-width: 900px) { .eventos-lista { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+ 
+EOF
+)
