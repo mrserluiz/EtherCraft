@@ -1,1 +1,22 @@
-
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/css/pages/home.css b/css/pages/home.css
+index 8b137891791fe96927ad78e64b0aad7bded08bdc..87341755ff8935fbed53d8a624ace31d55fed3e3 100644
+--- a/css/pages/home.css
++++ b/css/pages/home.css
+@@ -1 +1,13 @@
++.hero { padding: 4.4rem 0 3.2rem; }
++.hero-content { display: grid; gap: 1rem; }
++.hero-subtitle { font-size: clamp(1rem, 2.8vw, 1.25rem); max-width: 62ch; }
++.hero-actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: .8rem; }
+ 
++.steps { display: grid; gap: .65rem; margin: 1rem 0; padding-left: 1rem; }
++.server-info {
++  margin-top: .8rem;
++  padding: 1rem;
++  border-radius: var(--radius);
++  border: 1px solid var(--border);
++  background: rgba(255,255,255,0.03);
++}
+ 
+EOF
+)
