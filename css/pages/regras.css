@@ -1,1 +1,28 @@
-
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/css/pages/regras.css b/css/pages/regras.css
+index 8b137891791fe96927ad78e64b0aad7bded08bdc..39f857d0ab7e03207670035b44db3d9a2b6da5a3 100644
+--- a/css/pages/regras.css
++++ b/css/pages/regras.css
+@@ -1 +1,18 @@
+-
++.regras-hero { padding: 3.6rem 0 1.4rem; }
++.regras-lista { display: grid; gap: .9rem; }
++.regra-item {
++  background: rgba(255,255,255,0.03);
++  border: 1px solid var(--border);
++  border-left: 4px solid var(--primary);
++  border-radius: 12px;
++  padding: 1rem;
++}
++.regra-item h3 { margin-bottom: .35rem; }
++.alerta {
++  margin-top: 1.3rem;
++  border: 1px solid #4b3f13;
++  background: #2d260b;
++  color: #f3e39a;
++  padding: .9rem;
++  border-radius: 12px;
++}
+ 
+EOF
+)
