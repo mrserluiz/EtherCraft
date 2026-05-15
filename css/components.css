@@ -1,1 +1,44 @@
-
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/css/components.css b/css/components.css
+index 8b137891791fe96927ad78e64b0aad7bded08bdc..b7ed0b418178577e11f1f8445e1237d850b0f58e 100644
+--- a/css/components.css
++++ b/css/components.css
+@@ -1 +1,35 @@
++.btn {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  padding: .75rem 1rem;
++  border-radius: 12px;
++  border: 1px solid transparent;
++  font-weight: 600;
++  transition: transform .2s ease, background-color .2s ease, border-color .2s ease;
++}
++.btn:hover { transform: translateY(-1px); }
++.btn.primary { background: var(--primary); color: #fff; }
++.btn.primary:hover { background: var(--primary-2); }
++.btn.secondary { border-color: var(--border); color: var(--text); background: rgba(255,255,255,0.04); }
+ 
++.cards-grid {
++  display: grid;
++  grid-template-columns: 1fr;
++  gap: 1rem;
++}
++.card {
++  background: rgba(255,255,255,0.04);
++  border: 1px solid var(--border);
++  border-radius: var(--radius);
++  padding: 1.2rem;
++  box-shadow: var(--shadow);
++}
++.card h3 { margin-bottom: .45rem; }
++
++@media (min-width: 700px) {
++  .cards-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
++}
++@media (min-width: 1024px) {
++  .cards-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
++}
+ 
+EOF
+)
