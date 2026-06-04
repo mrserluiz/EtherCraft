@@ -66,11 +66,11 @@ body.is-header-hidden .site-nav {
 }
 
 .nav-shell {
-  width: min(100%, 48rem);
+  width: min(100%, 56rem);
   min-height: 3.05rem;
   margin-inline: auto;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(5.8rem, 1fr));
   align-items: stretch;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -85,7 +85,7 @@ body.is-header-hidden .site-nav {
   justify-content: center;
   padding: 0.5rem 0.35rem;
   color: var(--color-text);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 800;
   text-align: center;
   transition: background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
@@ -167,7 +167,7 @@ body.is-header-hidden .site-nav {
 
 @media (min-width: 40rem) {
   .nav-link {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
   }
 
   .cards-grid {
