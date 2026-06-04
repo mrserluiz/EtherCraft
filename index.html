@@ -19,11 +19,23 @@
   <meta property="og:image" content="https://mrserluiz.github.io/EtherCraft/assets/images/Ether_Logo.png" />
   <meta property="og:locale" content="pt_BR" />
 
+  <!--
+    TROCA DA LOGO
+    Para trocar a logo do site, substitua o arquivo abaixo mantendo o mesmo caminho:
+    assets/images/Ether_Logo.png
+    Se preferir outro nome, altere tambem o src da imagem no header e o og:image acima.
+  -->
   <link rel="preload" href="assets/images/Ether_Logo.png" as="image" />
-  <link rel="stylesheet" href="css/reset.css" />
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/pages/home.css" />
+
+  <!--
+    CSS MODULAR
+    O parametro ?v=20260604-2 ajuda o navegador a carregar a versao mais nova dos estilos.
+    Quando fizer grandes mudancas visuais, aumente esse numero.
+  -->
+  <link rel="stylesheet" href="css/reset.css?v=20260604-2" />
+  <link rel="stylesheet" href="css/base.css?v=20260604-2" />
+  <link rel="stylesheet" href="css/components.css?v=20260604-2" />
+  <link rel="stylesheet" href="css/pages/home.css?v=20260604-2" />
 
   <script type="application/ld+json">
   {
@@ -40,10 +52,21 @@
 </head>
 <body>
   <!--
+    CABECALHO
+    Contem apenas a logo oficial, sempre centralizada.
+    O fade-in/fade-out e controlado em js/main.js.
+  -->
+  <header class="site-header" data-scroll-header>
+    <a class="brand-logo" href="index.html" aria-label="Pagina inicial do EtherCraft">
+      <img src="assets/images/Ether_Logo.png" alt="Logo oficial do EtherCraft" width="360" height="180" />
+    </a>
+  </header>
+
+  <!--
     MENU DE NAVEGACAO
-    Para adicionar novos botoes, duplique um <a> abaixo e altere o href/texto.
-    As cores e animacoes do menu ficam em css/components.css.
-    O comportamento fixo do menu e controlado apenas por CSS para melhor desempenho.
+    Fica abaixo do cabecalho no topo da pagina.
+    Para adicionar novos botoes, duplique um <a class="nav-link"> abaixo.
+    Para alterar cores e tamanhos, edite css/components.css.
   -->
   <nav class="site-nav" aria-label="Navegacao principal">
     <div class="nav-shell">
@@ -53,17 +76,6 @@
       <a class="nav-link" href="#como-jogar">Como Jogar</a>
     </div>
   </nav>
-
-  <!--
-    CABECALHO
-    O header contem apenas a logo oficial. O fade-in/fade-out durante a rolagem
-    e controlado em js/main.js pela classe .is-hidden.
-  -->
-  <header class="site-header" data-scroll-header>
-    <a class="brand-logo" href="index.html" aria-label="Pagina inicial do EtherCraft">
-      <img src="assets/images/Ether_Logo.png" alt="Logo oficial do EtherCraft" width="360" height="180" />
-    </a>
-  </header>
 
   <main class="site-main">
     <section class="hero" aria-labelledby="hero-title">
@@ -78,6 +90,12 @@
       </div>
     </section>
 
+    <!--
+      IMAGENS FUTURAS
+      Para adicionar imagens na home, use a pasta assets/images/.
+      Para imagens de fundo da home, prefira assets/images/backgrounds/.
+      Para imagens de eventos, prefira assets/images/eventos/.
+    -->
     <section class="section" aria-labelledby="diferenciais-title">
       <div class="container">
         <div class="section-heading">
@@ -140,6 +158,6 @@
     </div>
   </footer>
 
-  <script src="js/main.js" defer></script>
+  <script src="js/main.js?v=20260604-2" defer></script>
 </body>
 </html>
