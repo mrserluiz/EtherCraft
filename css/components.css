@@ -15,7 +15,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.65rem var(--container-padding);
+  padding: 0.9rem var(--container-padding);
   pointer-events: none;
   opacity: 1;
   overflow: visible;
@@ -33,7 +33,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  max-width: min(76vw, 20rem);
+  max-width: min(86vw, 34rem);
   max-height: var(--logo-height-mobile);
 }
 
@@ -178,8 +178,12 @@ body.is-header-hidden .site-nav {
 @media (min-width: 48rem) {
   .site-header {
     height: var(--header-height-desktop);
-    padding-top: 0.8rem;
-    padding-bottom: 0.8rem;
+    padding-top: 1.2rem;
+    padding-bottom: 1.2rem;
+  }
+
+  .brand-logo {
+    max-width: min(48vw, 42rem);
   }
 
   .brand-logo,
