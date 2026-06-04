@@ -1,20 +1,60 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/css/reset.css b/css/reset.css
-index 8b137891791fe96927ad78e64b0aad7bded08bdc..1ed59083142797a69bd20b79d01b574e95488a42 100644
---- a/css/reset.css
-+++ b/css/reset.css
-@@ -1 +1,10 @@
--
-+/* Reset CSS simplificado e acessível */
-+*, *::before, *::after { box-sizing: border-box; }
-+* { margin: 0; }
-+html:focus-within { scroll-behavior: smooth; }
-+body { min-height: 100vh; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
-+img, picture, video, canvas, svg { display: block; max-width: 100%; }
-+input, button, textarea, select { font: inherit; }
-+a { color: inherit; text-decoration: none; }
-+ul[role='list'], ol[role='list'] { list-style: none; }
-+:target { scroll-margin-top: 6rem; }
- 
-EOF
-)
+/*
+  EtherCraft - Reset CSS
+  Base simples para manter o layout previsivel em navegadores modernos.
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+picture,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ol,
+ul {
+  list-style-position: inside;
+}
+
+:target {
+  scroll-margin-top: 7rem;
+}
