@@ -1,47 +1,50 @@
 /*
   EtherCraft - Base CSS
-  Para alterar cores globais, edite as variaveis abaixo em :root.
-  A identidade usa roxos magicos, fundo escuro e contraste alto.
+  Cores principais do site: altere as variaveis abaixo para mudar a identidade visual.
+  Imagens futuras: coloque arquivos em assets/images/ e referencie nos CSS especificos da pagina.
 */
 :root {
-  --color-bg-top: #12091f;
-  --color-bg-middle: #35145f;
-  --color-bg-bottom: #7c56b8;
-  --color-surface: rgba(22, 13, 38, 0.72);
-  --color-surface-strong: rgba(30, 17, 52, 0.92);
+  --color-bg-top: #0b0614;
+  --color-bg-middle: #28104f;
+  --color-bg-bottom: #8d65d1;
+  --color-surface: rgba(22, 13, 38, 0.76);
+  --color-surface-strong: rgba(28, 15, 50, 0.95);
   --color-text: #fff9ff;
-  --color-text-muted: #ddd2f2;
+  --color-text-muted: #e3d9f4;
   --color-primary: #b684ff;
-  --color-primary-strong: #d8bbff;
-  --color-border: rgba(230, 213, 255, 0.22);
+  --color-primary-strong: #dcc2ff;
+  --color-nav-start: #4b1b82;
+  --color-nav-end: #a275e6;
+  --color-border: rgba(235, 221, 255, 0.24);
   --color-focus: #f0dc7a;
-  --shadow-soft: 0 18px 46px rgba(11, 4, 24, 0.32);
+  --shadow-soft: 0 18px 46px rgba(11, 4, 24, 0.34);
   --container-width: 1120px;
   --container-padding: 1rem;
+  --header-height-mobile: 8.25rem;
+  --header-height-desktop: 9.75rem;
+  --nav-height: 4.25rem;
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --transition-fast: 180ms ease;
   --transition-smooth: 320ms ease;
 }
 
+html {
+  min-height: 100%;
+  background: var(--color-bg-bottom);
+}
+
 body {
   min-width: 320px;
+  min-height: 100vh;
   color: var(--color-text);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.6;
   background:
+    radial-gradient(circle at 50% 8%, rgba(225, 190, 255, 0.18), transparent 28rem),
+    radial-gradient(circle at 12% 30%, rgba(137, 83, 210, 0.2), transparent 20rem),
     linear-gradient(180deg, var(--color-bg-top) 0%, var(--color-bg-middle) 52%, var(--color-bg-bottom) 100%);
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 10%, rgba(195, 143, 255, 0.2), transparent 28%),
-    radial-gradient(circle at 15% 35%, rgba(110, 60, 180, 0.18), transparent 24%);
+  background-attachment: fixed;
 }
 
 .container {
@@ -51,7 +54,7 @@ body::before {
 
 .site-main {
   min-height: 100vh;
-  padding-top: 10.5rem;
+  padding-top: calc(var(--header-height-mobile) + var(--nav-height) + 1.5rem);
 }
 
 .section {
@@ -107,7 +110,7 @@ strong {
 .site-footer {
   padding: 1.5rem 0 2rem;
   border-top: 1px solid var(--color-border);
-  background: rgba(12, 7, 22, 0.28);
+  background: rgba(12, 7, 22, 0.32);
 }
 
 .footer-content {
@@ -139,7 +142,7 @@ strong {
   }
 
   .site-main {
-    padding-top: 12.5rem;
+    padding-top: calc(var(--header-height-desktop) + var(--nav-height) + 2rem);
   }
 
   .section {
