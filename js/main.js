@@ -1,117 +1,64 @@
-/* =========================================================
-   EtherCraft - main.js
-   UI Global | Mobile Menu | Smooth Scroll | SPA Base
-   ========================================================= */
-
+/*
+  EtherCraft - main.js
+  Comportamentos globais leves e compativeis com GitHub Pages.
+*/
 document.addEventListener("DOMContentLoaded", () => {
-  initMobileMenu();
-  initSmoothScroll();
-  initSpaNavigation(); // opcional, não quebra navegação normal
+  initHeaderFade();
+  initSmoothAnchors();
 });
 
-/* =========================================================
-   MENU MOBILE
-   ========================================================= */
-function initMobileMenu() {
-  const toggle = document.querySelector(".menu-toggle");
-  const nav = document.querySelector(".main-nav");
+/*
+  HEADER COM FADE
+  Para alterar quando a logo desaparece, ajuste fadeLimitRatio.
+  0.25 significa aproximadamente 25% da altura visivel da tela.
+  A animacao visual fica em css/components.css na classe .site-header.is-hidden.
+*/
+function initHeaderFade() {
+  const header = document.querySelector("[data-scroll-header]");
+  if (!header) return;
 
-  if (!toggle || !nav) return;
+  const fadeLimitRatio = 0.25;
+  let ticking = false;
 
-  toggle.addEventListener("click", () => {
-    const isOpen = nav.classList.toggle("open");
-    toggle.classList.toggle("active", isOpen);
-    toggle.setAttribute("aria-expanded", isOpen);
-  });
+  function updateHeaderState() {
+    const fadeLimit = window.innerHeight * fadeLimitRatio;
+    const shouldHide = window.scrollY > fadeLimit;
 
-  // Fecha menu ao clicar em link (mobile)
-  nav.querySelectorAll("a").forEach(link => {
-    link.addEventListener("click", () => {
-      nav.classList.remove("open");
-      toggle.classList.remove("active");
-      toggle.setAttribute("aria-expanded", "false");
-    });
-  });
+    header.classList.toggle("is-hidden", shouldHide);
+    ticking = false;
+  }
+
+  function requestHeaderUpdate() {
+    if (ticking) return;
+
+    ticking = true;
+    window.requestAnimationFrame(updateHeaderState);
+  }
+
+  updateHeaderState();
+  window.addEventListener("scroll", requestHeaderUpdate, { passive: true });
+  window.addEventListener("resize", requestHeaderUpdate);
 }
 
-/* =========================================================
-   SCROLL SUAVE PARA ÂNCORAS
-   ========================================================= */
-function initSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener("click", function (e) {
-      const targetId = this.getAttribute("href");
+/*
+  ROLAGEM SUAVE
+  Para adicionar novos links internos, use href="#id-da-secao" no HTML.
+  O deslocamento do alvo e definido no reset.css com :target.
+*/
+function initSmoothAnchors() {
+  const internalLinks = document.querySelectorAll('a[href^="#"]');
 
-      if (targetId.length <= 1) return;
+  internalLinks.forEach(link => {
+    link.addEventListener("click", event => {
+      const targetId = link.getAttribute("href");
+      if (!targetId || targetId === "#") return;
 
       const target = document.querySelector(targetId);
       if (!target) return;
 
-      e.preventDefault();
-
-      target.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-      // Atualiza URL sem pular
+      event.preventDefault();
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
       history.pushState(null, "", targetId);
     });
   });
 }
-
-/* =========================================================
-   SPA LEVE (OPCIONAL)
-   - Só funciona se data-spa="true" estiver no <body>
-   - Fallback automático para navegação normal
-   ========================================================= */
-function initSpaNavigation() {
-  const isSpaEnabled = document.body.dataset.spa === "true";
-  if (!isSpaEnabled) return;
-
-  const content = document.querySelector("#spa-content");
-  if (!content) return;
-
-  document.querySelectorAll("a[data-spa-link]").forEach(link => {
-    link.addEventListener("click", async e => {
-      const url = link.getAttribute("href");
-      if (!url || url.startsWith("#")) return;
-
-      e.preventDefault();
-      loadSpaPage(url);
-    });
-  });
-
-  window.addEventListener("popstate", () => {
-    loadSpaPage(location.pathname, false);
-  });
-}
-
-/* =========================================================
-   CARREGAMENTO SPA
-   ========================================================= */
-async function loadSpaPage(url, pushState = true) {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Falha ao carregar página");
-
-    const html = await response.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-
-    const newContent = doc.querySelector("#spa-content");
-    if (!newContent) throw new Error("Conteúdo SPA não encontrado");
-
-    document.querySelector("#spa-content").innerHTML = newContent.innerHTML;
-
-    if (pushState) {
-      history.pushState(null, "", url);
-    }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  } catch (err) {
-    console.error("[SPA]", err);
-    window.location.href = url; // fallback seguro
-  }
-}
-
