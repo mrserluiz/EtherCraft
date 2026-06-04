@@ -20,8 +20,10 @@
   --shadow-soft: 0 18px 46px rgba(11, 4, 24, 0.34);
   --container-width: 1120px;
   --container-padding: 1rem;
-  --header-height-mobile: 8.25rem;
-  --header-height-desktop: 9.75rem;
+  --header-height-mobile: 6.75rem;
+  --header-height-desktop: 7.75rem;
+  --logo-height-mobile: 5.1rem;
+  --logo-height-desktop: 6rem;
   --nav-height: 4.25rem;
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
