@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   HEADER COM FADE
   Para alterar quando a logo desaparece, ajuste fadeLimitRatio.
   0.25 significa aproximadamente 25% da altura visivel da tela.
-  A animacao visual fica em css/components.css na classe .site-header.is-hidden.
+  Quando a logo some, a classe body.is-header-hidden faz o menu subir para o topo.
 */
 function initHeaderFade() {
   const header = document.querySelector("[data-scroll-header]");
@@ -25,6 +25,7 @@ function initHeaderFade() {
     const shouldHide = window.scrollY > fadeLimit;
 
     header.classList.toggle("is-hidden", shouldHide);
+    document.body.classList.toggle("is-header-hidden", shouldHide);
     ticking = false;
   }
 
