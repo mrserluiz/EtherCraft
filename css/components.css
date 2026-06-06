@@ -142,6 +142,19 @@ body.is-header-hidden .site-nav {
   background: rgba(255, 255, 255, 0.14);
 }
 
+}
+
+.btn-tertiary {
+  color: var(--color-text);
+  border-color: var(--color-border);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-tertiary:hover,
+.btn-secondary:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+}
+
 .cards-grid {
   display: grid;
   grid-template-columns: 1fr;
