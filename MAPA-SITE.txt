@@ -1,8 +1,24 @@
 EtherCraft
 │
-├── index.html ← SITE PRINCIPAL (HOME) 
+├── index.html ← SITE PRINCIPAL (HOME)
+│
+├── admin/ 
+│ ├── painel.html
+│ ├── painel.js
+│ ├── reset-evento.html
+│ ├── reset.html
 │
 ├── assets/ 
+│ └── fonts/ 
+│ │ └── placeholder.font
+│ ├── icons/ 
+│ │ ├── android-chome-192x192.png
+│ │ ├── android-chome-512x512.png
+│ │ ├── apple-touch-icon.png
+│ │ ├── favicon-16x16.png
+│ │ ├── favicon-32x32.png
+│ │ ├── favicon.ico
+│ │ └── site.wabmanifest
 │ ├── images/ 
 │ │ ├── Ether_Logo.png
 │ │ ├── backgrounds/ 
@@ -10,35 +26,29 @@ EtherCraft
 │ │ ├── eventos/
 │ │ │ ├── amigo-secreto/
 │ │ │ │ └── *(IMAGENS-DO-EVENTO)
-│ ├── icons/ 
-│ │ └── placeholder.png
-│ └── fonts/ 
-│ │ └── placeholder.font
 │ 
 ├── css/ 
-│ ├── reset.css 
-│ ├── base.css ← cores, tipografia, layout 
-│ ├── components.css ← cards, botões, toasts 
 │ ├── pages/ 
+│ │ ├── eventos.css
 │ │ ├── home.css 
 │ │ ├── regras.css 
-│ │ └── eventos.css 
+| │ ├── eventos.css 
+│ | ├── base.css ← cores, tipografia, layout 
+| │ ├── components.css ← cards, botões, toasts 
+| │ └── reset.css 
 │
 ├── data/ 
 │ └── participantes.json
 │ 
 ├── js/ 
-│ ├── main.js     ← navegação, UI global 
-│ ├── firebase.js ← config 
-│ └── modules/ 
-│ │ └── amigo-secreto/ 
+│ └── modules/amigo-secreto
 │ │ │ ├── index.html 
+│ │ │ ├── old_index.html 
 │ │ │ ├── app.js 
 │ │ │ └── style.css 
+│ ├── firebase.js ← config 
+│ ├── main.js     ← navegação, UI global 
 │ 
-└── admin/ 
-│ ├── painel.html
-│ ├── painel.js
-│ ├── reset-evento.html
-. └── reset.js
+└── pages/ 
+. └── regras.js
 
