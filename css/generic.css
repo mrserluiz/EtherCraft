@@ -1,0 +1,18 @@
+.page-header {
+  text-align: center;
+  padding: 2rem 0 4rem;
+}
+
+.page-title {
+  margin-bottom: 1rem;
+}
+
+.page-description {
+  max-width: 42rem;
+  margin-inline: auto;
+  color: var(--color-text-muted);
+}
+
+.page-section {
+  padding: 3rem 0;
+}
