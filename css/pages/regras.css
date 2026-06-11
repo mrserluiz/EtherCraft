@@ -1,7 +1,7 @@
 /*
   EtherCraft - Home CSS
   Este arquivo cuida apenas das secoes exclusivas da pagina inicial.
-*/
+
 .hero {
   min-height: 68vh;
   display: grid;
@@ -16,7 +16,7 @@
   margin-inline: auto;
   text-align: center;
 }
-
+*/
 .eyebrow {
   color: var(--color-primary-strong);
   font-size: 0.78rem;
