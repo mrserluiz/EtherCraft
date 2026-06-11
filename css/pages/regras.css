@@ -1,58 +1,67 @@
 /*
   EtherCraft - Regras CSS
-  Estilos específicos para a página de regras e overrides para o menu fixo.
+  Estilos específicos para a página de regras e correções para o menu fixo.
 */
 
-/* --- Overrides para Menu Fixo no Topo (Apenas nesta página) --- */
+/* --- Overrides Críticos para Menu Fixo no Topo --- */
 
 :root {
-  --header-height-mobile: 0rem !important;
-  --header-height-desktop: 0rem !important;
-  --logo-height-mobile: 0rem !important;
-  --logo-height-desktop: 0rem !important;
+  /* Zera as alturas que o JS ou CSS Base usam para calcular o topo */
+  --header-height-mobile: 0px !important;
+  --header-height-desktop: 0px !important;
+  --logo-height-mobile: 0px !important;
+  --logo-height-desktop: 0px !important;
+  --nav-height: 4.25rem; /* Mantém o tamanho original do menu */
 }
 
-/* Esconder o cabeçalho da logo */
+/* Remove completamente o cabeçalho da logo nesta página */
 .site-header {
   display: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
-/* Fixar o menu no topo permanentemente */
+/* Fixa o menu exatamente no topo (0px) ignorando qualquer classe do JS */
 .site-nav {
   position: fixed !important;
   top: 0 !important;
-  left: 0;
-  right: 0;
-  z-index: 65;
-  padding: 0.55rem var(--container-padding) 0.7rem;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 100 !important;
+  padding: 0.55rem var(--container-padding) 0.7rem !important;
   background: linear-gradient(90deg, var(--color-nav-start), var(--color-nav-end)) !important;
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 10px 28px rgba(10, 4, 22, 0.25);
-  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border) !important;
+  box-shadow: 0 10px 28px rgba(10, 4, 22, 0.25) !important;
+  backdrop-filter: blur(12px) !important;
+  transform: none !important; /* Evita deslocamentos do script */
 }
 
-/* Ajustar o padding do main para não ficar sob o menu */
+/* Ajusta o corpo do site para começar logo abaixo do menu fixo */
 .site-main {
-  padding-top: calc(var(--nav-height) + 2rem) !important;
+  padding-top: var(--nav-height) !important;
+  margin-top: 0 !important;
+}
+
+/* Ajuste fino para a seção Hero (o título "Regras") */
+.hero {
+  min-height: auto !important;
+  padding: 4rem 0 3rem !important; /* Dá um espaço interno para o título não colar no menu */
+  margin-top: 0 !important;
 }
 
 @media (min-width: 48rem) {
   .site-main {
-    padding-top: calc(var(--nav-height) + 3rem) !important;
+    padding-top: var(--nav-height) !important;
   }
-  .site-nav {
-    top: 0 !important;
+  .hero {
+    padding: 6rem 0 5rem !important;
   }
 }
 
-/* --- Estilos de Conteúdo (Baseados no home.css) --- */
-
-.hero {
-  min-height: 60vh;
-  display: grid;
-  align-items: center;
-  padding: 2rem 0 3rem;
-}
+/* --- Estilos de Conteúdo (Sincronizados com o layout original) --- */
 
 .hero-content {
   max-width: 52rem;
@@ -116,11 +125,6 @@
 }
 
 @media (min-width: 48rem) {
-  .hero {
-    min-height: 65vh;
-    padding-bottom: 4rem;
-  }
-
   .content-panel {
     padding: 2rem;
   }
