@@ -1,1 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
 
+  <!-- Name Page -->
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>EtherCraft - User Login</title>
+
+  <meta name="description"content="Servidor de Minecraft EtherCraft.">
+  
+ <!-- Favicons -->
+<link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="../assets/icons/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="../assets/icons/site.webmanifest">
+
+  <meta name="theme-color" content="#7b2bf">
+
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/pages/regras.css">
+
+  <!--Corpo-do-Site -->
+  <title>EtherCraft | Area de Usuario</title>
+  <meta name="description" content="Regras do EtherCraft." />
+  <meta name="keywords" content="EtherCraft, regras, Minecraft Survival RPG, Minecraft Java, Minecraft Bedrock, servidor Semi-RP servival Medieval" />
+  <meta name="author" content="EtherCraft" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://mrserluiz.github.io/EtherCraft/" />
+
+  <meta property="og:title" content="EtherCraft | Regras do Servidor" />
+  <meta property="og:description" content="Servidor Minecraft para Java e Bedrock." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://mrserluiz.github.io/EtherCraft/pages/regras.html" />
+  <meta property="og:image" content="https://mrserluiz.github.io/EtherCraft/assets/images/Ether_Logo.png" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <!--
+    TROCA DA LOGO
+    Para trocar a logo do site, substitua o arquivo abaixo mantendo o mesmo caminho:
+    assets/images/Ether_Logo.png
+    Se preferir outro nome, altere tambem o src da imagem no header e o og:image acima.
+  
+  <link rel="preload" href="../assets/images/Ether_Logo.png" as="image" />
+  
+    CSS MODULAR
+    O parametro ?v=20260604-5 ajuda o navegador a carregar a versao mais nova dos estilos.
+    Quando fizer grandes mudancas visuais, aumente esse numero.
+  -->
+  <link rel="stylesheet" href="../css/reset.css?v=20260604-5" />
+  <link rel="stylesheet" href="../css/base.css?v=20260604-5" />
+  <link rel="stylesheet" href="../css/components.css?v=20260604-5" />
+  <link rel="stylesheet" href="../css/pages/regras.css?v=20260604-5" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "EtherCraft",
+    "applicationCategory": "Game",
+    "operatingSystem": "Windows, Linux, macOS, Android, iOS",
+    "description": "Servidor Minecraft Survival Semi-RP suporte para Java e Bedrock.",
+    "url": "https://mrserluiz.github.io/EtherCraft/",
+    "genre": ["Survival", "RPG", "Sandbox"]
+  }
+  </script>
+</head>
+<body>
+  <!-- MENU DE NAVEGACAO FIXO NO TOPO -->
+  <nav class="site-nav" aria-label="Navegacao principal">
+    <div class="nav-shell">
+      <a class="nav-link" href="../index.html" aria-current="page">Home</a>
+      <a class="nav-link" href="../pages/eventos.html">Eventos</a>
+      <a class="nav-link" href="../pages/regras.html">Regras</a>
+      <a class="nav-link" href="../index.html#como-jogar"">Como Jogar</a>
+      <a class="nav-link" href="../pages/login.html">Login</a>
+      <a class="nav-link" href="pages/login.html">Wiki</a>
+    </div>
+  </nav>
+
+  <main class="site-main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-content">
+        <p class="eyebrow">EtherCraft</p>
+        <h1 id="hero-title">Nova Area</h1>
+        <p class="hero-subtitle">🚧EM BREVE🚧</p>
+        <!--
+        <div class="hero-actions" aria-label="Acoes principais">
+          <a class="btn btn-primary" href="#como-jogar">Comecar a Jogar</a>
+          <a class="btn btn-secondary" href="eventos.html">Ver Eventos</a>
+          <a class="btn btn-tertiary" href="Staff.html">Staff</a>
+        </div>
+        -->
+      </div>
+    </section>
+
+    <!--
+      IMAGENS FUTURAS
+      Para adicionar imagens na home, use a pasta assets/images/.
+      Para imagens de fundo da home, prefira assets/images/backgrounds/.
+      Para imagens de eventos, prefira assets/images/eventos/.
+    
+    <section class="section" aria-labelledby="diferenciais-title">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">O que torna o servidor especial</p>
+          <h2 id="diferenciais-title">Diferenciais do EtherCraft</h2>
+        </div>
+
+        <div class="cards-grid">
+          <article class="feature-card">
+            <h3>💰Economia Própria</h3>
+            <p>Sistema econômico pensado para trocas, lojas, recompensas e evolução constante dentro do servidor.</p>
+          </article>
+
+          <article class="feature-card">
+            <h3>⚔️Progressao</h3>
+            <p>Escolha atividades, evolua sua função e desbloqueie recompensas conforme participa da comunidade.</p>
+          </article>
+
+          <article class="feature-card">
+            <h3>🏞️Exploração</h3>
+            <p>Avance sua aventura em busca de Novos Chefes, Novas Estruturas, Novas Dimenções, Novos Encantamentos, Novos Itens e recursos que tornam a experiencia mais viva e personalizada.</p>
+          </article>
+
+          <article class="feature-card">
+            <h3>🔮Eventos</h3>
+            <p>Participe de eventos especiais, desafios temáticos e recompensas limitadas durante o ano.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft" id="como-jogar" aria-labelledby="como-jogar-title">
+      <div class="container content-panel">
+        <div class="section-heading">
+          <p class="eyebrow">Entrada rapida</p>
+          <h2 id="como-jogar-title">Como Jogar</h2>
+        </div>
+
+        <ol class="steps-list">
+          <li>Abra o Minecraft Java ou Bedrock.</li>
+          <li>Adicione o servidor EtherCraft na sua lista.</li>
+          <li>Entre, escolha seu caminho e comece sua Jornada.</li>
+        </ol>
+
+        <div class="server-info" aria-label="Informacoes do servidor">
+          <p><strong>☕JAVA:</strong></p>
+          <p><strong>IP:</strong> enx-cirion-13.enx.host:10091</p>
+          <p><strong>🗿BEDROCK:</strong></p>
+          <p><strong>IP:</strong> enx-cirion-13.enx.host</p>
+          <p><strong>PORTA:</strong> 10091</p>
+          <p><strong>⚙️Versao:</strong> Java 26.2 - Badrock 26.20 - Minecraft Original</p>
+        </div>
+      </div>
+    </section>
+    -->
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <p>&copy; 2026 EtherCraft. Todos os direitos reservados.</p>
+      <nav aria-label="Links do rodape">
+        <a href="pages/eventos.html">Eventos</a>
+        <a href="pages/regras.html">Regras</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="js/main.js?v=20260604-5" defer></script>
+</body>
+</html>
