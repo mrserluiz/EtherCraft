@@ -129,7 +129,7 @@ body.is-header-hidden .site-nav {
 
 .btn-01:hover,
 .btn-01:focus-visible {
-  background: linear-gradient(180deg, #f2e4ff, var(--color-primary-strong));
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .btn-02 {
@@ -143,9 +143,8 @@ body.is-header-hidden .site-nav {
 }
 
 .btn-03 {
-  color: var(--color-text);
-  border-color: var(--color-border);
-  background: rgba(255, 255, 255, 0.08);
+  color: #170823;
+  background: linear-gradient(180deg, #e3c8ff, var(--color-primary));
 }
 
 .btn-03:hover,
@@ -155,9 +154,8 @@ body.is-header-hidden .site-nav {
 
 
 .btn-04 {
-  color: var(--color-text);
-  border-color: var(--color-border);
-  background: rgba(255, 255, 255, 0.08);
+  color: #170823;
+  background: linear-gradient(180deg, #e3c8ff, var(--color-primary));
 }
 
 .btn-04:hover,
