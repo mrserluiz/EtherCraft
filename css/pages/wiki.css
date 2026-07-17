@@ -133,9 +133,8 @@ body.is-header-hidden .site-nav {
 }
 
 .btn-02 {
-  color: var(--color-text);
-  border-color: var(--color-border);
-  background: rgba(255, 255, 255, 0.08);
+  color: #170823;
+  background: linear-gradient(180deg, #e3c8ff, var(--color-primary));
 }
 
 .btn-02:hover,
