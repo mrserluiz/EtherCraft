@@ -128,13 +128,12 @@ body.is-header-hidden .site-nav {
 
 .btn-primary:hover,
 .btn-primary:focus-visible {
-  background: linear-gradient(180deg, #f2e4ff, var(--color-primary-strong));
+   background: rgba(255, 255, 255, 0.14);
 }
 
 .btn-secondary {
-  color: var(--color-text);
-  border-color: var(--color-border);
-  background: rgba(255, 255, 255, 0.08);
+  color: #170823;
+  background: linear-gradient(180deg, #e3c8ff, var(--color-primary));
 }
 
 .btn-secondary:hover,
@@ -143,13 +142,12 @@ body.is-header-hidden .site-nav {
 }
 
 .btn-tertiary {
-  color: var(--color-text);
-  border-color: var(--color-border);
-  background: rgba(255, 255, 255, 0.08);
+  color: #170823;
+  background: linear-gradient(180deg, #e3c8ff, var(--color-primary));
 }
 
 .btn-tertiary:hover,
-.btn-secondary:focus-visible {
+.btn-tertiry:focus-visible {
   background: rgba(255, 255, 255, 0.14);
 }
 
