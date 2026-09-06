@@ -1,0 +1,89 @@
+/* EtherCraft - Transições e navegação flutuante da Wiki */
+
+.wiki-page-turn {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: left center;
+  transform: perspective(1400px) rotateY(-92deg);
+  background:
+    linear-gradient(90deg, rgba(11,6,20,.98) 0%, rgba(40,16,79,.98) 62%, rgba(141,101,209,.92) 100%);
+  box-shadow: 28px 0 70px rgba(0,0,0,.45);
+}
+
+.wiki-page-turn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 65%, rgba(255,255,255,.12));
+}
+
+body.wiki-page-entering .wiki-page-turn {
+  animation: wiki-page-enter .48s cubic-bezier(.2,.7,.2,1) forwards;
+}
+
+body.wiki-page-leaving .wiki-page-turn {
+  animation: wiki-page-leave .42s cubic-bezier(.55,.05,.25,1) forwards;
+}
+
+@keyframes wiki-page-enter {
+  from { opacity: 1; transform: perspective(1400px) rotateY(0deg); }
+  to { opacity: 0; transform: perspective(1400px) rotateY(92deg); }
+}
+
+@keyframes wiki-page-leave {
+  from { opacity: 0; transform: perspective(1400px) rotateY(-92deg); }
+  to { opacity: 1; transform: perspective(1400px) rotateY(0deg); }
+}
+
+.wiki-home-float {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 200;
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  min-height: 3rem;
+  padding: .72rem 1rem;
+  border: 1px solid rgba(227,200,255,.34);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(24,10,47,.88);
+  box-shadow: 0 14px 36px rgba(0,0,0,.32), inset 0 0 0 1px rgba(255,255,255,.03);
+  backdrop-filter: blur(12px);
+  font-weight: 850;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .35s ease, transform .45s cubic-bezier(.2,.7,.2,1), background-color .2s ease;
+}
+
+.wiki-home-float:hover,
+.wiki-home-float:focus-visible {
+  background: rgba(77,39,132,.94);
+}
+
+.wiki-home-float.is-idle {
+  opacity: 0;
+  transform: translateY(calc(100% + 1.6rem));
+  pointer-events: none;
+}
+
+.wiki-home-float-icon { font-size: 1.15rem; }
+
+@media (max-width: 39.99rem) {
+  .wiki-home-float {
+    right: .75rem;
+    bottom: .75rem;
+    min-height: 2.85rem;
+    padding: .66rem .85rem;
+    font-size: .88rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wiki-page-turn { display: none; }
+  .wiki-home-float { transition: none; }
+}
