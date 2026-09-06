@@ -1,5 +1,5 @@
 // EtherCraft - Firebase
-// Authentication por e-mail e senha com sessão persistente no navegador.
+// Authentication + Cloud Firestore com sessão persistente no navegador.
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import {
@@ -7,6 +7,7 @@ import {
   setPersistence,
   browserLocalPersistence
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
+import { getFirestore } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 
 export const firebaseConfig = {
   apiKey: 'AIzaSyBShJWCeG1Z82GXiGRBr6zwv_y568Sx88I',
@@ -27,6 +28,7 @@ export const firebaseConfigured = Boolean(
 
 export const app = firebaseConfigured ? initializeApp(firebaseConfig) : null;
 export const auth = app ? getAuth(app) : null;
+export const db = app ? getFirestore(app) : null;
 
 export const authPersistenceReady = auth
   ? setPersistence(auth, browserLocalPersistence).catch((error) => {
