@@ -16,24 +16,16 @@
 }
 
 /* RECEITAS */
-.recipe-entry {
-  display: grid;
-  gap: 1.2rem;
-  padding: 1.2rem;
-}
-
+.recipe-entry { display: grid; gap: 1.2rem; padding: 1.2rem; }
 .crafting-table {
   width: min(100%, 22rem);
   margin-inline: auto;
   padding: 1rem;
   border: 3px solid rgba(57, 31, 17, .72);
   border-radius: .65rem;
-  background:
-    linear-gradient(45deg, rgba(255,255,255,.05) 25%, transparent 25% 75%, rgba(255,255,255,.05) 75%),
-    rgba(116, 70, 37, .75);
+  background: linear-gradient(45deg, rgba(255,255,255,.05) 25%, transparent 25% 75%, rgba(255,255,255,.05) 75%), rgba(116, 70, 37, .75);
   background-size: 22px 22px;
 }
-
 .crafting-title { margin-bottom: .75rem; text-align: center; font-weight: 900; }
 .crafting-layout { display: grid; grid-template-columns: 1fr auto 4rem; gap: .7rem; align-items: center; }
 .crafting-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; }
@@ -57,6 +49,7 @@
 
 /* BESTIÁRIO */
 .bestiary-entry { display: grid; gap: 1rem; padding: 1.15rem; }
+.mob-title-mobile { display: none; }
 .mob-image-box {
   min-height: 13rem;
   display: grid;
@@ -84,6 +77,55 @@
 .mob-drop-icon { width: 2.3rem; height: 2.3rem; display: grid; place-items: center; border-radius: .45rem; background: rgba(255,255,255,.08); overflow: hidden; }
 .mob-drop-icon img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
 
+/* ENCANTAMENTOS */
+.enchant-entry { display: grid; gap: 1.2rem; padding: 1.15rem; }
+.enchant-image-box {
+  min-height: 13rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: radial-gradient(circle at 50% 45%, rgba(168, 118, 255, .25), rgba(255,255,255,.035));
+  overflow: hidden;
+}
+.enchant-image-box img { width: 100%; height: 100%; max-height: 20rem; object-fit: contain; image-rendering: pixelated; }
+.enchant-placeholder { font-size: 4.5rem; filter: drop-shadow(0 0 18px rgba(176,126,255,.45)); }
+.enchant-copy h2 { margin-bottom: .65rem; }
+.enchant-copy > p { color: var(--color-text-muted); }
+.enchant-materials { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1.1rem; }
+.enchant-material {
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: .65rem;
+  background: rgba(255,255,255,.07);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+}
+.enchant-material img { width: 82%; height: 82%; object-fit: contain; image-rendering: pixelated; }
+.enchant-material-fallback { font-size: 1.25rem; opacity: .7; }
+.enchant-no-materials { color: var(--color-text-muted); font-size: .9rem; }
+
+/* DIMENSÕES / ECONOMIA / MECÂNICAS */
+.article-entry { display: grid; gap: 1.2rem; padding: 1.15rem; }
+.article-image-box {
+  min-height: 12rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: radial-gradient(circle at center, rgba(141,101,209,.17), rgba(255,255,255,.03));
+  overflow: hidden;
+}
+.article-image-box img { width: 100%; height: 100%; max-height: 20rem; object-fit: contain; }
+.article-placeholder { font-size: 4rem; opacity: .8; }
+.article-kicker { color: var(--color-primary-strong) !important; font-size: .78rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.article-copy h2 { margin: .25rem 0 .65rem; }
+.article-copy > p { color: var(--color-text-muted); }
+.article-chips { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1rem; }
+.article-chip { padding: .42rem .65rem; border-radius: 999px; border: 1px solid var(--color-border); background: rgba(141,101,209,.12); color: var(--color-text); font-size: .82rem; font-weight: 750; }
+
 /* Editor preparado para o futuro login ADM */
 .wiki-admin-toolbar {
   display: none;
@@ -109,7 +151,6 @@
 .wiki-entry-edit { margin-top: 1rem; }
 .wiki-editor-save { font-weight: 800; background: rgba(141,101,209,.22); }
 .wiki-admin-note { width: 100%; color: var(--color-text-muted); font-size: .9rem; }
-
 .wiki-editor {
   margin-bottom: 1.25rem;
   padding: 1rem;
@@ -136,14 +177,21 @@
 .wiki-editor-fields textarea { min-height: 7rem; resize: vertical; }
 .wiki-editor-fields fieldset { padding: .8rem; border: 1px solid var(--color-border); border-radius: .65rem; }
 .wiki-editor-fields legend { padding-inline: .4rem; color: var(--color-primary-strong); font-weight: 800; }
-.wiki-editor-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .55rem; }
+.wiki-editor-grid { display: grid; gap: .55rem; }
+.editor-slot-pair { display: grid; gap: .45rem; padding: .55rem; border: 1px solid rgba(255,255,255,.08); border-radius: .55rem; }
+.wiki-empty-panel { padding: 2rem; text-align: center; border: 1px dashed var(--color-border); border-radius: var(--radius-md); color: var(--color-text-muted); }
+.wiki-empty-panel span { display: block; margin-bottom: .5rem; font-size: 2rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 @media (min-width: 48rem) {
   .recipe-entry { grid-template-columns: minmax(18rem, 24rem) 1fr; align-items: center; padding: 1.45rem; }
   .bestiary-entry { grid-template-columns: minmax(14rem, 22rem) 1fr; align-items: stretch; padding: 1.45rem; }
+  .enchant-entry { grid-template-columns: minmax(14rem, 22rem) 1fr; align-items: stretch; padding: 1.45rem; }
+  .article-entry { grid-template-columns: minmax(14rem, 22rem) 1fr; align-items: stretch; padding: 1.45rem; }
   .wiki-editor-fields { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .wiki-editor-fields textarea,
   .wiki-editor-fields fieldset { grid-column: 1 / -1; }
+  .wiki-editor-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
 }
 
 @media (max-width: 39.99rem) {
@@ -151,4 +199,7 @@
   .crafting-layout { grid-template-columns: 1fr auto 3.3rem; }
   .crafting-arrow { font-size: 1.4rem; }
   .wiki-editor-grid { grid-template-columns: 1fr; }
+  .mob-title-mobile { display: block; margin-bottom: .15rem; }
+  .mob-title-desktop { display: none; }
+  .enchant-material { width: 2.8rem; height: 2.8rem; }
 }
