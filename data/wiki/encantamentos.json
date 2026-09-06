@@ -1,0 +1,15 @@
+[
+  {
+    "id": "encantamento-exemplo",
+    "nome": "Encantamento de Exemplo",
+    "imagem": "",
+    "descricao": "Modelo visual para futuros encantamentos do EtherCraft. O ícone principal e os equipamentos compatíveis poderão ser substituídos por arquivos PNG.",
+    "materiais": [
+      { "nome": "Botas", "icone": "", "fallback": "🥾" },
+      { "nome": "Capacete", "icone": "", "fallback": "⛑️" },
+      { "nome": "Espada", "icone": "", "fallback": "⚔️" },
+      { "nome": "Vara de pesca", "icone": "", "fallback": "🎣" },
+      { "nome": "Picareta", "icone": "", "fallback": "⛏️" }
+    ]
+  }
+]
