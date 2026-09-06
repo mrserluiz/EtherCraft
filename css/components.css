@@ -103,6 +103,42 @@ body.is-header-hidden .site-nav {
   box-shadow: inset 0 -2px 0 rgba(240, 220, 122, 0.9);
 }
 
+.profile-shortcut {
+  position: fixed;
+  top: 0.65rem;
+  right: 0.75rem;
+  z-index: 95;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.82);
+  border-radius: 50%;
+  color: #ffffff;
+  background: linear-gradient(180deg, rgba(141, 101, 209, 0.98), rgba(67, 35, 116, 0.98));
+  box-shadow: 0 8px 22px rgba(10, 4, 22, 0.42), 0 0 0 3px rgba(141, 101, 209, 0.2);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.profile-shortcut:hover,
+.profile-shortcut:focus-visible {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: 0 10px 26px rgba(10, 4, 22, 0.48), 0 0 0 4px rgba(227, 200, 255, 0.24);
+}
+
+.profile-shortcut img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-shortcut-fallback {
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+}
+
 .btn {
   min-height: 3rem;
   display: inline-flex;
@@ -177,6 +213,13 @@ body.is-header-hidden .site-nav {
 @media (min-width: 40rem) {
   .nav-link {
     font-size: 0.92rem;
+  }
+
+  .profile-shortcut {
+    top: 0.8rem;
+    right: 1rem;
+    width: 3rem;
+    height: 3rem;
   }
 
   .cards-grid {
