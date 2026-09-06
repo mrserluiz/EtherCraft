@@ -27,6 +27,15 @@
     return `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'${fallback.className}',textContent:'${fallback.text}'}))">`;
   };
 
+  const typeLabel = {
+    receitas: 'receita',
+    mobs: 'mob',
+    encantamentos: 'encantamento',
+    dimensoes: 'dimensão',
+    economia: 'conteúdo',
+    mecanicas: 'mecânica'
+  }[type] || 'conteúdo';
+
   function getDraftKey() {
     return `ethercraft-wiki-draft-${type}`;
   }
@@ -62,6 +71,10 @@
     }
   }
 
+  function adminEditButton(id) {
+    return isAdmin() ? `<button class="wiki-entry-edit" type="button" data-edit-id="${escapeHtml(id)}">✏️ Editar</button>` : '';
+  }
+
   function renderRecipe(entry) {
     const ingredients = entry.ingredientes || {};
     const slots = Array.from({ length: 9 }, (_, index) => {
@@ -94,9 +107,10 @@
     const drop = entry.drop || {};
     return `
       <article class="wiki-entry bestiary-entry" data-entry-id="${escapeHtml(entry.id)}">
+        <h2 class="mob-title-mobile">${escapeHtml(entry.nome)}</h2>
         <div class="mob-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'mob-placeholder', text: '🐲' })}</div>
         <div class="mob-copy">
-          <h2>${escapeHtml(entry.nome)}</h2>
+          <h2 class="mob-title-desktop">${escapeHtml(entry.nome)}</h2>
           <p>${escapeHtml(entry.descricao)}</p>
           <div class="mob-drop" aria-label="Drop de ${escapeHtml(entry.nome)}">
             <span class="mob-drop-icon">${imageOrFallback(drop.icone, drop.nome || 'Drop', { className: 'crafting-empty', text: '◆' })}</span>
@@ -107,12 +121,58 @@
       </article>`;
   }
 
-  function adminEditButton(id) {
-    return isAdmin() ? `<button class="wiki-entry-edit" type="button" data-edit-id="${escapeHtml(id)}">✏️ Editar</button>` : '';
+  function renderEnchantment(entry) {
+    const materials = Array.isArray(entry.materiais) ? entry.materiais : [];
+    const materialIcons = materials.map((material) => `
+      <span class="enchant-material" title="${escapeHtml(material.nome || 'Equipamento')}">
+        ${imageOrFallback(material.icone, material.nome || 'Equipamento', { className: 'enchant-material-fallback', text: material.fallback || '◆' })}
+        <span class="sr-only">${escapeHtml(material.nome || 'Equipamento')}</span>
+      </span>`).join('');
+
+    return `
+      <article class="wiki-entry enchant-entry" data-entry-id="${escapeHtml(entry.id)}">
+        <div class="enchant-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'enchant-placeholder', text: '✨' })}</div>
+        <div class="enchant-copy">
+          <h2>${escapeHtml(entry.nome)}</h2>
+          <p>${escapeHtml(entry.descricao)}</p>
+          <div class="enchant-materials" aria-label="Equipamentos compatíveis">
+            ${materialIcons || '<span class="enchant-no-materials">Compatibilidade ainda não cadastrada.</span>'}
+          </div>
+          ${adminEditButton(entry.id)}
+        </div>
+      </article>`;
+  }
+
+  function renderArticle(entry) {
+    const facts = Array.isArray(entry.destaques) ? entry.destaques : [];
+    const chips = facts.map((fact) => `<span class="article-chip">${escapeHtml(fact)}</span>`).join('');
+    return `
+      <article class="wiki-entry article-entry" data-entry-id="${escapeHtml(entry.id)}">
+        <div class="article-image-box">${imageOrFallback(entry.imagem, entry.titulo, { className: 'article-placeholder', text: entry.icone || '📖' })}</div>
+        <div class="article-copy">
+          <p class="article-kicker">${escapeHtml(entry.subtitulo || '')}</p>
+          <h2>${escapeHtml(entry.titulo)}</h2>
+          <p>${escapeHtml(entry.descricao)}</p>
+          ${chips ? `<div class="article-chips">${chips}</div>` : ''}
+          ${adminEditButton(entry.id)}
+        </div>
+      </article>`;
+  }
+
+  function renderEntry(entry) {
+    if (type === 'receitas') return renderRecipe(entry);
+    if (type === 'mobs') return renderMob(entry);
+    if (type === 'encantamentos') return renderEnchantment(entry);
+    return renderArticle(entry);
   }
 
   function render() {
-    root.innerHTML = entries.map((entry) => type === 'receitas' ? renderRecipe(entry) : renderMob(entry)).join('');
+    if (!entries.length) {
+      root.innerHTML = '<div class="wiki-empty-panel"><span>📚</span><p>Nenhum conteúdo cadastrado nesta área ainda.</p></div>';
+      return;
+    }
+
+    root.innerHTML = entries.map(renderEntry).join('');
     root.querySelectorAll('[data-edit-id]').forEach((button) => {
       button.addEventListener('click', () => openEditor(button.dataset.editId));
     });
@@ -133,27 +193,49 @@
       const grid = entry.grade || Array(9).fill('');
       const ingredients = entry.ingredientes || {};
       const slotNames = grid.map((key) => key ? (ingredients[key]?.nome || key) : '');
+      const slotIcons = grid.map((key) => key ? (ingredients[key]?.icone || '') : '');
       return `
         <label>Título<input name="titulo" required value="${escapeHtml(entry.titulo || '')}"></label>
         <label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label>
         <label>Nome do resultado<input name="resultadoNome" required value="${escapeHtml(entry.resultado?.nome || '')}"></label>
-        <label>URL/ caminho da imagem do resultado<input name="resultadoIcone" value="${escapeHtml(entry.resultado?.icone || '')}"></label>
-        <fieldset><legend>Grade 3x3 — nome dos ingredientes</legend><div class="wiki-editor-grid">${slotNames.map((name, i) => `<label>Slot ${i + 1}<input name="slot${i}" value="${escapeHtml(name)}"></label>`).join('')}</div></fieldset>`;
+        <label>Imagem do resultado (.png ou caminho)<input name="resultadoIcone" value="${escapeHtml(entry.resultado?.icone || '')}"></label>
+        <fieldset><legend>Grade 3x3</legend><div class="wiki-editor-grid">${slotNames.map((name, i) => `<div class="editor-slot-pair"><label>Slot ${i + 1} — item<input name="slot${i}" value="${escapeHtml(name)}"></label><label>Imagem<input name="slotIcon${i}" value="${escapeHtml(slotIcons[i])}"></label></div>`).join('')}</div></fieldset>`;
+    }
+
+    if (type === 'mobs') {
+      return `
+        <label>Nome do mob<input name="nome" required value="${escapeHtml(entry.nome || '')}"></label>
+        <label>Imagem do mob (.png ou caminho)<input name="imagem" value="${escapeHtml(entry.imagem || '')}"></label>
+        <label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label>
+        <label>Nome do drop<input name="dropNome" value="${escapeHtml(entry.drop?.nome || '')}"></label>
+        <label>Ícone do drop (.png ou caminho)<input name="dropIcone" value="${escapeHtml(entry.drop?.icone || '')}"></label>`;
+    }
+
+    if (type === 'encantamentos') {
+      const mats = Array.isArray(entry.materiais) ? entry.materiais : [];
+      const names = mats.map((item) => item.nome).join(', ');
+      const icons = mats.map((item) => item.icone || '').join(', ');
+      return `
+        <label>Nome do encantamento<input name="nome" required value="${escapeHtml(entry.nome || '')}"></label>
+        <label>Imagem/ícone principal (.png ou caminho)<input name="imagem" value="${escapeHtml(entry.imagem || '')}"></label>
+        <label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label>
+        <label>Equipamentos compatíveis — separados por vírgula<input name="materiais" placeholder="Botas, Capacete, Espada" value="${escapeHtml(names)}"></label>
+        <label>Ícones dos equipamentos — mesma ordem, separados por vírgula<input name="materiaisIcones" placeholder="../../assets/images/wiki/equipamentos/botas.png, ..." value="${escapeHtml(icons)}"></label>`;
     }
 
     return `
-      <label>Nome do mob<input name="nome" required value="${escapeHtml(entry.nome || '')}"></label>
-      <label>Imagem do mob (URL/caminho)<input name="imagem" value="${escapeHtml(entry.imagem || '')}"></label>
+      <label>Título<input name="titulo" required value="${escapeHtml(entry.titulo || '')}"></label>
+      <label>Subtítulo/categoria<input name="subtitulo" value="${escapeHtml(entry.subtitulo || '')}"></label>
+      <label>Imagem (.png ou caminho)<input name="imagem" value="${escapeHtml(entry.imagem || '')}"></label>
       <label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label>
-      <label>Nome do drop<input name="dropNome" value="${escapeHtml(entry.drop?.nome || '')}"></label>
-      <label>Ícone do drop (URL/caminho)<input name="dropIcone" value="${escapeHtml(entry.drop?.icone || '')}"></label>`;
+      <label>Destaques — separados por vírgula<input name="destaques" value="${escapeHtml((entry.destaques || []).join(', '))}"></label>`;
   }
 
   function openEditor(id = null) {
     if (!isAdmin() || !editor || !editorFields) return;
     editingId = id;
     const entry = id ? entries.find((item) => item.id === id) : {};
-    editorTitle.textContent = id ? 'Editar conteúdo' : 'Adicionar conteúdo';
+    editorTitle.textContent = id ? `Editar ${typeLabel}` : `Adicionar ${typeLabel}`;
     editorFields.innerHTML = fieldsFor(entry);
     editor.hidden = false;
     editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -175,10 +257,11 @@
       const ingredients = {};
       for (let i = 0; i < 9; i += 1) {
         const name = String(formData.get(`slot${i}`) || '').trim();
+        const icon = String(formData.get(`slotIcon${i}`) || '').trim();
         if (!name) { grade.push(null); continue; }
         const key = `${slugify(name)}-${i}`;
         grade.push(key);
-        ingredients[key] = { nome: name, icone: '' };
+        ingredients[key] = { nome: name, icone: icon };
       }
       return {
         id: editingId || `${slugify(title)}-${Date.now()}`,
@@ -190,14 +273,39 @@
       };
     }
 
-    const name = formData.get('nome');
+    if (type === 'mobs') {
+      const name = formData.get('nome');
+      return {
+        id: editingId || `${slugify(name)}-${Date.now()}`,
+        nome: name,
+        imagem: formData.get('imagem'),
+        descricao: formData.get('descricao'),
+        drop: { nome: formData.get('dropNome'), icone: formData.get('dropIcone') },
+        tags: []
+      };
+    }
+
+    if (type === 'encantamentos') {
+      const name = formData.get('nome');
+      const names = String(formData.get('materiais') || '').split(',').map((item) => item.trim()).filter(Boolean);
+      const icons = String(formData.get('materiaisIcones') || '').split(',').map((item) => item.trim());
+      return {
+        id: editingId || `${slugify(name)}-${Date.now()}`,
+        nome: name,
+        imagem: formData.get('imagem'),
+        descricao: formData.get('descricao'),
+        materiais: names.map((material, index) => ({ nome: material, icone: icons[index] || '', fallback: '◆' }))
+      };
+    }
+
+    const title = formData.get('titulo');
     return {
-      id: editingId || `${slugify(name)}-${Date.now()}`,
-      nome: name,
+      id: editingId || `${slugify(title)}-${Date.now()}`,
+      titulo: title,
+      subtitulo: formData.get('subtitulo'),
       imagem: formData.get('imagem'),
       descricao: formData.get('descricao'),
-      drop: { nome: formData.get('dropNome'), icone: formData.get('dropIcone') },
-      tags: []
+      destaques: String(formData.get('destaques') || '').split(',').map((item) => item.trim()).filter(Boolean)
     };
   }
 
