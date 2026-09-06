@@ -25,6 +25,8 @@ const accountVerification = document.getElementById('account-verification');
 
 window.EtherCraftAuth = window.EtherCraftAuth || { currentUser: null };
 
+let authActionInProgress = false;
+
 function profileStorageKey(uid) {
   return `ethercraftUserProfile:${uid}`;
 }
@@ -127,6 +129,12 @@ if (!firebaseConfigured || !auth) {
   onAuthStateChanged(auth, (user) => {
     publishAuthState(user);
     renderUser(user);
+
+    // Se alguém já está autenticado e abre login.html diretamente,
+    // a página funciona como atalho para o próprio perfil.
+    if (user && !authActionInProgress) {
+      goToProfile();
+    }
   });
 }
 
@@ -152,12 +160,14 @@ loginForm?.addEventListener('submit', async (event) => {
   const email = String(data.get('email') || '').trim();
   const password = String(data.get('password') || '');
 
+  authActionInProgress = true;
   setBusy(loginForm, true);
   try {
     await signInWithEmailAndPassword(auth, email, password);
     loginForm.reset();
     goToProfile();
   } catch (error) {
+    authActionInProgress = false;
     showMessage(friendlyError(error), 'error');
   } finally {
     setBusy(loginForm, false);
@@ -181,6 +191,7 @@ registerForm?.addEventListener('submit', async (event) => {
     return;
   }
 
+  authActionInProgress = true;
   setBusy(registerForm, true);
   try {
     const credential = await createUserWithEmailAndPassword(auth, email, password);
@@ -198,6 +209,7 @@ registerForm?.addEventListener('submit', async (event) => {
     registerForm.reset();
     goToProfile();
   } catch (error) {
+    authActionInProgress = false;
     showMessage(friendlyError(error), 'error');
   } finally {
     setBusy(registerForm, false);
@@ -235,6 +247,7 @@ logoutButton?.addEventListener('click', async () => {
   if (!auth) return;
   try {
     await signOut(auth);
+    authActionInProgress = false;
     switchTab('login');
   } catch (error) {
     showMessage(friendlyError(error), 'error');
