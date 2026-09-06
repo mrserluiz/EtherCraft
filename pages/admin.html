@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EtherCraft | Área Administrativa</title>
+  <meta name="description" content="Área administrativa do EtherCraft.">
+  <link rel="canonical" href="https://mrserluiz.github.io/EtherCraft/pages/admin.html">
+  <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
+  <meta name="theme-color" content="#7b2cbf">
+  <link rel="stylesheet" href="../css/reset.css?v=20260906-admin1">
+  <link rel="stylesheet" href="../css/base.css?v=20260906-admin1">
+  <link rel="stylesheet" href="../css/components.css?v=20260906-admin1">
+  <style>
+    .admin-page .site-nav{top:0}
+    .admin-main{min-height:100vh;padding:7rem 1rem 3rem}
+    .admin-wrap{width:min(100%,72rem);margin:0 auto}
+    .admin-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
+    .admin-heading p{color:var(--color-text-muted)}
+    .admin-badge{padding:.42rem .7rem;border:1px solid rgba(104,255,154,.45);border-radius:999px;background:rgba(30,120,62,.15);color:#78f59d;font-size:.78rem;font-weight:900}
+    .admin-card{padding:1.2rem;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface);box-shadow:var(--shadow-soft);backdrop-filter:blur(12px)}
+    .admin-card-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+    .admin-card-head p{color:var(--color-text-muted);font-size:.9rem}
+    .admin-count{font-weight:900;color:#d9c6ff}
+    .admin-message{padding:.85rem;border:1px solid var(--color-border);border-radius:.7rem;background:rgba(255,255,255,.05);color:var(--color-text-muted)}
+    .admin-message.is-error{border-color:rgba(255,110,110,.45);color:#ffb0b0}
+    .admin-table-wrap{overflow-x:auto;border:1px solid var(--color-border);border-radius:.8rem}
+    .admin-table{width:100%;border-collapse:collapse;min-width:38rem}
+    .admin-table th,.admin-table td{padding:.9rem 1rem;text-align:left;border-bottom:1px solid var(--color-border)}
+    .admin-table th{background:rgba(141,101,209,.12);color:#d9c6ff;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+    .admin-table tbody tr:last-child td{border-bottom:0}
+    .admin-table tbody tr:hover{background:rgba(255,255,255,.035)}
+    .minecraft-cell{font-weight:900;color:#fff}
+    .role-badge{display:inline-flex;padding:.28rem .55rem;border-radius:999px;border:1px solid var(--color-border);font-size:.74rem;font-weight:900;text-transform:uppercase}
+    .role-badge.is-admin{border-color:rgba(104,255,154,.45);background:rgba(30,120,62,.15);color:#78f59d}
+    .role-badge.is-player{color:#d9c6ff;background:rgba(141,101,209,.1)}
+    .admin-empty{text-align:center;color:var(--color-text-muted);padding:1.5rem}
+    .admin-back{display:inline-flex;margin-top:1rem;color:#d9c6ff;font-weight:800}
+    [hidden]{display:none!important}
+    @media(max-width:40rem){.admin-main{padding-inline:.75rem}.admin-card{padding:.9rem}}
+  </style>
+</head>
+<body class="admin-page">
+  <nav class="site-nav" aria-label="Navegação principal">
+    <div class="nav-shell">
+      <a class="nav-link" href="../index.html">Home</a>
+      <a class="nav-link" href="eventos.html">Eventos</a>
+      <a class="nav-link" href="regras.html">Regras</a>
+      <a class="nav-link" href="../index.html#como-jogar">Como Jogar</a>
+      <a class="nav-link" href="wiki.html">Wiki</a>
+      <a class="nav-link" href="perfil.html">Perfil</a>
+    </div>
+  </nav>
+
+  <main class="admin-main">
+    <div class="admin-wrap">
+      <header class="admin-heading">
+        <div>
+          <p class="eyebrow">EtherCraft</p>
+          <h1>Área Administrativa</h1>
+          <p>Gerencie informações internas vinculadas aos jogadores do site.</p>
+        </div>
+        <span class="admin-badge">ADMIN</span>
+      </header>
+
+      <div id="admin-message" class="admin-message" role="status" aria-live="polite">Verificando permissão administrativa...</div>
+
+      <section id="admin-users-card" class="admin-card" hidden>
+        <div class="admin-card-head">
+          <div>
+            <h2>Usuários</h2>
+            <p>Jogadores cadastrados no Firestore.</p>
+          </div>
+          <span id="admin-user-count" class="admin-count">0 usuários</span>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th scope="col">Nome no Minecraft</th>
+                <th scope="col">Nome de exibição</th>
+                <th scope="col">Cargo</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-body"></tbody>
+          </table>
+          <p id="admin-users-empty" class="admin-empty" hidden>Nenhum usuário cadastrado.</p>
+        </div>
+      </section>
+
+      <a class="admin-back" href="perfil.html">← Voltar ao perfil</a>
+    </div>
+  </main>
+
+  <footer class="site-footer"><div class="container footer-content"><p>&copy; 2026 EtherCraft. Todos os direitos reservados.</p></div></footer>
+  <script src="../js/main.js?v=20260906-firestore1" defer></script>
+  <script type="module" src="../js/admin.js?v=20260906-admin1"></script>
+</body>
+</html>
