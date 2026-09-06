@@ -25,6 +25,8 @@ const avatarEmojiGrid = document.getElementById('avatar-emoji-grid');
 const avatarPhotoGrid = document.getElementById('avatar-photo-grid');
 const avatarPhotoEmpty = document.getElementById('avatar-photo-empty');
 const avatarCloseButton = document.getElementById('avatar-close');
+const adminLink = document.getElementById('profile-admin-link');
+const profileIdentity = document.getElementById('profile-identity');
 const nameText = document.getElementById('profile-name');
 const minecraftNameText = document.getElementById('profile-minecraft-name');
 const emailText = document.getElementById('profile-email');
@@ -220,6 +222,11 @@ function renderAvatarOptions() {
 }
 
 function renderUser(user) {
+  const isAdmin = currentProfile?.role === 'admin';
+
+  if (adminLink) adminLink.hidden = !isAdmin;
+  profileIdentity?.classList.toggle('is-admin', isAdmin);
+
   nameText.textContent = user.displayName || currentProfile?.nome || 'Jogador';
   minecraftNameText.textContent = `Minecraft: ${currentProfile?.minecraftNick || '—'}`;
   emailText.textContent = user.email || '';
