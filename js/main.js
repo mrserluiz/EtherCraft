@@ -144,6 +144,36 @@ function registerActivityTracking(auth, signOut) {
   checkInactivity();
 }
 
+function updateAccountNavigation(user, prefix) {
+  document.querySelectorAll('.nav-shell').forEach(nav => {
+    const links = [...nav.querySelectorAll('.nav-link')];
+    const accountLink = links.find(link => {
+      const href = link.getAttribute('href') || '';
+      const text = link.textContent.trim().toLowerCase();
+      return /(?:login|perfil)\.html(?:$|[?#])/.test(href) || text === 'login' || text === 'perfil';
+    });
+
+    if (!accountLink) return;
+
+    const wikiLink = links.find(link => /wiki\.html(?:$|[?#])/.test(link.getAttribute('href') || ''));
+    const accountPage = user ? 'perfil.html' : 'login.html';
+    accountLink.textContent = user ? 'Perfil' : 'Login';
+    accountLink.href = new URL(`${prefix}pages/${accountPage}`, window.location.href).href;
+
+    const currentPath = window.location.pathname.toLowerCase();
+    const isCurrentAccountPage = user
+      ? currentPath.endsWith('/perfil.html')
+      : currentPath.endsWith('/login.html');
+
+    if (isCurrentAccountPage) accountLink.setAttribute('aria-current', 'page');
+    else accountLink.removeAttribute('aria-current');
+
+    // Wiki fica como penúltimo item e Login/Perfil sempre como último.
+    if (wikiLink) nav.appendChild(wikiLink);
+    nav.appendChild(accountLink);
+  });
+}
+
 function renderProfileShortcut(shortcut, user) {
   shortcut.replaceChildren();
   const localProfile = readUserProfile(user.uid);
@@ -187,6 +217,7 @@ async function initProfileShortcut() {
 
     authModule.onAuthStateChanged(auth, (user) => {
       activeUser = user;
+      updateAccountNavigation(user, prefix);
       let shortcut = document.getElementById('profile-shortcut');
 
       if (!user) {
