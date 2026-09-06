@@ -8,9 +8,9 @@
   <link rel="canonical" href="https://mrserluiz.github.io/EtherCraft/pages/login.html">
   <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
   <meta name="theme-color" content="#7b2cbf">
-  <link rel="stylesheet" href="../css/reset.css?v=20260906-auth1">
-  <link rel="stylesheet" href="../css/base.css?v=20260906-auth1">
-  <link rel="stylesheet" href="../css/components.css?v=20260906-auth1">
+  <link rel="stylesheet" href="../css/reset.css?v=20260906-auth2">
+  <link rel="stylesheet" href="../css/base.css?v=20260906-auth2">
+  <link rel="stylesheet" href="../css/components.css?v=20260906-auth2">
   <style>
     .login-page .site-nav{top:0}.login-main{min-height:100vh;display:grid;place-items:center;padding:7rem 1rem 3rem}.login-shell{width:min(100%,32rem)}.login-heading{text-align:center;margin-bottom:1rem}.login-heading p{color:var(--color-text-muted)}.auth-card{padding:1.25rem;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface);box-shadow:var(--shadow-soft);backdrop-filter:blur(12px)}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:1rem}.auth-tab,.auth-primary,.auth-secondary,.auth-link-button,.password-toggle{cursor:pointer}.auth-tab{padding:.7rem;border:1px solid var(--color-border);border-radius:.6rem;color:var(--color-text-muted);background:rgba(255,255,255,.05);font-weight:800}.auth-tab.is-active{color:#fff;background:rgba(141,101,209,.25)}.auth-form{display:grid;gap:.9rem}.auth-form[hidden],.account-panel[hidden],.auth-message[hidden]{display:none}.auth-field{display:grid;gap:.4rem}.auth-field label{font-weight:800}.auth-input-wrap{position:relative}.auth-input{width:100%;min-height:3rem;padding:.75rem .9rem;border:1px solid var(--color-border);border-radius:.65rem;color:var(--color-text);background:rgba(10,5,20,.56);outline:none}.auth-input.has-toggle{padding-right:3.2rem}.auth-input:focus{border-color:var(--color-primary-strong);box-shadow:0 0 0 3px rgba(141,101,209,.16)}.password-toggle{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);width:2.2rem;height:2.2rem;border:0;border-radius:.5rem;color:var(--color-text);background:rgba(255,255,255,.07)}.auth-primary,.auth-secondary{min-height:3rem;padding:.75rem 1rem;border-radius:.65rem;font-weight:900}.auth-primary{border:0;color:#170823;background:linear-gradient(180deg,#e3c8ff,var(--color-primary))}.auth-secondary{border:1px solid var(--color-border);color:var(--color-text);background:rgba(255,255,255,.07)}.auth-link-button{border:0;color:var(--color-primary-strong);background:transparent;font-weight:800}.auth-helper{color:var(--color-text-muted);font-size:.86rem}.auth-message{margin-bottom:1rem;padding:.8rem;border:1px solid var(--color-border);border-radius:.65rem;background:rgba(255,255,255,.06)}.auth-message.is-error{border-color:rgba(255,110,110,.45)}.auth-message.is-success{border-color:rgba(142,226,174,.4)}.account-panel{display:grid;gap:1rem}.account-user{padding:1rem;border:1px solid var(--color-border);border-radius:.7rem;background:rgba(255,255,255,.045)}.account-user span{display:block;margin-top:.25rem;color:var(--color-text-muted);overflow-wrap:anywhere}.account-actions{display:grid;gap:.65rem}.account-actions a{display:grid;place-items:center}@media(min-width:40rem){.auth-card{padding:1.5rem}}
   </style>
@@ -53,6 +53,7 @@
 
           <form id="register-form" class="auth-form" hidden>
             <div class="auth-field"><label for="register-name">Nome de exibição</label><input class="auth-input" id="register-name" name="name" type="text" maxlength="32" required></div>
+            <div class="auth-field"><label for="register-minecraft-name">Nome no Minecraft</label><input class="auth-input" id="register-minecraft-name" name="minecraftName" type="text" maxlength="32" autocomplete="off" placeholder="Seu nick no servidor" required><p class="auth-helper">Será mostrado no seu perfil para identificar sua conta no EtherCraft.</p></div>
             <div class="auth-field"><label for="register-email">E-mail</label><input class="auth-input" id="register-email" name="email" type="email" autocomplete="email" required></div>
             <div class="auth-field"><label for="register-password">Senha</label><div class="auth-input-wrap"><input class="auth-input has-toggle" id="register-password" name="password" type="password" autocomplete="new-password" minlength="6" required><button class="password-toggle" type="button" data-password-toggle="register-password" aria-label="Mostrar senha">👁</button></div><p class="auth-helper">Use pelo menos 6 caracteres.</p></div>
             <div class="auth-field"><label for="register-password-confirm">Confirmar senha</label><div class="auth-input-wrap"><input class="auth-input has-toggle" id="register-password-confirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="6" required><button class="password-toggle" type="button" data-password-toggle="register-password-confirm" aria-label="Mostrar senha">👁</button></div></div>
@@ -75,7 +76,7 @@
 
   <footer class="site-footer"><div class="container footer-content"><p>&copy; 2026 EtherCraft. Todos os direitos reservados.</p></div></footer>
 
-  <script src="../js/main.js?v=20260906-auth1" defer></script>
-  <script type="module" src="../js/auth.js?v=20260906-auth1"></script>
+  <script src="../js/main.js?v=20260906-auth2" defer></script>
+  <script type="module" src="../js/auth.js?v=20260906-auth2"></script>
 </body>
 </html>
