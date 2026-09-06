@@ -1,0 +1,28 @@
+[
+  {
+    "id": "receita-exemplo",
+    "titulo": "Receita de Exemplo",
+    "descricao": "Modelo inicial para cadastrar receitas especiais do EtherCraft.",
+    "resultado": {
+      "nome": "Item Especial",
+      "icone": "../../assets/images/wiki/placeholder-item.png"
+    },
+    "grade": [
+      null,
+      null,
+      null,
+      null,
+      "minecraft:diamond",
+      null,
+      null,
+      null,
+      null
+    ],
+    "ingredientes": {
+      "minecraft:diamond": {
+        "nome": "Diamante",
+        "icone": "../../assets/images/wiki/placeholder-item.png"
+      }
+    }
+  }
+]
