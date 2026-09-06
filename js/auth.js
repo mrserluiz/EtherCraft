@@ -1,4 +1,4 @@
-import { auth, firebaseConfigured } from './firebase.js';
+import { auth, db, firebaseConfigured } from './firebase.js';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -8,6 +8,12 @@ import {
   sendEmailVerification,
   updateProfile
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 
 const guestPanel = document.getElementById('auth-guest-panel');
 const accountPanel = document.getElementById('auth-account-panel');
@@ -26,21 +32,6 @@ const accountVerification = document.getElementById('account-verification');
 window.EtherCraftAuth = window.EtherCraftAuth || { currentUser: null };
 
 let authActionInProgress = false;
-
-function profileStorageKey(uid) {
-  return `ethercraftUserProfile:${uid}`;
-}
-
-function saveLocalProfile(uid, data) {
-  const key = profileStorageKey(uid);
-  let current = {};
-  try {
-    current = JSON.parse(localStorage.getItem(key) || '{}') || {};
-  } catch (_) {
-    current = {};
-  }
-  localStorage.setItem(key, JSON.stringify({ ...current, ...data }));
-}
 
 function showMessage(text, kind = 'info') {
   if (!messageBox) return;
@@ -83,17 +74,29 @@ function friendlyError(error) {
     'auth/email-already-in-use': 'Este e-mail já possui uma conta.',
     'auth/weak-password': 'A senha é muito fraca.',
     'auth/too-many-requests': 'Muitas tentativas. Aguarde um pouco e tente novamente.',
-    'auth/network-request-failed': 'Falha de conexão. Verifique sua internet.'
+    'auth/network-request-failed': 'Falha de conexão. Verifique sua internet.',
+    'permission-denied': 'O Firebase recusou o acesso ao perfil. Confira as regras do Firestore.'
   };
   return messages[code] || `Não foi possível concluir a operação. (${code || 'erro desconhecido'})`;
 }
 
-function publishAuthState(user) {
+async function readRole(user) {
+  if (!db || !user) return 'player';
+  try {
+    const snap = await getDoc(doc(db, 'usuarios', user.uid));
+    return snap.exists() ? (snap.data().role || 'player') : 'player';
+  } catch (_) {
+    return 'player';
+  }
+}
+
+async function publishAuthState(user) {
   window.EtherCraftAuth.currentUser = user ? {
     uid: user.uid,
     email: user.email,
     displayName: user.displayName || '',
-    emailVerified: user.emailVerified
+    emailVerified: user.emailVerified,
+    role: await readRole(user)
   } : null;
 
   window.dispatchEvent(new CustomEvent('ethercraft:auth-changed', {
@@ -105,7 +108,6 @@ function renderUser(user) {
   const logged = Boolean(user);
   if (guestPanel) guestPanel.hidden = logged;
   if (accountPanel) accountPanel.hidden = !logged;
-
   if (!user) return;
 
   accountName.textContent = user.displayName || 'Jogador';
@@ -123,18 +125,28 @@ function goToProfile() {
   window.location.href = 'perfil.html';
 }
 
-if (!firebaseConfigured || !auth) {
-  showMessage('Firebase ainda não foi conectado a esta página. Conclua o cadastro do aplicativo Web no Firebase Console e preencha js/firebase.js.', 'error');
-} else {
-  onAuthStateChanged(auth, (user) => {
-    publishAuthState(user);
-    renderUser(user);
+async function createFirestoreProfile(user, minecraftName) {
+  if (!db || !user) return;
 
-    // Se alguém já está autenticado e abre login.html diretamente,
-    // a página funciona como atalho para o próprio perfil.
-    if (user && !authActionInProgress) {
-      goToProfile();
-    }
+  await setDoc(doc(db, 'usuarios', user.uid), {
+    nome: user.displayName || 'Jogador',
+    email: user.email || '',
+    minecraftNick: minecraftName || '',
+    avatar: { type: 'emoji', value: '🧙' },
+    role: 'player',
+    favoritos: [],
+    recentes: [],
+    criadoEm: serverTimestamp()
+  });
+}
+
+if (!firebaseConfigured || !auth || !db) {
+  showMessage('Firebase ainda não foi conectado completamente a esta página.', 'error');
+} else {
+  onAuthStateChanged(auth, async (user) => {
+    await publishAuthState(user);
+    renderUser(user);
+    if (user && !authActionInProgress) goToProfile();
   });
 }
 
@@ -176,7 +188,7 @@ loginForm?.addEventListener('submit', async (event) => {
 
 registerForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
-  if (!auth) return;
+  if (!auth || !db) return;
 
   clearMessage();
   const data = new FormData(registerForm);
@@ -196,15 +208,10 @@ registerForm?.addEventListener('submit', async (event) => {
   try {
     const credential = await createUserWithEmailAndPassword(auth, email, password);
     if (name) await updateProfile(credential.user, { displayName: name, photoURL: null });
-
-    saveLocalProfile(credential.user.uid, {
-      minecraftName,
-      avatar: { type: 'emoji', value: '🧙' }
-    });
-
+    await createFirestoreProfile(credential.user, minecraftName);
     await sendEmailVerification(credential.user);
     await credential.user.reload();
-    publishAuthState(auth.currentUser);
+    await publishAuthState(auth.currentUser);
     renderUser(auth.currentUser);
     registerForm.reset();
     goToProfile();
@@ -219,12 +226,10 @@ registerForm?.addEventListener('submit', async (event) => {
 forgotButton?.addEventListener('click', async () => {
   if (!auth) return;
   const email = String(document.getElementById('login-email')?.value || '').trim();
-
   if (!email) {
     showMessage('Digite seu e-mail no campo de login antes de solicitar a recuperação.', 'error');
     return;
   }
-
   try {
     await sendPasswordResetEmail(auth, email);
     showMessage('Enviamos um e-mail para redefinir sua senha.', 'success');
