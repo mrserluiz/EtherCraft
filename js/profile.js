@@ -1,4 +1,4 @@
-import { auth, firebaseConfigured } from './firebase.js';
+import { auth, firebaseConfigured, authPersistenceReady } from './firebase.js';
 import {
   onAuthStateChanged,
   signOut,
@@ -7,6 +7,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 
 const profileShell = document.getElementById('profile-shell');
+const profileDashboard = document.getElementById('profile-dashboard');
 const profileLoading = document.getElementById('profile-loading');
 const profileMessage = document.getElementById('profile-message');
 const avatar = document.getElementById('profile-avatar');
@@ -19,6 +20,12 @@ const nameInput = document.getElementById('profile-display-name');
 const photoInput = document.getElementById('profile-photo-url');
 const logoutButton = document.getElementById('profile-logout');
 const removePhotoButton = document.getElementById('remove-photo');
+const favoritesContainer = document.getElementById('profile-favorites');
+const recentContainer = document.getElementById('profile-recent');
+
+const RECENT_KEY = 'ethercraftRecentPages';
+const FAVORITES_KEY = 'ethercraftFavoritePages';
+const ACTIVITY_KEY = 'ethercraftLastActivity';
 
 function showMessage(text, kind = 'info') {
   if (!profileMessage) return;
@@ -44,8 +51,7 @@ function initials(name, email) {
 }
 
 function renderAvatar(user) {
-  const fallbackText = initials(user.displayName, user.email);
-  avatarFallback.textContent = fallbackText;
+  avatarFallback.textContent = initials(user.displayName, user.email);
 
   if (user.photoURL) {
     avatar.src = user.photoURL;
@@ -59,6 +65,106 @@ function renderAvatar(user) {
   }
 }
 
+function readList(key) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function writeList(key, list) {
+  localStorage.setItem(key, JSON.stringify(list));
+}
+
+function makeAbsoluteSiteUrl(path) {
+  try {
+    return new URL(path, `${window.location.origin}/`).href;
+  } catch (_) {
+    return path;
+  }
+}
+
+function formatVisit(timestamp) {
+  if (!timestamp) return '';
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(new Date(timestamp));
+}
+
+function isFavorite(url) {
+  return readList(FAVORITES_KEY).some(item => item?.url === url);
+}
+
+function toggleFavorite(item) {
+  let favorites = readList(FAVORITES_KEY).filter(entry => entry?.url);
+  const exists = favorites.some(entry => entry.url === item.url);
+
+  if (exists) {
+    favorites = favorites.filter(entry => entry.url !== item.url);
+  } else {
+    favorites.unshift({
+      title: item.title || 'Página do EtherCraft',
+      url: item.url,
+      addedAt: Date.now()
+    });
+  }
+
+  writeList(FAVORITES_KEY, favorites.slice(0, 12));
+  renderNavigationData();
+}
+
+function renderPageList(container, items, emptyText, showVisitedAt = false) {
+  if (!container) return;
+  container.replaceChildren();
+
+  if (!items.length) {
+    const empty = document.createElement('p');
+    empty.className = 'profile-empty';
+    empty.textContent = emptyText;
+    container.appendChild(empty);
+    return;
+  }
+
+  items.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'profile-page-item';
+
+    const link = document.createElement('a');
+    link.href = makeAbsoluteSiteUrl(item.url);
+    link.textContent = item.title || 'Página do EtherCraft';
+
+    if (showVisitedAt && item.visitedAt) {
+      const meta = document.createElement('small');
+      meta.textContent = `Visitada em ${formatVisit(item.visitedAt)}`;
+      link.appendChild(meta);
+    }
+
+    const favoriteButton = document.createElement('button');
+    favoriteButton.type = 'button';
+    favoriteButton.className = 'profile-favorite-toggle';
+    favoriteButton.textContent = isFavorite(item.url) ? '★' : '☆';
+    favoriteButton.setAttribute('aria-label', isFavorite(item.url) ? 'Remover dos favoritos' : 'Adicionar aos favoritos');
+    favoriteButton.title = favoriteButton.getAttribute('aria-label');
+    favoriteButton.addEventListener('click', () => toggleFavorite(item));
+
+    row.append(link, favoriteButton);
+    container.appendChild(row);
+  });
+}
+
+function renderNavigationData() {
+  const favorites = readList(FAVORITES_KEY);
+  const recent = readList(RECENT_KEY).slice(0, 6);
+
+  renderPageList(favoritesContainer, favorites, 'Você ainda não favoritou nenhuma página.');
+  renderPageList(recentContainer, recent, 'Nenhuma página recente registrada ainda.', true);
+}
+
 function renderUser(user) {
   nameText.textContent = user.displayName || 'Jogador';
   emailText.textContent = user.email || '';
@@ -70,9 +176,11 @@ function renderUser(user) {
   nameInput.value = user.displayName || '';
   photoInput.value = user.photoURL || '';
   renderAvatar(user);
+  renderNavigationData();
 
   profileLoading.hidden = true;
   profileShell.hidden = false;
+  if (profileDashboard) profileDashboard.hidden = false;
 }
 
 avatar?.addEventListener('error', () => {
@@ -84,6 +192,8 @@ if (!firebaseConfigured || !auth) {
   profileLoading.hidden = true;
   showMessage('Não foi possível conectar ao Firebase.', 'error');
 } else {
+  await authPersistenceReady;
+
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       window.location.replace('login.html');
@@ -145,6 +255,7 @@ removePhotoButton?.addEventListener('click', async () => {
 logoutButton?.addEventListener('click', async () => {
   if (!auth) return;
   try {
+    localStorage.removeItem(ACTIVITY_KEY);
     await signOut(auth);
     window.location.replace('login.html');
   } catch (error) {
