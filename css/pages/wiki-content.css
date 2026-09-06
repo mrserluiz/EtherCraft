@@ -1,0 +1,111 @@
+/* EtherCraft - Conteúdo interno da Wiki */
+
+.wiki-detail-page .site-nav { top: 0; }
+.wiki-detail-main { padding: 6.3rem 0 3rem; }
+.wiki-detail-header { padding: 2.4rem 0 1.4rem; text-align: center; }
+.wiki-detail-header p { max-width: 46rem; margin: .8rem auto 0; color: var(--color-text-muted); }
+.wiki-back-link { display: inline-flex; margin-bottom: 1rem; font-weight: 800; }
+.wiki-content-list { display: grid; gap: 1.25rem; }
+
+.wiki-entry {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.035)), var(--color-surface);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+/* RECEITAS */
+.recipe-entry {
+  display: grid;
+  gap: 1.2rem;
+  padding: 1.2rem;
+}
+
+.crafting-table {
+  width: min(100%, 22rem);
+  margin-inline: auto;
+  padding: 1rem;
+  border: 3px solid rgba(57, 31, 17, .72);
+  border-radius: .65rem;
+  background:
+    linear-gradient(45deg, rgba(255,255,255,.05) 25%, transparent 25% 75%, rgba(255,255,255,.05) 75%),
+    rgba(116, 70, 37, .75);
+  background-size: 22px 22px;
+}
+
+.crafting-title { margin-bottom: .75rem; text-align: center; font-weight: 900; }
+.crafting-layout { display: grid; grid-template-columns: 1fr auto 4rem; gap: .7rem; align-items: center; }
+.crafting-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; }
+.crafting-slot,
+.crafting-result {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(34, 22, 13, .82);
+  box-shadow: inset 2px 2px 0 rgba(255,255,255,.18), inset -2px -2px 0 rgba(0,0,0,.32);
+  background: rgba(210, 180, 142, .88);
+  overflow: hidden;
+}
+.crafting-slot img,
+.crafting-result img { width: 80%; height: 80%; object-fit: contain; image-rendering: pixelated; }
+.crafting-empty { font-size: 1.25rem; opacity: .35; }
+.crafting-arrow { font-size: 1.8rem; font-weight: 900; }
+.recipe-copy h2 { margin-bottom: .65rem; }
+.recipe-copy p { color: var(--color-text-muted); }
+.recipe-result-name { margin-top: 1rem; font-weight: 900; color: var(--color-primary-strong); }
+
+/* BESTIÁRIO */
+.bestiary-entry { display: grid; gap: 1rem; padding: 1.15rem; }
+.mob-image-box {
+  min-height: 13rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: radial-gradient(circle at center, rgba(141,101,209,.18), rgba(255,255,255,.035));
+  overflow: hidden;
+}
+.mob-image-box img { width: 100%; height: 100%; max-height: 20rem; object-fit: contain; image-rendering: pixelated; }
+.mob-placeholder { font-size: 4.5rem; opacity: .7; }
+.mob-copy h2 { margin-bottom: .65rem; }
+.mob-copy > p { color: var(--color-text-muted); }
+.mob-drop {
+  display: inline-flex;
+  align-items: center;
+  gap: .7rem;
+  margin-top: 1rem;
+  padding: .65rem .8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,.055);
+  font-weight: 800;
+}
+.mob-drop-icon { width: 2.3rem; height: 2.3rem; display: grid; place-items: center; border-radius: .45rem; background: rgba(255,255,255,.08); overflow: hidden; }
+.mob-drop-icon img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+
+/* Editor preparado para o futuro login ADM */
+.wiki-admin-toolbar {
+  display: none;
+  gap: .65rem;
+  flex-wrap: wrap;
+  margin: 0 0 1.25rem;
+  padding: .9rem;
+  border: 1px dashed rgba(227,200,255,.45);
+  border-radius: var(--radius-sm);
+  background: rgba(141,101,209,.1);
+}
+.wiki-admin-toolbar.is-visible { display: flex; }
+.wiki-admin-toolbar button { padding: .65rem .9rem; border: 1px solid var(--color-border); border-radius: .55rem; color: var(--color-text); background: rgba(255,255,255,.08); cursor: pointer; }
+.wiki-admin-note { width: 100%; color: var(--color-text-muted); font-size: .9rem; }
+
+@media (min-width: 48rem) {
+  .recipe-entry { grid-template-columns: minmax(18rem, 24rem) 1fr; align-items: center; padding: 1.45rem; }
+  .bestiary-entry { grid-template-columns: minmax(14rem, 22rem) 1fr; align-items: stretch; padding: 1.45rem; }
+}
+
+@media (max-width: 39.99rem) {
+  .wiki-detail-main { padding-top: 7.2rem; }
+  .crafting-layout { grid-template-columns: 1fr auto 3.3rem; }
+  .crafting-arrow { font-size: 1.4rem; }
+}
