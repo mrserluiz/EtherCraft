@@ -3,213 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>EtherCraft | Wiki</title>
   <meta name="description" content="Wiki oficial do EtherCraft: mecânicas, receitas, bestiário, dimensões, encantamentos e guias do servidor." />
   <meta name="keywords" content="EtherCraft, Wiki, Minecraft Survival RPG, Minecraft Java, Minecraft Bedrock, servidor Semi-RP medieval" />
   <meta name="author" content="EtherCraft" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://mrserluiz.github.io/EtherCraft/pages/wiki.html" />
-
   <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="../assets/icons/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
   <link rel="manifest" href="../assets/icons/site.webmanifest">
   <meta name="theme-color" content="#7b2cbf">
-
   <meta property="og:title" content="EtherCraft | Wiki" />
   <meta property="og:description" content="Explore sistemas, criaturas, receitas, dimensões e segredos do EtherCraft." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://mrserluiz.github.io/EtherCraft/pages/wiki.html" />
   <meta property="og:image" content="https://mrserluiz.github.io/EtherCraft/assets/images/Ether_Logo.png" />
   <meta property="og:locale" content="pt_BR" />
-
-  <link rel="stylesheet" href="../css/reset.css?v=20260906-2" />
-  <link rel="stylesheet" href="../css/base.css?v=20260906-2" />
-  <link rel="stylesheet" href="../css/components.css?v=20260906-2" />
-  <link rel="stylesheet" href="../css/pages/wiki.css?v=20260906-2" />
+  <link rel="stylesheet" href="../css/reset.css?v=20260906-3" />
+  <link rel="stylesheet" href="../css/base.css?v=20260906-3" />
+  <link rel="stylesheet" href="../css/components.css?v=20260906-3" />
+  <link rel="stylesheet" href="../css/pages/wiki.css?v=20260906-3" />
+  <link rel="stylesheet" href="../css/pages/wiki-motion.css?v=20260906-3" />
 </head>
-
 <body class="wiki-page">
   <nav class="site-nav wiki-main-nav" aria-label="Navegação principal">
     <div class="nav-shell">
-      <a class="nav-link" href="../index.html">Home</a>
-      <a class="nav-link" href="../pages/eventos.html">Eventos</a>
-      <a class="nav-link" href="../pages/regras.html">Regras</a>
-      <a class="nav-link" href="../index.html#como-jogar">Como Jogar</a>
-      <a class="nav-link" href="../pages/login.html">Login</a>
-      <a class="nav-link" href="../pages/wiki.html" aria-current="page">Wiki</a>
+      <a class="nav-link" href="../index.html">Home</a><a class="nav-link" href="../pages/eventos.html">Eventos</a><a class="nav-link" href="../pages/regras.html">Regras</a><a class="nav-link" href="../index.html#como-jogar">Como Jogar</a><a class="nav-link" href="../pages/login.html">Login</a><a class="nav-link" href="../pages/wiki.html" aria-current="page">Wiki</a>
     </div>
   </nav>
-
   <main class="wiki-main">
-    <section class="wiki-hero" aria-labelledby="wiki-title">
-      <div class="container wiki-hero-content">
-        <p class="eyebrow">Biblioteca do EtherCraft</p>
-        <h1 id="wiki-title">Wiki EtherCraft</h1>
-        <p class="wiki-intro">
-          Descubra sistemas, criaturas, receitas, dimensões e segredos do servidor.
-        </p>
-
-        <form class="wiki-search" id="wiki-search-form" role="search">
-          <label class="sr-only" for="wiki-search-input">Pesquisar na Wiki</label>
-          <span class="wiki-search-icon" aria-hidden="true">⌕</span>
-          <input
-            id="wiki-search-input"
-            type="search"
-            autocomplete="off"
-            placeholder="Pesquisar: bosses, Aether, receitas, encantamentos..."
-          >
-          <button type="button" id="wiki-search-clear" class="wiki-search-clear" aria-label="Limpar pesquisa">×</button>
-        </form>
-
-        <div class="wiki-filter-row" aria-label="Filtros da Wiki">
-          <button class="wiki-filter is-active" type="button" data-filter="todos">Todos</button>
-          <button class="wiki-filter" type="button" data-filter="guia">Guias</button>
-          <button class="wiki-filter" type="button" data-filter="sistema">Sistemas</button>
-          <button class="wiki-filter" type="button" data-filter="exploracao">Exploração</button>
-          <button class="wiki-filter" type="button" data-filter="combate">Combate</button>
-        </div>
+    <section class="wiki-hero" aria-labelledby="wiki-title"><div class="container wiki-hero-content">
+      <p class="eyebrow">Biblioteca do EtherCraft</p><h1 id="wiki-title">Wiki EtherCraft</h1><p class="wiki-intro">Descubra sistemas, criaturas, receitas, dimensões e segredos do servidor.</p>
+      <form class="wiki-search" id="wiki-search-form" role="search"><label class="sr-only" for="wiki-search-input">Pesquisar na Wiki</label><span class="wiki-search-icon" aria-hidden="true">⌕</span><input id="wiki-search-input" type="search" autocomplete="off" placeholder="Pesquisar: bosses, Aether, receitas, encantamentos..."><button type="button" id="wiki-search-clear" class="wiki-search-clear" aria-label="Limpar pesquisa">×</button></form>
+      <div class="wiki-filter-row" aria-label="Filtros da Wiki"><button class="wiki-filter is-active" type="button" data-filter="todos">Todos</button><button class="wiki-filter" type="button" data-filter="guia">Guias</button><button class="wiki-filter" type="button" data-filter="sistema">Sistemas</button><button class="wiki-filter" type="button" data-filter="exploracao">Exploração</button><button class="wiki-filter" type="button" data-filter="combate">Combate</button></div>
+    </div></section>
+    <section class="wiki-section" aria-labelledby="categorias-title"><div class="container">
+      <div class="wiki-section-heading"><div><p class="eyebrow">Comece por aqui</p><h2 id="categorias-title">Categorias</h2></div><button class="wiki-random-btn" id="wiki-random-btn" type="button">🎲 Descobrir algo</button></div>
+      <div class="wiki-grid" id="wiki-grid">
+        <a class="wiki-card" href="../pages/wiki/mecanicas.html" data-title="Mecânicas" data-category="sistema guia" data-keywords="mecanicas sistemas progressao economia agricultura encantamentos"><span class="wiki-card-icon" aria-hidden="true">🧬</span><div class="wiki-card-content"><p class="wiki-card-kicker">Sistemas</p><h3>Mecânicas</h3><p>Entenda os sistemas exclusivos, progressão e funcionamento do EtherCraft.</p></div><span class="wiki-card-arrow" aria-hidden="true">→</span></a>
+        <a class="wiki-card" href="../pages/wiki/receitas.html" data-title="Receitas" data-category="guia sistema" data-keywords="receitas craft crafting itens equipamentos materiais"><span class="wiki-card-icon" aria-hidden="true">🛠️</span><div class="wiki-card-content"><p class="wiki-card-kicker">Criação</p><h3>Receitas</h3><p>Consulte receitas especiais, materiais e formas de criação de itens.</p></div><span class="wiki-card-arrow" aria-hidden="true">→</span></a>
+        <a class="wiki-card" href="../pages/wiki/bestiario.html" data-title="Bestiário" data-category="combate exploracao" data-keywords="bestiario mobs criaturas monstros chefes bosses inimigos"><span class="wiki-card-icon" aria-hidden="true">🐲</span><div class="wiki-card-content"><p class="wiki-card-kicker">Criaturas</p><h3>Bestiário</h3><p>Conheça inimigos, criaturas especiais e chefes encontrados pelo mundo.</p></div><span class="wiki-card-arrow" aria-hidden="true">→</span></a>
+        <a class="wiki-card" href="../pages/wiki/dimensoes.html" data-title="Dimensões" data-category="exploracao guia" data-keywords="dimensoes frost heat infernal aether portal exploracao mundos"><span class="wiki-card-icon" aria-hidden="true">🌌</span><div class="wiki-card-content"><p class="wiki-card-kicker">Exploração</p><h3>Dimensões</h3><p>Descubra novos mundos, seus portais, perigos e recursos exclusivos.</p></div><span class="wiki-card-arrow" aria-hidden="true">→</span></a>
+        <a class="wiki-card" href="../pages/wiki/encantamentos.html" data-title="Encantamentos" data-category="sistema combate" data-keywords="encantamentos magia equipamentos armas armaduras melhoria"><span class="wiki-card-icon" aria-hidden="true">✨</span><div class="wiki-card-content"><p class="wiki-card-kicker">Equipamento</p><h3>Encantamentos</h3><p>Veja encantamentos especiais e como eles modificam seus equipamentos.</p></div><span class="wiki-card-arrow" aria-hidden="true">→</span></a>
+        <a class="wiki-card" href="../pages/wiki/economia.html" data-title="Economia" data-category="sistema guia" data-keywords="economia moedas loja comercio trocas recompensas dinheiro mercado"><span class="wiki-card-icon" aria-hidden="true">💰</span><div class="wiki-card-content"><p class="wiki-card-kicker">Comunidade</p><h3>Economia</h3><p>Saiba como funcionam comércio, recompensas, lojas e circulação de recursos.</p></div><span class="wiki-card-arrow" aria-hidden="true">→</span></a>
       </div>
-    </section>
-
-    <section class="wiki-section" aria-labelledby="categorias-title">
-      <div class="container">
-        <div class="wiki-section-heading">
-          <div>
-            <p class="eyebrow">Comece por aqui</p>
-            <h2 id="categorias-title">Categorias</h2>
-          </div>
-          <button class="wiki-random-btn" id="wiki-random-btn" type="button">🎲 Descobrir algo</button>
-        </div>
-
-        <div class="wiki-grid" id="wiki-grid">
-          <a class="wiki-card" href="#mecanicas" data-title="Mecânicas" data-category="sistema guia" data-keywords="mecanicas sistemas progressao economia agricultura encantamentos">
-            <span class="wiki-card-icon" aria-hidden="true">🧬</span>
-            <div class="wiki-card-content">
-              <p class="wiki-card-kicker">Sistemas</p>
-              <h3>Mecânicas</h3>
-              <p>Entenda os sistemas exclusivos, progressão e funcionamento do EtherCraft.</p>
-            </div>
-            <span class="wiki-card-arrow" aria-hidden="true">→</span>
-          </a>
-
-          <a class="wiki-card" href="../pages/wiki/receitas.html" data-title="Receitas" data-category="guia sistema" data-keywords="receitas craft crafting itens equipamentos materiais">
-            <span class="wiki-card-icon" aria-hidden="true">🛠️</span>
-            <div class="wiki-card-content">
-              <p class="wiki-card-kicker">Criação</p>
-              <h3>Receitas</h3>
-              <p>Consulte receitas especiais, materiais e formas de criação de itens.</p>
-            </div>
-            <span class="wiki-card-arrow" aria-hidden="true">→</span>
-          </a>
-
-          <a class="wiki-card" href="../pages/wiki/bestiario.html" data-title="Bestiário" data-category="combate exploracao" data-keywords="bestiario mobs criaturas monstros chefes bosses inimigos">
-            <span class="wiki-card-icon" aria-hidden="true">🐲</span>
-            <div class="wiki-card-content">
-              <p class="wiki-card-kicker">Criaturas</p>
-              <h3>Bestiário</h3>
-              <p>Conheça inimigos, criaturas especiais e chefes encontrados pelo mundo.</p>
-            </div>
-            <span class="wiki-card-arrow" aria-hidden="true">→</span>
-          </a>
-
-          <a class="wiki-card" href="#dimensoes" data-title="Dimensões" data-category="exploracao guia" data-keywords="dimensoes frost heat infernal aether portal exploracao mundos">
-            <span class="wiki-card-icon" aria-hidden="true">🌌</span>
-            <div class="wiki-card-content">
-              <p class="wiki-card-kicker">Exploração</p>
-              <h3>Dimensões</h3>
-              <p>Descubra novos mundos, seus portais, perigos e recursos exclusivos.</p>
-            </div>
-            <span class="wiki-card-arrow" aria-hidden="true">→</span>
-          </a>
-
-          <a class="wiki-card" href="#encantamentos" data-title="Encantamentos" data-category="sistema combate" data-keywords="encantamentos magia equipamentos armas armaduras melhoria">
-            <span class="wiki-card-icon" aria-hidden="true">✨</span>
-            <div class="wiki-card-content">
-              <p class="wiki-card-kicker">Equipamento</p>
-              <h3>Encantamentos</h3>
-              <p>Veja encantamentos especiais e como eles modificam seus equipamentos.</p>
-            </div>
-            <span class="wiki-card-arrow" aria-hidden="true">→</span>
-          </a>
-
-          <a class="wiki-card" href="#economia" data-title="Economia" data-category="sistema guia" data-keywords="economia moedas loja comercio trocas recompensas dinheiro mercado">
-            <span class="wiki-card-icon" aria-hidden="true">💰</span>
-            <div class="wiki-card-content">
-              <p class="wiki-card-kicker">Comunidade</p>
-              <h3>Economia</h3>
-              <p>Saiba como funcionam comércio, recompensas, lojas e circulação de recursos.</p>
-            </div>
-            <span class="wiki-card-arrow" aria-hidden="true">→</span>
-          </a>
-        </div>
-
-        <p class="wiki-empty" id="wiki-empty" hidden>Nenhum conteúdo encontrado para essa pesquisa.</p>
-      </div>
-    </section>
-
-    <section class="wiki-section wiki-featured" aria-labelledby="destaques-title">
-      <div class="container">
-        <div class="wiki-section-heading">
-          <div>
-            <p class="eyebrow">Exploração recomendada</p>
-            <h2 id="destaques-title">Destaques da Wiki</h2>
-          </div>
-        </div>
-
-        <div class="wiki-featured-grid">
-          <article class="wiki-featured-card" id="dimensoes">
-            <span class="wiki-featured-badge">🌍 Dimensão</span>
-            <h3>Frost Realm</h3>
-            <p>Um mundo congelado com recursos, criaturas e desafios próprios.</p>
-            <a href="#" aria-label="Abrir artigo Frost Realm">Abrir artigo →</a>
-          </article>
-
-          <article class="wiki-featured-card">
-            <span class="wiki-featured-badge">☁️ Dimensão</span>
-            <h3>Aether</h3>
-            <p>Explore uma dimensão elevada e descubra o que existe acima das nuvens.</p>
-            <a href="#" aria-label="Abrir artigo Aether">Abrir artigo →</a>
-          </article>
-
-          <article class="wiki-featured-card">
-            <span class="wiki-featured-badge">👑 Combate</span>
-            <h3>Chefes</h3>
-            <p>Prepare-se para encontros especiais e recompensas de alto nível.</p>
-            <a href="../pages/wiki/bestiario.html" aria-label="Abrir Bestiário">Abrir Bestiário →</a>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="wiki-section wiki-coming" aria-labelledby="em-breve-title">
-      <div class="container wiki-coming-panel">
-        <div>
-          <p class="eyebrow">Em construção</p>
-          <h2 id="em-breve-title">A Wiki vai crescer junto com o servidor</h2>
-          <p>Novos sistemas, criaturas, itens, dimensões e guias serão adicionados conforme o EtherCraft evoluir.</p>
-        </div>
-        <div class="wiki-status" aria-label="Status da Wiki">
-          <span class="wiki-status-dot" aria-hidden="true"></span>
-          <span>Versão inicial da Wiki</span>
-        </div>
-      </div>
-    </section>
+      <p class="wiki-empty" id="wiki-empty" hidden>Nenhum conteúdo encontrado para essa pesquisa.</p>
+    </div></section>
+    <section class="wiki-section wiki-featured" aria-labelledby="destaques-title"><div class="container"><div class="wiki-section-heading"><div><p class="eyebrow">Exploração recomendada</p><h2 id="destaques-title">Destaques da Wiki</h2></div></div><div class="wiki-featured-grid">
+      <article class="wiki-featured-card"><span class="wiki-featured-badge">🌍 Dimensão</span><h3>Frost Realm</h3><p>Um mundo congelado com recursos, criaturas e desafios próprios.</p><a href="../pages/wiki/dimensoes.html">Abrir Dimensões →</a></article>
+      <article class="wiki-featured-card"><span class="wiki-featured-badge">☁️ Dimensão</span><h3>Aether</h3><p>Explore uma dimensão elevada e descubra o que existe acima das nuvens.</p><a href="../pages/wiki/dimensoes.html">Abrir Dimensões →</a></article>
+      <article class="wiki-featured-card"><span class="wiki-featured-badge">👑 Combate</span><h3>Chefes</h3><p>Prepare-se para encontros especiais e recompensas de alto nível.</p><a href="../pages/wiki/bestiario.html">Abrir Bestiário →</a></article>
+    </div></div></section>
+    <section class="wiki-section wiki-coming" aria-labelledby="em-breve-title"><div class="container wiki-coming-panel"><div><p class="eyebrow">Em construção</p><h2 id="em-breve-title">A Wiki vai crescer junto com o servidor</h2><p>Novos sistemas, criaturas, itens, dimensões e guias serão adicionados conforme o EtherCraft evoluir.</p></div><div class="wiki-status" aria-label="Status da Wiki"><span class="wiki-status-dot" aria-hidden="true"></span><span>Versão inicial da Wiki</span></div></div></section>
   </main>
-
-  <footer class="site-footer">
-    <div class="container footer-content">
-      <p>&copy; 2026 EtherCraft. Todos os direitos reservados.</p>
-      <nav aria-label="Links do rodapé">
-        <a href="../pages/eventos.html">Eventos</a>
-        <a href="../pages/regras.html">Regras</a>
-      </nav>
-    </div>
-  </footer>
-
-  <script src="../js/main.js?v=20260906-2" defer></script>
-  <script src="../js/wiki.js?v=20260906-2" defer></script>
-</body>
-</html>
+  <footer class="site-footer"><div class="container footer-content"><p>&copy; 2026 EtherCraft. Todos os direitos reservados.</p><nav aria-label="Links do rodapé"><a href="../pages/eventos.html">Eventos</a><a href="../pages/regras.html">Regras</a></nav></div></footer>
+  <script src="../js/main.js?v=20260906-3" defer></script><script src="../js/wiki.js?v=20260906-3" defer></script><script src="../js/wiki-motion.js?v=20260906-3" defer></script>
+</body></html>
