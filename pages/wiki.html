@@ -1,180 +1,215 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
-  <!-- Name Page -->
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>EtherCraft - Wiki</title>
-
-  <meta name="description"content="Servidor de Minecraft EtherCraft.">
-  
- <!-- Favicons -->
-<link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="../assets/icons/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
-<link rel="manifest" href="../assets/icons/site.webmanifest">
-
-  <meta name="theme-color" content="#7b2bf">
-
-  <link rel="stylesheet" href="../css/reset.css">
-  <link rel="stylesheet" href="../css/base.css">
-  <link rel="stylesheet" href="../css/components.css">
-  <link rel="stylesheet" href="../css/pages/regras.css">
-
-  <!--Corpo-do-Site -->
-  <title>EtherCraft | Wiki de Server</title>
-  <meta name="description" content="Regras do EtherCraft." />
-  <meta name="keywords" content="EtherCraft, regras, Minecraft Survival RPG, Minecraft Java, Minecraft Bedrock, servidor Semi-RP servival Medieval" />
+  <title>EtherCraft | Wiki</title>
+  <meta name="description" content="Wiki oficial do EtherCraft: mecânicas, receitas, bestiário, dimensões, encantamentos e guias do servidor." />
+  <meta name="keywords" content="EtherCraft, Wiki, Minecraft Survival RPG, Minecraft Java, Minecraft Bedrock, servidor Semi-RP medieval" />
   <meta name="author" content="EtherCraft" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://mrserluiz.github.io/EtherCraft/" />
+  <link rel="canonical" href="https://mrserluiz.github.io/EtherCraft/pages/wiki.html" />
 
-  <meta property="og:title" content="EtherCraft | Regras do Servidor" />
-  <meta property="og:description" content="Servidor Minecraft para Java e Bedrock." />
+  <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="../assets/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="../assets/icons/site.webmanifest">
+  <meta name="theme-color" content="#7b2cbf">
+
+  <meta property="og:title" content="EtherCraft | Wiki" />
+  <meta property="og:description" content="Explore sistemas, criaturas, receitas, dimensões e segredos do EtherCraft." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://mrserluiz.github.io/EtherCraft/pages/wiki.html" />
   <meta property="og:image" content="https://mrserluiz.github.io/EtherCraft/assets/images/Ether_Logo.png" />
   <meta property="og:locale" content="pt_BR" />
 
-  <!--
-    TROCA DA LOGO
-    Para trocar a logo do site, substitua o arquivo abaixo mantendo o mesmo caminho:
-    assets/images/Ether_Logo.png
-    Se preferir outro nome, altere tambem o src da imagem no header e o og:image acima.
-  
-  <link rel="preload" href="../assets/images/Ether_Logo.png" as="image" />
-  
-    CSS MODULAR
-    O parametro ?v=20260604-5 ajuda o navegador a carregar a versao mais nova dos estilos.
-    Quando fizer grandes mudancas visuais, aumente esse numero.
-  -->
-  <link rel="stylesheet" href="../css/reset.css?v=20260604-5" />
-  <link rel="stylesheet" href="../css/base.css?v=20260604-5" />
-  <link rel="stylesheet" href="../css/components.css?v=20260604-5" />
-  <link rel="stylesheet" href="../css/pages/regras.css?v=20260604-5" />
-  <link rel="stylesheet" href="../css/pages/wiki.css?v=20260604-5" />
-  
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "VideoGame",
-    "name": "EtherCraft",
-    "applicationCategory": "Game",
-    "operatingSystem": "Windows, Linux, macOS, Android, iOS",
-    "description": "Servidor Minecraft Survival Semi-RP suporte para Java e Bedrock.",
-    "url": "https://mrserluiz.github.io/EtherCraft/",
-    "genre": ["Survival", "RPG", "Sandbox"]
-  }
-  </script>
+  <link rel="stylesheet" href="../css/reset.css?v=20260906-1" />
+  <link rel="stylesheet" href="../css/base.css?v=20260906-1" />
+  <link rel="stylesheet" href="../css/components.css?v=20260906-1" />
+  <link rel="stylesheet" href="../css/pages/wiki.css?v=20260906-1" />
 </head>
-<body>
-  <!-- MENU DE NAVEGACAO FIXO NO TOPO -->
-  <nav class="site-nav" aria-label="Navegacao principal">
+
+<body class="wiki-page">
+  <nav class="site-nav wiki-main-nav" aria-label="Navegação principal">
     <div class="nav-shell">
-      <a class="nav-link" href="../index.html" aria-current="page">Home</a>
+      <a class="nav-link" href="../index.html">Home</a>
       <a class="nav-link" href="../pages/eventos.html">Eventos</a>
       <a class="nav-link" href="../pages/regras.html">Regras</a>
-      <a class="nav-link" href="../index.html#como-jogar"">Como Jogar</a>
+      <a class="nav-link" href="../index.html#como-jogar">Como Jogar</a>
       <a class="nav-link" href="../pages/login.html">Login</a>
-      <a class="nav-link" href="../pages/wiki.html">Wiki</a>
+      <a class="nav-link" href="../pages/wiki.html" aria-current="page">Wiki</a>
     </div>
   </nav>
 
-  <main class="site-main">
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="container hero-content">
-        <p class="eyebrow">EtherCraft</p>
-        <h1 id="hero-title">Wiki do server</h1>
-        <p class="hero-subtitle">🚧EM BREVE🚧</p>
-        
-        <div class="hero-actions" aria-label="Acoes principais">
-          <a class="btn btn-01" href="#como-jogar">🧬Mecanicas</a>
-          <a class="btn btn-02" href="">🛠️Receitas</a>
-          <a class="btn btn-03" href="../pages/wiki/bestiario.html">🐲Bestiario</a>
-          <a class="btn btn-04" href="">👑</a>
+  <main class="wiki-main">
+    <section class="wiki-hero" aria-labelledby="wiki-title">
+      <div class="container wiki-hero-content">
+        <p class="eyebrow">Biblioteca do EtherCraft</p>
+        <h1 id="wiki-title">Wiki EtherCraft</h1>
+        <p class="wiki-intro">
+          Descubra sistemas, criaturas, receitas, dimensões e segredos do servidor.
+        </p>
+
+        <form class="wiki-search" id="wiki-search-form" role="search">
+          <label class="sr-only" for="wiki-search-input">Pesquisar na Wiki</label>
+          <span class="wiki-search-icon" aria-hidden="true">⌕</span>
+          <input
+            id="wiki-search-input"
+            type="search"
+            autocomplete="off"
+            placeholder="Pesquisar: bosses, Aether, receitas, encantamentos..."
+          >
+          <button type="button" id="wiki-search-clear" class="wiki-search-clear" aria-label="Limpar pesquisa">×</button>
+        </form>
+
+        <div class="wiki-filter-row" aria-label="Filtros da Wiki">
+          <button class="wiki-filter is-active" type="button" data-filter="todos">Todos</button>
+          <button class="wiki-filter" type="button" data-filter="guia">Guias</button>
+          <button class="wiki-filter" type="button" data-filter="sistema">Sistemas</button>
+          <button class="wiki-filter" type="button" data-filter="exploracao">Exploração</button>
+          <button class="wiki-filter" type="button" data-filter="combate">Combate</button>
         </div>
-        
       </div>
     </section>
 
-    <!--
-      IMAGENS FUTURAS
-      Para adicionar imagens na home, use a pasta assets/images/.
-      Para imagens de fundo da home, prefira assets/images/backgrounds/.
-      Para imagens de eventos, prefira assets/images/eventos/.
-    
-    <section class="section" aria-labelledby="diferenciais-title">
+    <section class="wiki-section" aria-labelledby="categorias-title">
       <div class="container">
-        <div class="section-heading">
-          <p class="eyebrow">O que torna o servidor especial</p>
-          <h2 id="diferenciais-title">Diferenciais do EtherCraft</h2>
+        <div class="wiki-section-heading">
+          <div>
+            <p class="eyebrow">Comece por aqui</p>
+            <h2 id="categorias-title">Categorias</h2>
+          </div>
+          <button class="wiki-random-btn" id="wiki-random-btn" type="button">🎲 Descobrir algo</button>
         </div>
 
-        <div class="cards-grid">
-          <article class="feature-card">
-            <h3>💰Economia Própria</h3>
-            <p>Sistema econômico pensado para trocas, lojas, recompensas e evolução constante dentro do servidor.</p>
+        <div class="wiki-grid" id="wiki-grid">
+          <a class="wiki-card" href="#mecanicas" data-title="Mecânicas" data-category="sistema guia" data-keywords="mecanicas sistemas progressao economia agricultura encantamentos">
+            <span class="wiki-card-icon" aria-hidden="true">🧬</span>
+            <div class="wiki-card-content">
+              <p class="wiki-card-kicker">Sistemas</p>
+              <h3>Mecânicas</h3>
+              <p>Entenda os sistemas exclusivos, progressão e funcionamento do EtherCraft.</p>
+            </div>
+            <span class="wiki-card-arrow" aria-hidden="true">→</span>
+          </a>
+
+          <a class="wiki-card" href="#receitas" data-title="Receitas" data-category="guia sistema" data-keywords="receitas craft crafting itens equipamentos materiais">
+            <span class="wiki-card-icon" aria-hidden="true">🛠️</span>
+            <div class="wiki-card-content">
+              <p class="wiki-card-kicker">Criação</p>
+              <h3>Receitas</h3>
+              <p>Consulte receitas especiais, materiais e formas de criação de itens.</p>
+            </div>
+            <span class="wiki-card-arrow" aria-hidden="true">→</span>
+          </a>
+
+          <a class="wiki-card" href="../pages/wiki/bestiario.html" data-title="Bestiário" data-category="combate exploracao" data-keywords="bestiario mobs criaturas monstros chefes bosses inimigos">
+            <span class="wiki-card-icon" aria-hidden="true">🐲</span>
+            <div class="wiki-card-content">
+              <p class="wiki-card-kicker">Criaturas</p>
+              <h3>Bestiário</h3>
+              <p>Conheça inimigos, criaturas especiais e chefes encontrados pelo mundo.</p>
+            </div>
+            <span class="wiki-card-arrow" aria-hidden="true">→</span>
+          </a>
+
+          <a class="wiki-card" href="#dimensoes" data-title="Dimensões" data-category="exploracao guia" data-keywords="dimensoes frost heat infernal aether portal exploracao mundos">
+            <span class="wiki-card-icon" aria-hidden="true">🌌</span>
+            <div class="wiki-card-content">
+              <p class="wiki-card-kicker">Exploração</p>
+              <h3>Dimensões</h3>
+              <p>Descubra novos mundos, seus portais, perigos e recursos exclusivos.</p>
+            </div>
+            <span class="wiki-card-arrow" aria-hidden="true">→</span>
+          </a>
+
+          <a class="wiki-card" href="#encantamentos" data-title="Encantamentos" data-category="sistema combate" data-keywords="encantamentos magia equipamentos armas armaduras melhoria">
+            <span class="wiki-card-icon" aria-hidden="true">✨</span>
+            <div class="wiki-card-content">
+              <p class="wiki-card-kicker">Equipamento</p>
+              <h3>Encantamentos</h3>
+              <p>Veja encantamentos especiais e como eles modificam seus equipamentos.</p>
+            </div>
+            <span class="wiki-card-arrow" aria-hidden="true">→</span>
+          </a>
+
+          <a class="wiki-card" href="#economia" data-title="Economia" data-category="sistema guia" data-keywords="economia moedas loja comercio trocas recompensas dinheiro mercado">
+            <span class="wiki-card-icon" aria-hidden="true">💰</span>
+            <div class="wiki-card-content">
+              <p class="wiki-card-kicker">Comunidade</p>
+              <h3>Economia</h3>
+              <p>Saiba como funcionam comércio, recompensas, lojas e circulação de recursos.</p>
+            </div>
+            <span class="wiki-card-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <p class="wiki-empty" id="wiki-empty" hidden>Nenhum conteúdo encontrado para essa pesquisa.</p>
+      </div>
+    </section>
+
+    <section class="wiki-section wiki-featured" aria-labelledby="destaques-title">
+      <div class="container">
+        <div class="wiki-section-heading">
+          <div>
+            <p class="eyebrow">Exploração recomendada</p>
+            <h2 id="destaques-title">Destaques da Wiki</h2>
+          </div>
+        </div>
+
+        <div class="wiki-featured-grid">
+          <article class="wiki-featured-card" id="dimensoes">
+            <span class="wiki-featured-badge">🌍 Dimensão</span>
+            <h3>Frost Realm</h3>
+            <p>Um mundo congelado com recursos, criaturas e desafios próprios.</p>
+            <a href="#" aria-label="Abrir artigo Frost Realm">Abrir artigo →</a>
           </article>
 
-          <article class="feature-card">
-            <h3>⚔️Progressao</h3>
-            <p>Escolha atividades, evolua sua função e desbloqueie recompensas conforme participa da comunidade.</p>
+          <article class="wiki-featured-card">
+            <span class="wiki-featured-badge">☁️ Dimensão</span>
+            <h3>Aether</h3>
+            <p>Explore uma dimensão elevada e descubra o que existe acima das nuvens.</p>
+            <a href="#" aria-label="Abrir artigo Aether">Abrir artigo →</a>
           </article>
 
-          <article class="feature-card">
-            <h3>🏞️Exploração</h3>
-            <p>Avance sua aventura em busca de Novos Chefes, Novas Estruturas, Novas Dimenções, Novos Encantamentos, Novos Itens e recursos que tornam a experiencia mais viva e personalizada.</p>
-          </article>
-
-          <article class="feature-card">
-            <h3>🔮Eventos</h3>
-            <p>Participe de eventos especiais, desafios temáticos e recompensas limitadas durante o ano.</p>
+          <article class="wiki-featured-card">
+            <span class="wiki-featured-badge">👑 Combate</span>
+            <h3>Chefes</h3>
+            <p>Prepare-se para encontros especiais e recompensas de alto nível.</p>
+            <a href="../pages/wiki/bestiario.html" aria-label="Abrir Bestiário">Abrir Bestiário →</a>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="section section-soft" id="como-jogar" aria-labelledby="como-jogar-title">
-      <div class="container content-panel">
-        <div class="section-heading">
-          <p class="eyebrow">Entrada rapida</p>
-          <h2 id="como-jogar-title">Como Jogar</h2>
+    <section class="wiki-section wiki-coming" aria-labelledby="em-breve-title">
+      <div class="container wiki-coming-panel">
+        <div>
+          <p class="eyebrow">Em construção</p>
+          <h2 id="em-breve-title">A Wiki vai crescer junto com o servidor</h2>
+          <p>Novos sistemas, criaturas, itens, dimensões e guias serão adicionados conforme o EtherCraft evoluir.</p>
         </div>
-
-        <ol class="steps-list">
-          <li>Abra o Minecraft Java ou Bedrock.</li>
-          <li>Adicione o servidor EtherCraft na sua lista.</li>
-          <li>Entre, escolha seu caminho e comece sua Jornada.</li>
-        </ol>
-
-        <div class="server-info" aria-label="Informacoes do servidor">
-          <p><strong>☕JAVA:</strong></p>
-          <p><strong>IP:</strong> enx-cirion-13.enx.host:10091</p>
-          <p><strong>🗿BEDROCK:</strong></p>
-          <p><strong>IP:</strong> enx-cirion-13.enx.host</p>
-          <p><strong>PORTA:</strong> 10091</p>
-          <p><strong>⚙️Versao:</strong> Java 26.2 - Badrock 26.20 - Minecraft Original</p>
+        <div class="wiki-status" aria-label="Status da Wiki">
+          <span class="wiki-status-dot" aria-hidden="true"></span>
+          <span>Versão inicial da Wiki</span>
         </div>
       </div>
     </section>
-    -->
   </main>
 
   <footer class="site-footer">
     <div class="container footer-content">
       <p>&copy; 2026 EtherCraft. Todos os direitos reservados.</p>
-      <nav aria-label="Links do rodape">
-        <a href="pages/eventos.html">Eventos</a>
-        <a href="pages/regras.html">Regras</a>
+      <nav aria-label="Links do rodapé">
+        <a href="../pages/eventos.html">Eventos</a>
+        <a href="../pages/regras.html">Regras</a>
       </nav>
     </div>
   </footer>
 
-  <script src="js/main.js?v=20260604-5" defer></script>
+  <script src="../js/main.js?v=20260906-1" defer></script>
+  <script src="../js/wiki.js?v=20260906-1" defer></script>
 </body>
 </html>
