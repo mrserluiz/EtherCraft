@@ -1,0 +1,13 @@
+[
+  {
+    "id": "mob-exemplo",
+    "nome": "Criatura de Exemplo",
+    "imagem": "",
+    "descricao": "Modelo inicial para cadastrar criaturas, chefes e inimigos especiais do EtherCraft.",
+    "drop": {
+      "nome": "Drop Especial",
+      "icone": ""
+    },
+    "tags": ["criatura", "exemplo"]
+  }
+]
