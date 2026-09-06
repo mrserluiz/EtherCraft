@@ -25,6 +25,21 @@ const accountVerification = document.getElementById('account-verification');
 
 window.EtherCraftAuth = window.EtherCraftAuth || { currentUser: null };
 
+function profileStorageKey(uid) {
+  return `ethercraftUserProfile:${uid}`;
+}
+
+function saveLocalProfile(uid, data) {
+  const key = profileStorageKey(uid);
+  let current = {};
+  try {
+    current = JSON.parse(localStorage.getItem(key) || '{}') || {};
+  } catch (_) {
+    current = {};
+  }
+  localStorage.setItem(key, JSON.stringify({ ...current, ...data }));
+}
+
 function showMessage(text, kind = 'info') {
   if (!messageBox) return;
   messageBox.textContent = text;
@@ -76,7 +91,6 @@ function publishAuthState(user) {
     uid: user.uid,
     email: user.email,
     displayName: user.displayName || '',
-    photoURL: user.photoURL || '',
     emailVerified: user.emailVerified
   } : null;
 
@@ -157,6 +171,7 @@ registerForm?.addEventListener('submit', async (event) => {
   clearMessage();
   const data = new FormData(registerForm);
   const name = String(data.get('name') || '').trim();
+  const minecraftName = String(data.get('minecraftName') || '').trim();
   const email = String(data.get('email') || '').trim();
   const password = String(data.get('password') || '');
   const confirmation = String(data.get('passwordConfirm') || '');
@@ -169,7 +184,13 @@ registerForm?.addEventListener('submit', async (event) => {
   setBusy(registerForm, true);
   try {
     const credential = await createUserWithEmailAndPassword(auth, email, password);
-    if (name) await updateProfile(credential.user, { displayName: name });
+    if (name) await updateProfile(credential.user, { displayName: name, photoURL: null });
+
+    saveLocalProfile(credential.user.uid, {
+      minecraftName,
+      avatar: { type: 'emoji', value: '🧙' }
+    });
+
     await sendEmailVerification(credential.user);
     await credential.user.reload();
     publishAuthState(auth.currentUser);
