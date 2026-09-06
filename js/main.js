@@ -5,15 +5,15 @@
 document.addEventListener("DOMContentLoaded", () => {
   initHeaderFade();
   initSmoothAnchors();
+  initVisitHistory();
   initProfileShortcut();
 });
 
-/*
-  HEADER COM FADE
-  Para alterar quando a logo desaparece, ajuste fadeLimitRatio.
-  0.25 significa aproximadamente 25% da altura visivel da tela.
-  Quando a logo some, a classe body.is-header-hidden faz o menu subir para o topo.
-*/
+const ETHERCRAFT_INACTIVITY_LIMIT = 12 * 60 * 60 * 1000;
+const ETHERCRAFT_ACTIVITY_KEY = 'ethercraftLastActivity';
+const ETHERCRAFT_RECENT_KEY = 'ethercraftRecentPages';
+const ETHERCRAFT_FAVORITES_KEY = 'ethercraftFavoritePages';
+
 function initHeaderFade() {
   const header = document.querySelector("[data-scroll-header]");
   if (!header) return;
@@ -32,7 +32,6 @@ function initHeaderFade() {
 
   function requestHeaderUpdate() {
     if (ticking) return;
-
     ticking = true;
     window.requestAnimationFrame(updateHeaderState);
   }
@@ -42,11 +41,6 @@ function initHeaderFade() {
   window.addEventListener("resize", requestHeaderUpdate);
 }
 
-/*
-  ROLAGEM SUAVE
-  Para adicionar novos links internos, use href="#id-da-secao" no HTML.
-  O deslocamento do alvo e definido no reset.css com :target.
-*/
 function initSmoothAnchors() {
   const internalLinks = document.querySelectorAll('a[href^="#"]');
 
@@ -79,14 +73,87 @@ function getInitials(name, email) {
   return source.slice(0, 2).toUpperCase();
 }
 
+function readJsonStorage(key, fallback = []) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) || 'null');
+    return Array.isArray(value) ? value : fallback;
+  } catch (_) {
+    return fallback;
+  }
+}
+
+function getFriendlyPageTitle() {
+  const raw = document.title.replace(/\s*\|\s*EtherCraft\s*/i, '').replace(/EtherCraft\s*\|\s*/i, '').trim();
+  return raw || 'EtherCraft';
+}
+
+function initVisitHistory() {
+  const url = new URL(window.location.href);
+  if (!url.pathname.includes('/EtherCraft/')) return;
+  if (url.pathname.endsWith('/login.html') || url.pathname.endsWith('/perfil.html')) return;
+
+  const item = {
+    title: getFriendlyPageTitle(),
+    url: `${url.pathname}${url.hash || ''}`,
+    visitedAt: Date.now()
+  };
+
+  const recent = readJsonStorage(ETHERCRAFT_RECENT_KEY)
+    .filter(entry => entry?.url && entry.url !== item.url);
+
+  recent.unshift(item);
+  localStorage.setItem(ETHERCRAFT_RECENT_KEY, JSON.stringify(recent.slice(0, 12)));
+}
+
+function registerActivityTracking(auth, signOut) {
+  let lastWrite = 0;
+
+  const markActivity = () => {
+    const now = Date.now();
+    if (now - lastWrite < 30000) return;
+    lastWrite = now;
+    localStorage.setItem(ETHERCRAFT_ACTIVITY_KEY, String(now));
+  };
+
+  const checkInactivity = async () => {
+    if (!auth.currentUser) return;
+    const lastActivity = Number(localStorage.getItem(ETHERCRAFT_ACTIVITY_KEY) || 0);
+
+    if (!lastActivity) {
+      markActivity();
+      return;
+    }
+
+    if (Date.now() - lastActivity >= ETHERCRAFT_INACTIVITY_LIMIT) {
+      localStorage.removeItem(ETHERCRAFT_ACTIVITY_KEY);
+      await signOut(auth);
+      return;
+    }
+  };
+
+  ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach(eventName => {
+    window.addEventListener(eventName, markActivity, { passive: true });
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) checkInactivity();
+  });
+
+  window.setInterval(checkInactivity, 5 * 60 * 1000);
+  checkInactivity();
+}
+
 async function initProfileShortcut() {
   try {
     const prefix = getSitePrefix();
     const firebaseUrl = new URL(`${prefix}js/firebase.js`, window.location.href).href;
-    const { auth, firebaseConfigured } = await import(firebaseUrl);
+    const { auth, firebaseConfigured, authPersistenceReady } = await import(firebaseUrl);
     if (!firebaseConfigured || !auth) return;
 
+    await authPersistenceReady;
+
     const authModule = await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js');
+    registerActivityTracking(auth, authModule.signOut);
 
     authModule.onAuthStateChanged(auth, (user) => {
       let shortcut = document.getElementById('profile-shortcut');
@@ -94,6 +161,10 @@ async function initProfileShortcut() {
       if (!user) {
         shortcut?.remove();
         return;
+      }
+
+      if (!localStorage.getItem(ETHERCRAFT_ACTIVITY_KEY)) {
+        localStorage.setItem(ETHERCRAFT_ACTIVITY_KEY, String(Date.now()));
       }
 
       if (!shortcut) {
@@ -129,3 +200,8 @@ async function initProfileShortcut() {
     console.warn('EtherCraft: não foi possível carregar o atalho de perfil.', error);
   }
 }
+
+window.EtherCraftProfileData = {
+  recentKey: ETHERCRAFT_RECENT_KEY,
+  favoritesKey: ETHERCRAFT_FAVORITES_KEY
+};
