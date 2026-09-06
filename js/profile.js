@@ -12,20 +12,57 @@ const profileLoading = document.getElementById('profile-loading');
 const profileMessage = document.getElementById('profile-message');
 const avatar = document.getElementById('profile-avatar');
 const avatarFallback = document.getElementById('profile-avatar-fallback');
+const editAvatarButton = document.getElementById('edit-avatar');
+const avatarDialog = document.getElementById('avatar-dialog');
+const avatarEmojiGrid = document.getElementById('avatar-emoji-grid');
+const avatarPhotoGrid = document.getElementById('avatar-photo-grid');
+const avatarPhotoEmpty = document.getElementById('avatar-photo-empty');
+const avatarCloseButton = document.getElementById('avatar-close');
 const nameText = document.getElementById('profile-name');
+const minecraftNameText = document.getElementById('profile-minecraft-name');
 const emailText = document.getElementById('profile-email');
 const verificationText = document.getElementById('profile-verification');
 const form = document.getElementById('profile-form');
 const nameInput = document.getElementById('profile-display-name');
-const photoInput = document.getElementById('profile-photo-url');
+const minecraftNameInput = document.getElementById('profile-minecraft-input');
 const logoutButton = document.getElementById('profile-logout');
-const removePhotoButton = document.getElementById('remove-photo');
 const favoritesContainer = document.getElementById('profile-favorites');
 const recentContainer = document.getElementById('profile-recent');
 
 const RECENT_KEY = 'ethercraftRecentPages';
 const FAVORITES_KEY = 'ethercraftFavoritePages';
 const ACTIVITY_KEY = 'ethercraftLastActivity';
+const PROFILE_KEY_PREFIX = 'ethercraftUserProfile:';
+
+const EMOJI_AVATARS = ['🧙','⚔️','🛡️','🏹','🪄','🐉','🐺','🦊','🐱','🐸','👑','💎','🔥','❄️','🌿','⚡','🌙','⭐','☁️','🧪'];
+
+// Quando você adicionar PNGs oficiais, coloque os caminhos aqui.
+// Exemplo: '../assets/images/avatars/mago.png'
+const PHOTO_AVATARS = [];
+
+let currentLocalProfile = null;
+let pendingAvatar = null;
+
+function profileStorageKey(uid) {
+  return `${PROFILE_KEY_PREFIX}${uid}`;
+}
+
+function readLocalProfile(uid) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(profileStorageKey(uid)) || '{}');
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (_) {
+    return {};
+  }
+}
+
+function writeLocalProfile(uid, data) {
+  const merged = { ...readLocalProfile(uid), ...data };
+  localStorage.setItem(profileStorageKey(uid), JSON.stringify(merged));
+  currentLocalProfile = merged;
+  window.dispatchEvent(new CustomEvent('ethercraft:profile-updated', { detail: merged }));
+  return merged;
+}
 
 function showMessage(text, kind = 'info') {
   if (!profileMessage) return;
@@ -43,25 +80,19 @@ function clearMessage() {
   profileMessage.classList.remove('is-error', 'is-success');
 }
 
-function initials(name, email) {
-  const source = (name || email || 'J').trim();
-  const parts = source.split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-  return source.slice(0, 2).toUpperCase();
-}
+function renderAvatarChoice(choice) {
+  const selected = choice || { type: 'emoji', value: '🧙' };
 
-function renderAvatar(user) {
-  avatarFallback.textContent = initials(user.displayName, user.email);
-
-  if (user.photoURL) {
-    avatar.src = user.photoURL;
-    avatar.alt = `Foto de perfil de ${user.displayName || 'jogador'}`;
+  if (selected.type === 'photo' && selected.value) {
+    avatar.src = selected.value;
+    avatar.alt = 'Avatar do jogador';
     avatar.hidden = false;
     avatarFallback.hidden = true;
   } else {
     avatar.removeAttribute('src');
     avatar.hidden = true;
     avatarFallback.hidden = false;
+    avatarFallback.textContent = selected.value || '🧙';
   }
 }
 
@@ -89,10 +120,7 @@ function makeAbsoluteSiteUrl(path) {
 function formatVisit(timestamp) {
   if (!timestamp) return '';
   return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
+    day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
   }).format(new Date(timestamp));
 }
 
@@ -103,17 +131,9 @@ function isFavorite(url) {
 function toggleFavorite(item) {
   let favorites = readList(FAVORITES_KEY).filter(entry => entry?.url);
   const exists = favorites.some(entry => entry.url === item.url);
-
-  if (exists) {
-    favorites = favorites.filter(entry => entry.url !== item.url);
-  } else {
-    favorites.unshift({
-      title: item.title || 'Página do EtherCraft',
-      url: item.url,
-      addedAt: Date.now()
-    });
-  }
-
+  favorites = exists
+    ? favorites.filter(entry => entry.url !== item.url)
+    : [{ title: item.title || 'Página do EtherCraft', url: item.url, addedAt: Date.now() }, ...favorites];
   writeList(FAVORITES_KEY, favorites.slice(0, 12));
   renderNavigationData();
 }
@@ -149,7 +169,6 @@ function renderPageList(container, items, emptyText, showVisitedAt = false) {
     favoriteButton.className = 'profile-favorite-toggle';
     favoriteButton.textContent = isFavorite(item.url) ? '★' : '☆';
     favoriteButton.setAttribute('aria-label', isFavorite(item.url) ? 'Remover dos favoritos' : 'Adicionar aos favoritos');
-    favoriteButton.title = favoriteButton.getAttribute('aria-label');
     favoriteButton.addEventListener('click', () => toggleFavorite(item));
 
     row.append(link, favoriteButton);
@@ -158,24 +177,62 @@ function renderPageList(container, items, emptyText, showVisitedAt = false) {
 }
 
 function renderNavigationData() {
-  const favorites = readList(FAVORITES_KEY);
-  const recent = readList(RECENT_KEY).slice(0, 6);
+  renderPageList(favoritesContainer, readList(FAVORITES_KEY), 'Você ainda não favoritou nenhuma página.');
+  renderPageList(recentContainer, readList(RECENT_KEY).slice(0, 6), 'Nenhuma página recente registrada ainda.', true);
+}
 
-  renderPageList(favoritesContainer, favorites, 'Você ainda não favoritou nenhuma página.');
-  renderPageList(recentContainer, recent, 'Nenhuma página recente registrada ainda.', true);
+function renderAvatarOptions() {
+  avatarEmojiGrid.replaceChildren();
+  EMOJI_AVATARS.forEach(value => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'avatar-option';
+    button.textContent = value;
+    button.setAttribute('aria-label', `Usar ${value} como avatar`);
+    if (pendingAvatar?.type === 'emoji' && pendingAvatar.value === value) button.classList.add('is-selected');
+    button.addEventListener('click', () => {
+      pendingAvatar = { type: 'emoji', value };
+      renderAvatarOptions();
+    });
+    avatarEmojiGrid.appendChild(button);
+  });
+
+  avatarPhotoGrid.replaceChildren();
+  PHOTO_AVATARS.forEach(path => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'avatar-option';
+    if (pendingAvatar?.type === 'photo' && pendingAvatar.value === path) button.classList.add('is-selected');
+    const image = document.createElement('img');
+    image.src = path;
+    image.alt = 'Avatar oficial do EtherCraft';
+    button.appendChild(image);
+    button.addEventListener('click', () => {
+      pendingAvatar = { type: 'photo', value: path };
+      renderAvatarOptions();
+    });
+    avatarPhotoGrid.appendChild(button);
+  });
+
+  avatarPhotoEmpty.hidden = PHOTO_AVATARS.length > 0;
 }
 
 function renderUser(user) {
+  currentLocalProfile = readLocalProfile(user.uid);
+  if (!currentLocalProfile.avatar) {
+    currentLocalProfile.avatar = { type: 'emoji', value: '🧙' };
+    writeLocalProfile(user.uid, currentLocalProfile);
+  }
+
   nameText.textContent = user.displayName || 'Jogador';
+  minecraftNameText.textContent = `Minecraft: ${currentLocalProfile.minecraftName || '—'}`;
   emailText.textContent = user.email || '';
-  verificationText.textContent = user.emailVerified
-    ? 'E-mail verificado ✓'
-    : 'E-mail ainda não verificado';
+  verificationText.textContent = user.emailVerified ? 'E-mail verificado ✓' : 'E-mail ainda não verificado';
   verificationText.classList.toggle('is-verified', user.emailVerified);
 
   nameInput.value = user.displayName || '';
-  photoInput.value = user.photoURL || '';
-  renderAvatar(user);
+  minecraftNameInput.value = currentLocalProfile.minecraftName || '';
+  renderAvatarChoice(currentLocalProfile.avatar);
   renderNavigationData();
 
   profileLoading.hidden = true;
@@ -186,6 +243,23 @@ function renderUser(user) {
 avatar?.addEventListener('error', () => {
   avatar.hidden = true;
   avatarFallback.hidden = false;
+  avatarFallback.textContent = '🧙';
+});
+
+editAvatarButton?.addEventListener('click', () => {
+  if (!auth?.currentUser) return;
+  pendingAvatar = currentLocalProfile?.avatar || { type: 'emoji', value: '🧙' };
+  renderAvatarOptions();
+  avatarDialog.showModal();
+});
+
+avatarCloseButton?.addEventListener('click', () => {
+  if (!auth?.currentUser) return;
+  const avatarChoice = pendingAvatar || { type: 'emoji', value: '🧙' };
+  currentLocalProfile = writeLocalProfile(auth.currentUser.uid, { avatar: avatarChoice });
+  renderAvatarChoice(avatarChoice);
+  avatarDialog.close();
+  showMessage('Foto de perfil atualizada.', 'success');
 });
 
 if (!firebaseConfigured || !auth) {
@@ -193,19 +267,13 @@ if (!firebaseConfigured || !auth) {
   showMessage('Não foi possível conectar ao Firebase.', 'error');
 } else {
   await authPersistenceReady;
-
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       window.location.replace('login.html');
       return;
     }
 
-    try {
-      await reload(user);
-    } catch (_) {
-      // Mantém os dados em cache caso a atualização remota falhe momentaneamente.
-    }
-
+    try { await reload(user); } catch (_) {}
     renderUser(auth.currentUser || user);
   });
 }
@@ -216,15 +284,13 @@ form?.addEventListener('submit', async (event) => {
 
   clearMessage();
   const displayName = nameInput.value.trim();
-  const photoURL = photoInput.value.trim();
+  const minecraftName = minecraftNameInput.value.trim();
   const submitButton = form.querySelector('button[type="submit"]');
 
   submitButton.disabled = true;
   try {
-    await updateProfile(auth.currentUser, {
-      displayName,
-      photoURL: photoURL || null
-    });
+    await updateProfile(auth.currentUser, { displayName, photoURL: null });
+    currentLocalProfile = writeLocalProfile(auth.currentUser.uid, { minecraftName });
     await reload(auth.currentUser);
     renderUser(auth.currentUser);
     showMessage('Perfil atualizado com sucesso.', 'success');
@@ -232,23 +298,6 @@ form?.addEventListener('submit', async (event) => {
     showMessage(`Não foi possível atualizar o perfil. (${error?.code || 'erro desconhecido'})`, 'error');
   } finally {
     submitButton.disabled = false;
-  }
-});
-
-removePhotoButton?.addEventListener('click', async () => {
-  if (!auth?.currentUser) return;
-
-  clearMessage();
-  removePhotoButton.disabled = true;
-  try {
-    await updateProfile(auth.currentUser, { photoURL: null });
-    photoInput.value = '';
-    renderUser(auth.currentUser);
-    showMessage('Foto de perfil removida.', 'success');
-  } catch (error) {
-    showMessage(`Não foi possível remover a foto. (${error?.code || 'erro desconhecido'})`, 'error');
-  } finally {
-    removePhotoButton.disabled = false;
   }
 });
 
