@@ -1,0 +1,29 @@
+[
+  {
+    "id": "frost-realm",
+    "titulo": "Frost Realm",
+    "subtitulo": "Dimensão congelada",
+    "icone": "❄️",
+    "imagem": "",
+    "descricao": "Área dedicada às informações da dimensão Frost: acesso, recursos, perigos, criaturas e conteúdos próprios.",
+    "destaques": ["Exploração", "Recursos", "Criaturas"]
+  },
+  {
+    "id": "heat-realm",
+    "titulo": "Heat / Infernal Realm",
+    "subtitulo": "Dimensão hostil",
+    "icone": "🔥",
+    "imagem": "",
+    "descricao": "Área destinada às informações do reino de calor, incluindo acesso, ameaças e recursos exclusivos.",
+    "destaques": ["Exploração", "Perigos", "Recursos"]
+  },
+  {
+    "id": "aether",
+    "titulo": "Aether",
+    "subtitulo": "Dimensão elevada",
+    "icone": "☁️",
+    "imagem": "",
+    "descricao": "Área destinada às informações do Aether e de seus conteúdos de exploração acima das nuvens.",
+    "destaques": ["Exploração", "Portais", "Descobertas"]
+  }
+]
