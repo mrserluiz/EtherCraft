@@ -29,6 +29,9 @@ const logoutButton = document.getElementById('profile-logout');
 const favoritesContainer = document.getElementById('profile-favorites');
 const recentContainer = document.getElementById('profile-recent');
 
+// A Wiki já existe no menu principal; remove o antigo atalho redundante do perfil.
+document.querySelector('.profile-link[href="wiki.html"]')?.remove();
+
 const RECENT_KEY = 'ethercraftRecentPages';
 const FAVORITES_KEY = 'ethercraftFavoritePages';
 const ACTIVITY_KEY = 'ethercraftLastActivity';
