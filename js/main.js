@@ -13,6 +13,7 @@ const ETHERCRAFT_INACTIVITY_LIMIT = 12 * 60 * 60 * 1000;
 const ETHERCRAFT_ACTIVITY_KEY = 'ethercraftLastActivity';
 const ETHERCRAFT_RECENT_KEY = 'ethercraftRecentPages';
 const ETHERCRAFT_FAVORITES_KEY = 'ethercraftFavoritePages';
+const ETHERCRAFT_PROFILE_PREFIX = 'ethercraftUserProfile:';
 
 function initHeaderFade() {
   const header = document.querySelector("[data-scroll-header]");
@@ -24,7 +25,6 @@ function initHeaderFade() {
   function updateHeaderState() {
     const fadeLimit = window.innerHeight * fadeLimitRatio;
     const shouldHide = window.scrollY > fadeLimit;
-
     header.classList.toggle("is-hidden", shouldHide);
     document.body.classList.toggle("is-header-hidden", shouldHide);
     ticking = false;
@@ -43,15 +43,12 @@ function initHeaderFade() {
 
 function initSmoothAnchors() {
   const internalLinks = document.querySelectorAll('a[href^="#"]');
-
   internalLinks.forEach(link => {
     link.addEventListener("click", event => {
       const targetId = link.getAttribute("href");
       if (!targetId || targetId === "#") return;
-
       const target = document.querySelector(targetId);
       if (!target) return;
-
       event.preventDefault();
       target.scrollIntoView({ behavior: "smooth", block: "start" });
       history.pushState(null, "", targetId);
@@ -82,6 +79,15 @@ function readJsonStorage(key, fallback = []) {
   }
 }
 
+function readUserProfile(uid) {
+  try {
+    const value = JSON.parse(localStorage.getItem(`${ETHERCRAFT_PROFILE_PREFIX}${uid}`) || '{}');
+    return value && typeof value === 'object' ? value : {};
+  } catch (_) {
+    return {};
+  }
+}
+
 function getFriendlyPageTitle() {
   const raw = document.title.replace(/\s*\|\s*EtherCraft\s*/i, '').replace(/EtherCraft\s*\|\s*/i, '').trim();
   return raw || 'EtherCraft';
@@ -98,9 +104,7 @@ function initVisitHistory() {
     visitedAt: Date.now()
   };
 
-  const recent = readJsonStorage(ETHERCRAFT_RECENT_KEY)
-    .filter(entry => entry?.url && entry.url !== item.url);
-
+  const recent = readJsonStorage(ETHERCRAFT_RECENT_KEY).filter(entry => entry?.url && entry.url !== item.url);
   recent.unshift(item);
   localStorage.setItem(ETHERCRAFT_RECENT_KEY, JSON.stringify(recent.slice(0, 12)));
 }
@@ -118,16 +122,13 @@ function registerActivityTracking(auth, signOut) {
   const checkInactivity = async () => {
     if (!auth.currentUser) return;
     const lastActivity = Number(localStorage.getItem(ETHERCRAFT_ACTIVITY_KEY) || 0);
-
     if (!lastActivity) {
       markActivity();
       return;
     }
-
     if (Date.now() - lastActivity >= ETHERCRAFT_INACTIVITY_LIMIT) {
       localStorage.removeItem(ETHERCRAFT_ACTIVITY_KEY);
       await signOut(auth);
-      return;
     }
   };
 
@@ -143,6 +144,34 @@ function registerActivityTracking(auth, signOut) {
   checkInactivity();
 }
 
+function renderProfileShortcut(shortcut, user) {
+  shortcut.replaceChildren();
+  const localProfile = readUserProfile(user.uid);
+  const avatarChoice = localProfile.avatar;
+
+  if (avatarChoice?.type === 'photo' && avatarChoice.value) {
+    const image = document.createElement('img');
+    image.src = avatarChoice.value;
+    image.alt = '';
+    image.addEventListener('error', () => {
+      image.remove();
+      const fallback = document.createElement('span');
+      fallback.className = 'profile-shortcut-fallback';
+      fallback.textContent = '🧙';
+      shortcut.appendChild(fallback);
+    });
+    shortcut.appendChild(image);
+    return;
+  }
+
+  const fallback = document.createElement('span');
+  fallback.className = 'profile-shortcut-fallback';
+  fallback.textContent = avatarChoice?.type === 'emoji' && avatarChoice.value
+    ? avatarChoice.value
+    : getInitials(user.displayName, user.email);
+  shortcut.appendChild(fallback);
+}
+
 async function initProfileShortcut() {
   try {
     const prefix = getSitePrefix();
@@ -151,11 +180,13 @@ async function initProfileShortcut() {
     if (!firebaseConfigured || !auth) return;
 
     await authPersistenceReady;
-
     const authModule = await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js');
     registerActivityTracking(auth, authModule.signOut);
 
+    let activeUser = null;
+
     authModule.onAuthStateChanged(auth, (user) => {
+      activeUser = user;
       let shortcut = document.getElementById('profile-shortcut');
 
       if (!user) {
@@ -177,24 +208,18 @@ async function initProfileShortcut() {
         document.body.appendChild(shortcut);
       }
 
-      shortcut.replaceChildren();
+      renderProfileShortcut(shortcut, user);
+    });
 
-      const fallback = document.createElement('span');
-      fallback.className = 'profile-shortcut-fallback';
-      fallback.textContent = getInitials(user.displayName, user.email);
+    window.addEventListener('ethercraft:profile-updated', () => {
+      const shortcut = document.getElementById('profile-shortcut');
+      if (shortcut && activeUser) renderProfileShortcut(shortcut, activeUser);
+    });
 
-      if (user.photoURL) {
-        const image = document.createElement('img');
-        image.src = user.photoURL;
-        image.alt = '';
-        image.addEventListener('error', () => {
-          image.remove();
-          if (!shortcut.contains(fallback)) shortcut.appendChild(fallback);
-        });
-        shortcut.appendChild(image);
-      } else {
-        shortcut.appendChild(fallback);
-      }
+    window.addEventListener('storage', (event) => {
+      if (!activeUser || !event.key?.startsWith(ETHERCRAFT_PROFILE_PREFIX)) return;
+      const shortcut = document.getElementById('profile-shortcut');
+      if (shortcut) renderProfileShortcut(shortcut, activeUser);
     });
   } catch (error) {
     console.warn('EtherCraft: não foi possível carregar o atalho de perfil.', error);
