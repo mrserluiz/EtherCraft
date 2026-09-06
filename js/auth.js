@@ -76,6 +76,7 @@ function publishAuthState(user) {
     uid: user.uid,
     email: user.email,
     displayName: user.displayName || '',
+    photoURL: user.photoURL || '',
     emailVerified: user.emailVerified
   } : null;
 
@@ -100,6 +101,10 @@ function renderUser(user) {
   if (resendVerificationButton) {
     resendVerificationButton.hidden = user.emailVerified;
   }
+}
+
+function goToProfile() {
+  window.location.href = 'perfil.html';
 }
 
 if (!firebaseConfigured || !auth) {
@@ -136,8 +141,8 @@ loginForm?.addEventListener('submit', async (event) => {
   setBusy(loginForm, true);
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    showMessage('Login realizado com sucesso.', 'success');
     loginForm.reset();
+    goToProfile();
   } catch (error) {
     showMessage(friendlyError(error), 'error');
   } finally {
@@ -169,8 +174,8 @@ registerForm?.addEventListener('submit', async (event) => {
     await credential.user.reload();
     publishAuthState(auth.currentUser);
     renderUser(auth.currentUser);
-    showMessage('Conta criada. Enviamos um e-mail de verificação.', 'success');
     registerForm.reset();
+    goToProfile();
   } catch (error) {
     showMessage(friendlyError(error), 'error');
   } finally {
@@ -209,7 +214,6 @@ logoutButton?.addEventListener('click', async () => {
   if (!auth) return;
   try {
     await signOut(auth);
-    showMessage('Você saiu da conta.', 'success');
     switchTab('login');
   } catch (error) {
     showMessage(friendlyError(error), 'error');
