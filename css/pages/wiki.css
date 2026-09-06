@@ -219,6 +219,12 @@
   transform: scale(1.25);
 }
 
+.wiki-card.is-random-pick {
+  transform: translateY(-5px) scale(1.015);
+  border-color: rgba(227, 200, 255, 0.8);
+  box-shadow: 0 0 0 3px rgba(141, 101, 209, 0.2), 0 18px 42px rgba(10, 4, 22, 0.42);
+}
+
 .wiki-card.is-hidden {
   display: none;
 }
