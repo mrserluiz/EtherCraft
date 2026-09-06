@@ -1,25 +1,28 @@
 // EtherCraft - Firebase
 // Etapa 1: Authentication por e-mail e senha.
 //
-// IMPORTANTE:
-// 1. No Firebase Console, registre um aplicativo Web para o projeto EtherCraft.
-// 2. Copie SOMENTE os valores do objeto firebaseConfig fornecido pelo Firebase.
-// 3. Substitua os valores abaixo. O Firebase Web config não é uma senha de administrador.
+// Este arquivo usa o SDK modular do Firebase diretamente pelo navegador.
+// O objeto firebaseConfig identifica o projeto Web; a segurança real fica no
+// Firebase Authentication e, na Etapa 2, nas regras do Firestore.
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 
 export const firebaseConfig = {
-  apiKey: 'COLE_AQUI',
-  authDomain: 'COLE_AQUI',
-  projectId: 'COLE_AQUI',
-  storageBucket: 'COLE_AQUI',
-  messagingSenderId: 'COLE_AQUI',
-  appId: 'COLE_AQUI'
+  apiKey: 'AIzaSyBShJWCeG1Z82GXiGRBr6zwv_y568Sx88I',
+  authDomain: 'ethercraft-378c3.firebaseapp.com',
+  projectId: 'ethercraft-378c3',
+  storageBucket: 'ethercraft-378c3.firebasestorage.app',
+  messagingSenderId: '930179523246',
+  appId: '1:930179523246:web:64e7323ef72ac05555833f',
+  measurementId: 'G-76783CTPMB'
 };
 
-export const firebaseConfigured = Object.values(firebaseConfig).every(
-  (value) => value && value !== 'COLE_AQUI'
+export const firebaseConfigured = Boolean(
+  firebaseConfig.apiKey &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.projectId &&
+  firebaseConfig.appId
 );
 
 export const app = firebaseConfigured ? initializeApp(firebaseConfig) : null;
