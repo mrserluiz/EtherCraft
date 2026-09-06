@@ -1,10 +1,17 @@
-import { auth, firebaseConfigured, authPersistenceReady } from './firebase.js';
+import { auth, db, firebaseConfigured, authPersistenceReady } from './firebase.js';
 import {
   onAuthStateChanged,
   signOut,
   updateProfile,
   reload
 } from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 
 const profileShell = document.getElementById('profile-shell');
 const profileDashboard = document.getElementById('profile-dashboard');
@@ -29,43 +36,17 @@ const logoutButton = document.getElementById('profile-logout');
 const favoritesContainer = document.getElementById('profile-favorites');
 const recentContainer = document.getElementById('profile-recent');
 
-// A Wiki já existe no menu principal; remove o antigo atalho redundante do perfil.
 document.querySelector('.profile-link[href="wiki.html"]')?.remove();
 
 const RECENT_KEY = 'ethercraftRecentPages';
 const FAVORITES_KEY = 'ethercraftFavoritePages';
 const ACTIVITY_KEY = 'ethercraftLastActivity';
 const PROFILE_KEY_PREFIX = 'ethercraftUserProfile:';
-
 const EMOJI_AVATARS = ['🧙','⚔️','🛡️','🏹','🪄','🐉','🐺','🦊','🐱','🐸','👑','💎','🔥','❄️','🌿','⚡','🌙','⭐','☁️','🧪'];
-
-// Quando você adicionar PNGs oficiais, coloque os caminhos aqui.
-// Exemplo: '../assets/images/avatars/mago.png'
 const PHOTO_AVATARS = [];
 
-let currentLocalProfile = null;
+let currentProfile = null;
 let pendingAvatar = null;
-
-function profileStorageKey(uid) {
-  return `${PROFILE_KEY_PREFIX}${uid}`;
-}
-
-function readLocalProfile(uid) {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(profileStorageKey(uid)) || '{}');
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch (_) {
-    return {};
-  }
-}
-
-function writeLocalProfile(uid, data) {
-  const merged = { ...readLocalProfile(uid), ...data };
-  localStorage.setItem(profileStorageKey(uid), JSON.stringify(merged));
-  currentLocalProfile = merged;
-  window.dispatchEvent(new CustomEvent('ethercraft:profile-updated', { detail: merged }));
-  return merged;
-}
 
 function showMessage(text, kind = 'info') {
   if (!profileMessage) return;
@@ -83,9 +64,42 @@ function clearMessage() {
   profileMessage.classList.remove('is-error', 'is-success');
 }
 
+function readLocalJson(key, fallback) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || 'null');
+    return parsed ?? fallback;
+  } catch (_) {
+    return fallback;
+  }
+}
+
+function localProfile(uid) {
+  return readLocalJson(`${PROFILE_KEY_PREFIX}${uid}`, {});
+}
+
+async function ensureFirestoreProfile(user) {
+  const ref = doc(db, 'usuarios', user.uid);
+  const snap = await getDoc(ref);
+  if (snap.exists()) return snap.data();
+
+  const legacy = localProfile(user.uid);
+  const data = {
+    nome: user.displayName || 'Jogador',
+    email: user.email || '',
+    minecraftNick: legacy.minecraftName || '',
+    avatar: legacy.avatar || { type: 'emoji', value: '🧙' },
+    role: 'player',
+    favoritos: readLocalJson(FAVORITES_KEY, []),
+    recentes: readLocalJson(RECENT_KEY, []),
+    criadoEm: serverTimestamp()
+  };
+  await setDoc(ref, data);
+  const created = await getDoc(ref);
+  return created.data();
+}
+
 function renderAvatarChoice(choice) {
   const selected = choice || { type: 'emoji', value: '🧙' };
-
   if (selected.type === 'photo' && selected.value) {
     avatar.src = selected.value;
     avatar.alt = 'Avatar do jogador';
@@ -99,25 +113,9 @@ function renderAvatarChoice(choice) {
   }
 }
 
-function readList(key) {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(key) || '[]');
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (_) {
-    return [];
-  }
-}
-
-function writeList(key, list) {
-  localStorage.setItem(key, JSON.stringify(list));
-}
-
 function makeAbsoluteSiteUrl(path) {
-  try {
-    return new URL(path, `${window.location.origin}/`).href;
-  } catch (_) {
-    return path;
-  }
+  try { return new URL(path, `${window.location.origin}/`).href; }
+  catch (_) { return path; }
 }
 
 function formatVisit(timestamp) {
@@ -128,23 +126,25 @@ function formatVisit(timestamp) {
 }
 
 function isFavorite(url) {
-  return readList(FAVORITES_KEY).some(item => item?.url === url);
+  return (currentProfile?.favoritos || []).some(item => item?.url === url);
 }
 
-function toggleFavorite(item) {
-  let favorites = readList(FAVORITES_KEY).filter(entry => entry?.url);
+async function toggleFavorite(item) {
+  if (!auth?.currentUser || !currentProfile) return;
+  let favorites = (currentProfile.favoritos || []).filter(entry => entry?.url);
   const exists = favorites.some(entry => entry.url === item.url);
   favorites = exists
     ? favorites.filter(entry => entry.url !== item.url)
     : [{ title: item.title || 'Página do EtherCraft', url: item.url, addedAt: Date.now() }, ...favorites];
-  writeList(FAVORITES_KEY, favorites.slice(0, 12));
+  favorites = favorites.slice(0, 12);
+  await updateDoc(doc(db, 'usuarios', auth.currentUser.uid), { favoritos: favorites });
+  currentProfile.favoritos = favorites;
   renderNavigationData();
 }
 
 function renderPageList(container, items, emptyText, showVisitedAt = false) {
   if (!container) return;
   container.replaceChildren();
-
   if (!items.length) {
     const empty = document.createElement('p');
     empty.className = 'profile-empty';
@@ -156,32 +156,33 @@ function renderPageList(container, items, emptyText, showVisitedAt = false) {
   items.forEach(item => {
     const row = document.createElement('div');
     row.className = 'profile-page-item';
-
     const link = document.createElement('a');
     link.href = makeAbsoluteSiteUrl(item.url);
     link.textContent = item.title || 'Página do EtherCraft';
-
     if (showVisitedAt && item.visitedAt) {
       const meta = document.createElement('small');
       meta.textContent = `Visitada em ${formatVisit(item.visitedAt)}`;
       link.appendChild(meta);
     }
-
     const favoriteButton = document.createElement('button');
     favoriteButton.type = 'button';
     favoriteButton.className = 'profile-favorite-toggle';
     favoriteButton.textContent = isFavorite(item.url) ? '★' : '☆';
     favoriteButton.setAttribute('aria-label', isFavorite(item.url) ? 'Remover dos favoritos' : 'Adicionar aos favoritos');
-    favoriteButton.addEventListener('click', () => toggleFavorite(item));
-
+    favoriteButton.addEventListener('click', async () => {
+      favoriteButton.disabled = true;
+      try { await toggleFavorite(item); }
+      catch (error) { showMessage(`Não foi possível atualizar favoritos. (${error?.code || 'erro'})`, 'error'); }
+      finally { favoriteButton.disabled = false; }
+    });
     row.append(link, favoriteButton);
     container.appendChild(row);
   });
 }
 
 function renderNavigationData() {
-  renderPageList(favoritesContainer, readList(FAVORITES_KEY), 'Você ainda não favoritou nenhuma página.');
-  renderPageList(recentContainer, readList(RECENT_KEY).slice(0, 6), 'Nenhuma página recente registrada ainda.', true);
+  renderPageList(favoritesContainer, currentProfile?.favoritos || [], 'Você ainda não favoritou nenhuma página.');
+  renderPageList(recentContainer, (currentProfile?.recentes || []).slice(0, 6), 'Nenhuma página recente registrada ainda.', true);
 }
 
 function renderAvatarOptions() {
@@ -191,7 +192,6 @@ function renderAvatarOptions() {
     button.type = 'button';
     button.className = 'avatar-option';
     button.textContent = value;
-    button.setAttribute('aria-label', `Usar ${value} como avatar`);
     if (pendingAvatar?.type === 'emoji' && pendingAvatar.value === value) button.classList.add('is-selected');
     button.addEventListener('click', () => {
       pendingAvatar = { type: 'emoji', value };
@@ -216,28 +216,19 @@ function renderAvatarOptions() {
     });
     avatarPhotoGrid.appendChild(button);
   });
-
   avatarPhotoEmpty.hidden = PHOTO_AVATARS.length > 0;
 }
 
 function renderUser(user) {
-  currentLocalProfile = readLocalProfile(user.uid);
-  if (!currentLocalProfile.avatar) {
-    currentLocalProfile.avatar = { type: 'emoji', value: '🧙' };
-    writeLocalProfile(user.uid, currentLocalProfile);
-  }
-
-  nameText.textContent = user.displayName || 'Jogador';
-  minecraftNameText.textContent = `Minecraft: ${currentLocalProfile.minecraftName || '—'}`;
+  nameText.textContent = user.displayName || currentProfile?.nome || 'Jogador';
+  minecraftNameText.textContent = `Minecraft: ${currentProfile?.minecraftNick || '—'}`;
   emailText.textContent = user.email || '';
   verificationText.textContent = user.emailVerified ? 'E-mail verificado ✓' : 'E-mail ainda não verificado';
   verificationText.classList.toggle('is-verified', user.emailVerified);
-
-  nameInput.value = user.displayName || '';
-  minecraftNameInput.value = currentLocalProfile.minecraftName || '';
-  renderAvatarChoice(currentLocalProfile.avatar);
+  nameInput.value = user.displayName || currentProfile?.nome || '';
+  minecraftNameInput.value = currentProfile?.minecraftNick || '';
+  renderAvatarChoice(currentProfile?.avatar);
   renderNavigationData();
-
   profileLoading.hidden = true;
   profileShell.hidden = false;
   if (profileDashboard) profileDashboard.hidden = false;
@@ -251,23 +242,32 @@ avatar?.addEventListener('error', () => {
 
 editAvatarButton?.addEventListener('click', () => {
   if (!auth?.currentUser) return;
-  pendingAvatar = currentLocalProfile?.avatar || { type: 'emoji', value: '🧙' };
+  pendingAvatar = currentProfile?.avatar || { type: 'emoji', value: '🧙' };
   renderAvatarOptions();
   avatarDialog.showModal();
 });
 
-avatarCloseButton?.addEventListener('click', () => {
+avatarCloseButton?.addEventListener('click', async () => {
   if (!auth?.currentUser) return;
   const avatarChoice = pendingAvatar || { type: 'emoji', value: '🧙' };
-  currentLocalProfile = writeLocalProfile(auth.currentUser.uid, { avatar: avatarChoice });
-  renderAvatarChoice(avatarChoice);
-  avatarDialog.close();
-  showMessage('Foto de perfil atualizada.', 'success');
+  avatarCloseButton.disabled = true;
+  try {
+    await updateDoc(doc(db, 'usuarios', auth.currentUser.uid), { avatar: avatarChoice });
+    currentProfile.avatar = avatarChoice;
+    renderAvatarChoice(avatarChoice);
+    avatarDialog.close();
+    window.dispatchEvent(new CustomEvent('ethercraft:profile-updated', { detail: currentProfile }));
+    showMessage('Foto de perfil atualizada.', 'success');
+  } catch (error) {
+    showMessage(`Não foi possível salvar o avatar. (${error?.code || 'erro'})`, 'error');
+  } finally {
+    avatarCloseButton.disabled = false;
+  }
 });
 
-if (!firebaseConfigured || !auth) {
+if (!firebaseConfigured || !auth || !db) {
   profileLoading.hidden = true;
-  showMessage('Não foi possível conectar ao Firebase.', 'error');
+  showMessage('Não foi possível conectar ao Firebase/Firestore.', 'error');
 } else {
   await authPersistenceReady;
   onAuthStateChanged(auth, async (user) => {
@@ -275,28 +275,37 @@ if (!firebaseConfigured || !auth) {
       window.location.replace('login.html');
       return;
     }
-
-    try { await reload(user); } catch (_) {}
-    renderUser(auth.currentUser || user);
+    try {
+      await reload(user);
+      currentProfile = await ensureFirestoreProfile(auth.currentUser || user);
+      renderUser(auth.currentUser || user);
+    } catch (error) {
+      profileLoading.hidden = true;
+      showMessage(`Não foi possível carregar seu perfil no Firestore. (${error?.code || 'erro'})`, 'error');
+    }
   });
 }
 
 form?.addEventListener('submit', async (event) => {
   event.preventDefault();
-  if (!auth?.currentUser) return;
-
+  if (!auth?.currentUser || !db) return;
   clearMessage();
   const displayName = nameInput.value.trim();
   const minecraftName = minecraftNameInput.value.trim();
   const submitButton = form.querySelector('button[type="submit"]');
-
   submitButton.disabled = true;
   try {
     await updateProfile(auth.currentUser, { displayName, photoURL: null });
-    currentLocalProfile = writeLocalProfile(auth.currentUser.uid, { minecraftName });
+    await updateDoc(doc(db, 'usuarios', auth.currentUser.uid), {
+      nome: displayName,
+      email: auth.currentUser.email || '',
+      minecraftNick: minecraftName
+    });
+    currentProfile.nome = displayName;
+    currentProfile.minecraftNick = minecraftName;
     await reload(auth.currentUser);
     renderUser(auth.currentUser);
-    showMessage('Perfil atualizado com sucesso.', 'success');
+    showMessage('Perfil atualizado no Firebase.', 'success');
   } catch (error) {
     showMessage(`Não foi possível atualizar o perfil. (${error?.code || 'erro desconhecido'})`, 'error');
   } finally {
