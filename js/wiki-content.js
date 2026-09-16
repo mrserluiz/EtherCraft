@@ -14,6 +14,7 @@
 
   let entries = [];
   let editingId = null;
+  let firestoreRole = 'guest';
 
   const escapeHtml = (value = '') => String(value)
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
@@ -74,11 +75,12 @@
   }
 
   function isAdmin() {
-    return window.EtherCraftAuth?.currentUser?.role === 'admin';
+    return firestoreRole === 'admin' || window.EtherCraftAuth?.currentUser?.role === 'admin';
   }
 
   function adminEditButton(id) {
-    return isAdmin() ? `<button class="wiki-entry-edit" type="button" data-edit-id="${escapeHtml(id)}">✏️ Editar</button>` : '';
+    if (!isAdmin()) return '';
+    return `<div class="wiki-entry-admin-actions"><button class="wiki-entry-edit" type="button" data-edit-id="${escapeHtml(id)}">✏️ Editar</button><button class="wiki-entry-delete" type="button" data-delete-id="${escapeHtml(id)}">🗑️ Excluir</button></div>`;
   }
 
   function renderRecipe(entry) {
@@ -128,11 +130,35 @@
     }
     root.innerHTML = entries.map(renderEntry).join('');
     root.querySelectorAll('[data-edit-id]').forEach(button => button.addEventListener('click', () => openEditor(button.dataset.editId)));
+    root.querySelectorAll('[data-delete-id]').forEach(button => button.addEventListener('click', () => deleteEntry(button.dataset.deleteId)));
   }
 
-  function syncAdminState() {
+  async function syncAdminState() {
+    try {
+      const storage = await ensureWikiStorage();
+      const api = await storage.ready;
+      firestoreRole = await api.currentRole();
+    } catch (error) {
+      firestoreRole = window.EtherCraftAuth?.currentUser?.role || 'guest';
+    }
     toolbar?.classList.toggle('is-visible', isAdmin());
     render();
+  }
+
+  async function deleteEntry(id) {
+    if (!isAdmin()) return;
+    const entry = entries.find(item => item.id === id);
+    const label = entry?.nome || entry?.titulo || id;
+    if (!window.confirm(`Excluir “${label}” da Wiki? Esta alteração será publicada para todos.`)) return;
+    try {
+      const storage = await ensureWikiStorage();
+      await storage.deleteEntry(type, id);
+      entries = entries.filter(item => item.id !== id);
+      render();
+    } catch (error) {
+      console.error('EtherCraft Wiki: falha ao excluir.', error);
+      alert(`Não foi possível excluir do Firestore. (${error?.code || error?.message || 'erro'})`);
+    }
   }
 
   function fieldsFor(entry = {}) {
