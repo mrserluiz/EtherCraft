@@ -140,6 +140,7 @@
 .wiki-admin-toolbar.is-visible { display: flex; }
 .wiki-admin-toolbar button,
 .wiki-entry-edit,
+.wiki-entry-delete,
 .wiki-editor-save {
   padding: .65rem .9rem;
   border: 1px solid var(--color-border);
@@ -148,7 +149,10 @@
   background: rgba(255,255,255,.08);
   cursor: pointer;
 }
-.wiki-entry-edit { margin-top: 1rem; }
+.wiki-entry-admin-actions { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1rem; }
+.wiki-entry-edit,
+.wiki-entry-delete { margin-top: 0; }
+.wiki-entry-delete { border-color: rgba(255,120,140,.32); background: rgba(130,25,45,.18); }
 .wiki-editor-save { font-weight: 800; background: rgba(141,101,209,.22); }
 .wiki-admin-note { width: 100%; color: var(--color-text-muted); font-size: .9rem; }
 .wiki-editor {
