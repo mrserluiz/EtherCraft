@@ -499,8 +499,8 @@
     aspect-ratio: 1412 / 833;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 5%;
-    padding: 3% 5.5% 7% 3.5%;
+    gap: 2.4%;
+    padding: 5.2% 8% 6.5% 7.5%;
     background: url("../../assets/images/wiki/livro-aberto-cortado.png?v=2") center / 100% 100% no-repeat;
   }
   .wiki-category-page-left { display: grid; grid-template-rows: 20% minmax(0, 1fr); }
