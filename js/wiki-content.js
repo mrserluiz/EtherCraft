@@ -211,28 +211,32 @@
     }).join('');
     const result = entry.resultado || {};
     return `<article class="wiki-entry recipe-entry" data-entry-id="${escapeHtml(entry.id)}">
+      <header class="wiki-entry-heading"><p class="article-kicker">Receita especial</p><h2>${escapeHtml(entry.titulo)}</h2></header>
       <div class="crafting-table" aria-label="Receita de ${escapeHtml(entry.titulo)}"><div class="crafting-title">Crafting</div><div class="crafting-layout"><div class="crafting-grid">${slots}</div><div class="crafting-arrow" aria-hidden="true">➜</div><div class="crafting-result" title="${escapeHtml(result.nome || 'Resultado')}">${imageOrFallback(result.icone, result.nome || 'Resultado', { className: 'crafting-empty', text: '★' })}</div></div></div>
-      <div class="recipe-copy"><h2>${escapeHtml(entry.titulo)}</h2><p>${escapeHtml(entry.descricao)}</p><p class="recipe-result-name">Resultado: ${escapeHtml(result.nome || 'Item')}</p>${adminEditButton(entry.id)}</div>
+      <div class="recipe-copy"><p>${escapeHtml(entry.descricao)}</p><p class="recipe-result-name">Resultado: ${escapeHtml(result.nome || 'Item')}</p>${adminEditButton(entry.id)}</div>
+      <div class="wiki-entry-continuation" aria-hidden="true"></div>
     </article>`;
   }
 
   function renderMob(entry) {
     const drop = entry.drop || {};
     return `<article class="wiki-entry bestiary-entry" data-entry-id="${escapeHtml(entry.id)}">
+      <header class="wiki-entry-heading"><p class="article-kicker">Criatura</p><h2>${escapeHtml(entry.nome)}</h2></header>
       <div class="mob-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'mob-placeholder', text: '🐲' })}</div>
-      <div class="mob-copy"><h2>${escapeHtml(entry.nome)}</h2><p>${escapeHtml(entry.descricao)}</p><div class="mob-drop"><span class="mob-drop-icon">${imageOrFallback(drop.icone, drop.nome || 'Drop', { className: 'crafting-empty', text: '◆' })}</span><span>${escapeHtml(drop.nome || 'Sem drop cadastrado')}</span></div>${adminEditButton(entry.id)}</div>
+      <div class="mob-copy"><p>${escapeHtml(entry.descricao)}</p><div class="mob-drop"><span class="mob-drop-icon">${imageOrFallback(drop.icone, drop.nome || 'Drop', { className: 'crafting-empty', text: '◆' })}</span><span>${escapeHtml(drop.nome || 'Sem drop cadastrado')}</span></div>${adminEditButton(entry.id)}</div>
+      <div class="wiki-entry-continuation" aria-hidden="true"></div>
     </article>`;
   }
 
   function renderEnchantment(entry) {
     const materials = Array.isArray(entry.materiais) ? entry.materiais : [];
     const materialIcons = materials.map(material => `<span class="enchant-material" title="${escapeHtml(material.nome || 'Equipamento')}">${imageOrFallback(material.icone, material.nome || 'Equipamento', { className: 'enchant-material-fallback', text: material.fallback || '◆' })}<span class="sr-only">${escapeHtml(material.nome || 'Equipamento')}</span></span>`).join('');
-    return `<article class="wiki-entry enchant-entry" data-entry-id="${escapeHtml(entry.id)}"><div class="enchant-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'enchant-placeholder', text: '✨' })}</div><div class="enchant-copy"><h2>${escapeHtml(entry.nome)}</h2><p>${escapeHtml(entry.descricao)}</p><div class="enchant-materials">${materialIcons || '<span class="enchant-no-materials">Compatibilidade ainda não cadastrada.</span>'}</div>${adminEditButton(entry.id)}</div></article>`;
+    return `<article class="wiki-entry enchant-entry" data-entry-id="${escapeHtml(entry.id)}"><header class="wiki-entry-heading"><p class="article-kicker">Encantamento</p><h2>${escapeHtml(entry.nome)}</h2></header><div class="enchant-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'enchant-placeholder', text: '✨' })}</div><div class="enchant-copy"><p>${escapeHtml(entry.descricao)}</p><div class="enchant-materials">${materialIcons || '<span class="enchant-no-materials">Compatibilidade ainda não cadastrada.</span>'}</div>${adminEditButton(entry.id)}</div><div class="wiki-entry-continuation" aria-hidden="true"></div></article>`;
   }
 
   function renderArticle(entry) {
     const chips = (Array.isArray(entry.destaques) ? entry.destaques : []).map(fact => `<span class="article-chip">${escapeHtml(fact)}</span>`).join('');
-    return `<article class="wiki-entry article-entry" data-entry-id="${escapeHtml(entry.id)}"><div class="article-image-box">${imageOrFallback(entry.imagem, entry.titulo, { className: 'article-placeholder', text: entry.icone || '📖' })}</div><div class="article-copy"><p class="article-kicker">${escapeHtml(entry.subtitulo || '')}</p><h2>${escapeHtml(entry.titulo)}</h2><p>${escapeHtml(entry.descricao)}</p>${chips ? `<div class="article-chips">${chips}</div>` : ''}${adminEditButton(entry.id)}</div></article>`;
+    return `<article class="wiki-entry article-entry" data-entry-id="${escapeHtml(entry.id)}"><header class="wiki-entry-heading"><p class="article-kicker">${escapeHtml(entry.subtitulo || '')}</p><h2>${escapeHtml(entry.titulo)}</h2></header><div class="article-image-box">${imageOrFallback(entry.imagem, entry.titulo, { className: 'article-placeholder', text: entry.icone || '📖' })}</div><div class="article-copy"><p>${escapeHtml(entry.descricao)}</p>${chips ? `<div class="article-chips">${chips}</div>` : ''}${adminEditButton(entry.id)}</div><div class="wiki-entry-continuation" aria-hidden="true"></div></article>`;
   }
 
   function renderEntry(entry) {

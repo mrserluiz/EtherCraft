@@ -413,15 +413,38 @@
   min-height: 0;
   aspect-ratio: auto;
   display: grid;
-  grid-template-columns: minmax(7.5rem, .72fr) minmax(0, 1.28fr);
-  align-items: center;
+  grid-template-columns: minmax(5.2rem, .28fr) minmax(0, .72fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-areas:
+    "heading heading"
+    "visual copy"
+    "continuation continuation";
+  align-items: start;
+  align-content: start;
   gap: clamp(.7rem, 1.4vw, 1.3rem);
   padding: 0;
   background: none;
   filter: none;
   overflow: visible;
 }
-.wiki-category-reading .recipe-entry { grid-template-columns: 1fr; }
+.wiki-entry-heading { grid-area: heading; min-width: 0; padding-bottom: .55rem; border-bottom: 1px solid rgba(91,58,32,.22); }
+.wiki-entry-heading h2 {
+  margin: .18rem 0 0;
+  color: #4c2b16;
+  font-family: "EtherCraft Minecraft", system-ui, sans-serif;
+  font-size: clamp(1.15rem, 1.7vw, 1.9rem);
+  line-height: 1.08;
+  letter-spacing: .025em;
+}
+.wiki-entry-continuation { grid-area: continuation; min-height: 100%; }
+.wiki-category-reading .crafting-table,
+.wiki-category-reading .mob-image-box,
+.wiki-category-reading .enchant-image-box,
+.wiki-category-reading .article-image-box { grid-area: visual; }
+.wiki-category-reading .recipe-copy,
+.wiki-category-reading .mob-copy,
+.wiki-category-reading .enchant-copy,
+.wiki-category-reading .article-copy { grid-area: copy; }
 .wiki-category-reading .crafting-table { width: min(100%, 18rem); padding: .65rem; }
 .wiki-category-reading .crafting-title { margin-bottom: .45rem; }
 .wiki-category-reading .mob-image-box,
@@ -429,13 +452,14 @@
 .wiki-category-reading .article-image-box {
   width: 100%;
   height: auto;
-  min-height: clamp(7rem, 15vw, 13rem);
+  min-height: clamp(5.5rem, 9vw, 8rem);
+  max-height: clamp(6.5rem, 11vw, 10rem);
   border: 0;
   background: transparent;
 }
 .wiki-category-reading .mob-image-box img,
 .wiki-category-reading .enchant-image-box img,
-.wiki-category-reading .article-image-box img { max-height: clamp(8rem, 18vw, 17rem); }
+.wiki-category-reading .article-image-box img { max-height: clamp(6.5rem, 11vw, 10rem); }
 .wiki-category-menu-heading {
   padding-bottom: .8rem;
   border-bottom: 3px double rgba(84,57,32,.45);
@@ -479,16 +503,16 @@
     padding: 3% 5.5% 7% 3.5%;
     background: url("../../assets/images/wiki/livro-aberto-cortado.png?v=2") center / 100% 100% no-repeat;
   }
-  .wiki-category-page-left { display: grid; grid-template-rows: 27% minmax(0, 1fr); }
+  .wiki-category-page-left { display: grid; grid-template-rows: 20% minmax(0, 1fr); }
   .wiki-category-identity { padding: 0 3% 1.5% 0; }
-  .wiki-category-reading { padding: 2% 4% 0 2%; }
+  .wiki-category-reading { padding: 1% 4% 0 2%; }
   .wiki-category-page-right { display: grid; grid-template-rows: auto minmax(0, 1fr); padding: 1% 3% 0 2%; overflow: hidden; }
 
   .wiki-category-reading .recipe-entry,
   .wiki-category-reading .bestiary-entry,
   .wiki-category-reading .enchant-entry,
   .wiki-category-reading .article-entry {
-    min-height: 0;
+    min-height: 100%;
     aspect-ratio: auto;
     padding: 0;
     background: none;
@@ -524,6 +548,8 @@
     min-height: 0;
     aspect-ratio: auto;
     grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+    grid-template-areas: "heading" "visual" "copy" "continuation";
     padding: 0;
     background: none;
     filter: none;
