@@ -506,7 +506,8 @@
   .wiki-category-page-left {
     display: grid;
     grid-template-rows: 20% minmax(0, 1fr);
-    margin-inline: 3px;
+    margin-left: 3px;
+    margin-right: -2px;
   }
   .wiki-category-identity { padding: 0 3% 1.5% 0; }
   .wiki-category-reading { padding: 1% 4% 0 2%; }
