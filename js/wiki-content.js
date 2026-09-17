@@ -14,6 +14,7 @@
 
   let entries = [];
   let editingId = null;
+  let activeEntryId = null;
   let firestoreRole = 'guest';
 
   const CLOUDINARY_CLOUD_NAME = 'uofznsju';
@@ -35,6 +36,15 @@
     receitas: 'receita', mobs: 'mob', encantamentos: 'encantamento',
     dimensoes: 'dimensão', economia: 'conteúdo', mecanicas: 'mecânica'
   }[type] || 'conteúdo';
+
+  const categoryMeta = {
+    mecanicas: { icon: '🧬', title: 'Mecânicas', eyebrow: 'Sistemas', description: 'Sistemas especiais, progressão e recursos próprios do EtherCraft.' },
+    receitas: { icon: '🛠️', title: 'Receitas', eyebrow: 'Criação', description: 'Receitas especiais, materiais e formas de criação de itens.' },
+    mobs: { icon: '🐲', title: 'Bestiário', eyebrow: 'Criaturas', description: 'Criaturas, chefes, características e recompensas encontradas pelo mundo.' },
+    dimensoes: { icon: '🌌', title: 'Dimensões', eyebrow: 'Exploração', description: 'Mundos especiais, portais, perigos e recursos exclusivos.' },
+    encantamentos: { icon: '✨', title: 'Encantamentos', eyebrow: 'Equipamentos', description: 'Efeitos especiais e os equipamentos em que podem ser aplicados.' },
+    economia: { icon: '💰', title: 'Economia', eyebrow: 'Comunidade', description: 'Comércio, recompensas, moedas e circulação de recursos.' }
+  }[type] || { icon: '📖', title: 'Wiki', eyebrow: 'Categoria', description: 'Conteúdo oficial do EtherCraft.' };
 
   function getSitePrefix() {
     const path = window.location.pathname;
@@ -201,28 +211,28 @@
     }).join('');
     const result = entry.resultado || {};
     return `<article class="wiki-entry recipe-entry" data-entry-id="${escapeHtml(entry.id)}">
-      <div class="wiki-book-page wiki-book-page-left"><div class="crafting-table" aria-label="Receita de ${escapeHtml(entry.titulo)}"><div class="crafting-title">Crafting</div><div class="crafting-layout"><div class="crafting-grid">${slots}</div><div class="crafting-arrow" aria-hidden="true">➜</div><div class="crafting-result" title="${escapeHtml(result.nome || 'Resultado')}">${imageOrFallback(result.icone, result.nome || 'Resultado', { className: 'crafting-empty', text: '★' })}</div></div></div></div>
-      <div class="wiki-book-page wiki-book-page-right"><div class="recipe-copy"><h2>${escapeHtml(entry.titulo)}</h2><p>${escapeHtml(entry.descricao)}</p><p class="recipe-result-name">Resultado: ${escapeHtml(result.nome || 'Item')}</p>${adminEditButton(entry.id)}</div></div>
+      <div class="crafting-table" aria-label="Receita de ${escapeHtml(entry.titulo)}"><div class="crafting-title">Crafting</div><div class="crafting-layout"><div class="crafting-grid">${slots}</div><div class="crafting-arrow" aria-hidden="true">➜</div><div class="crafting-result" title="${escapeHtml(result.nome || 'Resultado')}">${imageOrFallback(result.icone, result.nome || 'Resultado', { className: 'crafting-empty', text: '★' })}</div></div></div>
+      <div class="recipe-copy"><h2>${escapeHtml(entry.titulo)}</h2><p>${escapeHtml(entry.descricao)}</p><p class="recipe-result-name">Resultado: ${escapeHtml(result.nome || 'Item')}</p>${adminEditButton(entry.id)}</div>
     </article>`;
   }
 
   function renderMob(entry) {
     const drop = entry.drop || {};
     return `<article class="wiki-entry bestiary-entry" data-entry-id="${escapeHtml(entry.id)}">
-      <div class="wiki-book-page wiki-book-page-left"><div class="mob-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'mob-placeholder', text: '🐲' })}</div></div>
-      <div class="wiki-book-page wiki-book-page-right"><div class="mob-copy"><h2>${escapeHtml(entry.nome)}</h2><p>${escapeHtml(entry.descricao)}</p><div class="mob-drop"><span class="mob-drop-icon">${imageOrFallback(drop.icone, drop.nome || 'Drop', { className: 'crafting-empty', text: '◆' })}</span><span>${escapeHtml(drop.nome || 'Sem drop cadastrado')}</span></div>${adminEditButton(entry.id)}</div></div>
+      <div class="mob-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'mob-placeholder', text: '🐲' })}</div>
+      <div class="mob-copy"><h2>${escapeHtml(entry.nome)}</h2><p>${escapeHtml(entry.descricao)}</p><div class="mob-drop"><span class="mob-drop-icon">${imageOrFallback(drop.icone, drop.nome || 'Drop', { className: 'crafting-empty', text: '◆' })}</span><span>${escapeHtml(drop.nome || 'Sem drop cadastrado')}</span></div>${adminEditButton(entry.id)}</div>
     </article>`;
   }
 
   function renderEnchantment(entry) {
     const materials = Array.isArray(entry.materiais) ? entry.materiais : [];
     const materialIcons = materials.map(material => `<span class="enchant-material" title="${escapeHtml(material.nome || 'Equipamento')}">${imageOrFallback(material.icone, material.nome || 'Equipamento', { className: 'enchant-material-fallback', text: material.fallback || '◆' })}<span class="sr-only">${escapeHtml(material.nome || 'Equipamento')}</span></span>`).join('');
-    return `<article class="wiki-entry enchant-entry" data-entry-id="${escapeHtml(entry.id)}"><div class="wiki-book-page wiki-book-page-left"><div class="enchant-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'enchant-placeholder', text: '✨' })}</div></div><div class="wiki-book-page wiki-book-page-right"><div class="enchant-copy"><h2>${escapeHtml(entry.nome)}</h2><p>${escapeHtml(entry.descricao)}</p><div class="enchant-materials">${materialIcons || '<span class="enchant-no-materials">Compatibilidade ainda não cadastrada.</span>'}</div>${adminEditButton(entry.id)}</div></div></article>`;
+    return `<article class="wiki-entry enchant-entry" data-entry-id="${escapeHtml(entry.id)}"><div class="enchant-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'enchant-placeholder', text: '✨' })}</div><div class="enchant-copy"><h2>${escapeHtml(entry.nome)}</h2><p>${escapeHtml(entry.descricao)}</p><div class="enchant-materials">${materialIcons || '<span class="enchant-no-materials">Compatibilidade ainda não cadastrada.</span>'}</div>${adminEditButton(entry.id)}</div></article>`;
   }
 
   function renderArticle(entry) {
     const chips = (Array.isArray(entry.destaques) ? entry.destaques : []).map(fact => `<span class="article-chip">${escapeHtml(fact)}</span>`).join('');
-    return `<article class="wiki-entry article-entry" data-entry-id="${escapeHtml(entry.id)}"><div class="wiki-book-page wiki-book-page-left"><div class="article-image-box">${imageOrFallback(entry.imagem, entry.titulo, { className: 'article-placeholder', text: entry.icone || '📖' })}</div></div><div class="wiki-book-page wiki-book-page-right"><div class="article-copy"><p class="article-kicker">${escapeHtml(entry.subtitulo || '')}</p><h2>${escapeHtml(entry.titulo)}</h2><p>${escapeHtml(entry.descricao)}</p>${chips ? `<div class="article-chips">${chips}</div>` : ''}${adminEditButton(entry.id)}</div></div></article>`;
+    return `<article class="wiki-entry article-entry" data-entry-id="${escapeHtml(entry.id)}"><div class="article-image-box">${imageOrFallback(entry.imagem, entry.titulo, { className: 'article-placeholder', text: entry.icone || '📖' })}</div><div class="article-copy"><p class="article-kicker">${escapeHtml(entry.subtitulo || '')}</p><h2>${escapeHtml(entry.titulo)}</h2><p>${escapeHtml(entry.descricao)}</p>${chips ? `<div class="article-chips">${chips}</div>` : ''}${adminEditButton(entry.id)}</div></article>`;
   }
 
   function renderEntry(entry) {
@@ -237,7 +247,37 @@
       root.innerHTML = '<div class="wiki-empty-panel"><span>📚</span><p>Nenhum conteúdo cadastrado nesta área ainda.</p></div>';
       return;
     }
-    root.innerHTML = entries.map(renderEntry).join('');
+    const hashId = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+    const hashEntry = entries.find(item => String(item.id) === hashId || slugify(item.nome || item.titulo) === hashId);
+    const activeEntry = entries.find(item => String(item.id) === String(activeEntryId)) || hashEntry || entries[0];
+    activeEntryId = activeEntry.id;
+    const menuItems = entries.map(item => {
+      const label = item.nome || item.titulo || 'Conteúdo';
+      const slug = slugify(label);
+      const isActive = String(item.id) === String(activeEntryId);
+      return `<li><a href="#${escapeHtml(slug)}" class="wiki-category-menu-link${isActive ? ' is-active' : ''}" data-entry-select="${escapeHtml(item.id)}"${isActive ? ' aria-current="page"' : ''}>${escapeHtml(label)}</a></li>`;
+    }).join('');
+
+    root.innerHTML = `<article class="wiki-category-book">
+      <section class="wiki-category-page wiki-category-page-left" aria-label="Conteúdo de ${escapeHtml(categoryMeta.title)}">
+        <header class="wiki-category-identity">
+          <span class="wiki-category-icon" aria-hidden="true">${escapeHtml(categoryMeta.icon)}</span>
+          <span class="wiki-category-title"><small>${escapeHtml(categoryMeta.eyebrow)}</small><strong>${escapeHtml(categoryMeta.title)}</strong><span>${escapeHtml(categoryMeta.description)}</span></span>
+        </header>
+        <div class="wiki-category-reading">${renderEntry(activeEntry)}</div>
+      </section>
+      <aside class="wiki-category-page wiki-category-page-right">
+        <header class="wiki-category-menu-heading"><small>Índice da categoria</small><h2>Menu</h2></header>
+        <nav class="wiki-category-menu" aria-label="Conteúdos de ${escapeHtml(categoryMeta.title)}"><ol>${menuItems}</ol></nav>
+      </aside>
+    </article>`;
+    root.querySelectorAll('[data-entry-select]').forEach(link => link.addEventListener('click', event => {
+      event.preventDefault();
+      activeEntryId = link.dataset.entrySelect;
+      const selected = entries.find(item => String(item.id) === String(activeEntryId));
+      history.replaceState(null, '', `#${slugify(selected?.nome || selected?.titulo || activeEntryId)}`);
+      render();
+    }));
     root.querySelectorAll('[data-edit-id]').forEach(button => button.addEventListener('click', () => openEditor(button.dataset.editId)));
     root.querySelectorAll('[data-delete-id]').forEach(button => button.addEventListener('click', () => deleteEntry(button.dataset.deleteId)));
   }
