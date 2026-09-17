@@ -16,6 +16,12 @@
   let editingId = null;
   let firestoreRole = 'guest';
 
+  const CLOUDINARY_CLOUD_NAME = 'uofznsju';
+  const CLOUDINARY_UPLOAD_PRESET = 'ethercraft_wiki';
+  const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+  const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+  const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/webp', 'image/jpeg']);
+
   const escapeHtml = (value = '') => String(value)
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
@@ -78,6 +84,109 @@
     return firestoreRole === 'admin' || window.EtherCraftAuth?.currentUser?.role === 'admin';
   }
 
+  function imageField(label, name, value = '') {
+    const safeName = escapeHtml(name);
+    return `<div class="wiki-image-field">
+      <label>${escapeHtml(label)}<input name="${safeName}" value="${escapeHtml(value)}" placeholder="URL da imagem"></label>
+      <label class="wiki-upload-picker">Enviar imagem
+        <input type="file" accept=".png,.webp,.jpg,.jpeg,image/png,image/webp,image/jpeg" data-wiki-upload-for="${safeName}">
+      </label>
+      <p class="wiki-upload-status" data-wiki-upload-status="${safeName}" aria-live="polite">PNG, WEBP ou JPG, até 10 MB.</p>
+    </div>`;
+  }
+
+  function imageCollectionField(label, name, value = '') {
+    const safeName = escapeHtml(name);
+    return `<div class="wiki-image-field">
+      <label>${escapeHtml(label)}<input name="${safeName}" value="${escapeHtml(value)}" placeholder="URLs separadas por vírgula"></label>
+      <label class="wiki-upload-picker">Enviar imagens
+        <input type="file" multiple accept=".png,.webp,.jpg,.jpeg,image/png,image/webp,image/jpeg" data-wiki-upload-many-for="${safeName}">
+      </label>
+      <p class="wiki-upload-status" data-wiki-upload-status="${safeName}" aria-live="polite">Selecione uma imagem para cada item, na mesma ordem.</p>
+    </div>`;
+  }
+
+  async function sendImage(file) {
+    if (!ALLOWED_IMAGE_TYPES.has(file.type)) throw new Error('Formato não permitido. Use PNG, WEBP ou JPG.');
+    if (file.size > MAX_IMAGE_SIZE) throw new Error('A imagem deve ter no máximo 10 MB.');
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+    const response = await fetch(CLOUDINARY_UPLOAD_URL, { method: 'POST', body: formData });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok || !payload.secure_url) {
+      throw new Error(payload?.error?.message || 'O Cloudinary não concluiu o upload.');
+    }
+    return payload.secure_url;
+  }
+
+  function bindUploadFields() {
+    editorFields?.querySelectorAll('[data-wiki-upload-for]').forEach(fileInput => {
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files?.[0];
+        if (!file) return;
+
+        const targetName = fileInput.dataset.wikiUploadFor;
+        const targetInput = editorFields.querySelector(`[name="${targetName}"]`);
+        const status = editorFields.querySelector(`[data-wiki-upload-status="${targetName}"]`);
+        if (!targetInput || !status) return;
+
+        fileInput.disabled = true;
+        status.textContent = 'Enviando imagem…';
+        status.classList.remove('is-error', 'is-success');
+        try {
+          targetInput.value = await sendImage(file);
+          targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+          status.textContent = 'Imagem enviada e vinculada ao conteúdo.';
+          status.classList.add('is-success');
+        } catch (error) {
+          console.error('EtherCraft Wiki: falha no upload da imagem.', error);
+          status.textContent = error?.message || 'Não foi possível enviar a imagem.';
+          status.classList.remove('is-success');
+          status.classList.add('is-error');
+        } finally {
+          fileInput.disabled = false;
+          fileInput.value = '';
+        }
+      });
+    });
+
+    editorFields?.querySelectorAll('[data-wiki-upload-many-for]').forEach(fileInput => {
+      fileInput.addEventListener('change', async () => {
+        const files = Array.from(fileInput.files || []);
+        if (!files.length) return;
+
+        const targetName = fileInput.dataset.wikiUploadManyFor;
+        const targetInput = editorFields.querySelector(`[name="${targetName}"]`);
+        const status = editorFields.querySelector(`[data-wiki-upload-status="${targetName}"]`);
+        if (!targetInput || !status) return;
+
+        fileInput.disabled = true;
+        status.classList.remove('is-error', 'is-success');
+        try {
+          const uploadedUrls = [];
+          for (let index = 0; index < files.length; index += 1) {
+            status.textContent = `Enviando imagem ${index + 1} de ${files.length}…`;
+            uploadedUrls.push(await sendImage(files[index]));
+          }
+          targetInput.value = uploadedUrls.join(', ');
+          targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+          status.textContent = `${uploadedUrls.length} imagem(ns) enviada(s) e vinculada(s).`;
+          status.classList.add('is-success');
+        } catch (error) {
+          console.error('EtherCraft Wiki: falha no upload das imagens.', error);
+          status.textContent = error?.message || 'Não foi possível enviar as imagens.';
+          status.classList.add('is-error');
+        } finally {
+          fileInput.disabled = false;
+          fileInput.value = '';
+        }
+      });
+    });
+  }
+
   function adminEditButton(id) {
     if (!isAdmin()) return '';
     return `<div class="wiki-entry-admin-actions"><button class="wiki-entry-edit" type="button" data-edit-id="${escapeHtml(id)}">✏️ Editar</button><button class="wiki-entry-delete" type="button" data-delete-id="${escapeHtml(id)}">🗑️ Excluir</button></div>`;
@@ -92,28 +201,28 @@
     }).join('');
     const result = entry.resultado || {};
     return `<article class="wiki-entry recipe-entry" data-entry-id="${escapeHtml(entry.id)}">
-      <div class="crafting-table" aria-label="Receita de ${escapeHtml(entry.titulo)}"><div class="crafting-title">Crafting</div><div class="crafting-layout"><div class="crafting-grid">${slots}</div><div class="crafting-arrow" aria-hidden="true">➜</div><div class="crafting-result" title="${escapeHtml(result.nome || 'Resultado')}">${imageOrFallback(result.icone, result.nome || 'Resultado', { className: 'crafting-empty', text: '★' })}</div></div></div>
-      <div class="recipe-copy"><h2>${escapeHtml(entry.titulo)}</h2><p>${escapeHtml(entry.descricao)}</p><p class="recipe-result-name">Resultado: ${escapeHtml(result.nome || 'Item')}</p>${adminEditButton(entry.id)}</div>
+      <div class="wiki-book-page wiki-book-page-left"><div class="crafting-table" aria-label="Receita de ${escapeHtml(entry.titulo)}"><div class="crafting-title">Crafting</div><div class="crafting-layout"><div class="crafting-grid">${slots}</div><div class="crafting-arrow" aria-hidden="true">➜</div><div class="crafting-result" title="${escapeHtml(result.nome || 'Resultado')}">${imageOrFallback(result.icone, result.nome || 'Resultado', { className: 'crafting-empty', text: '★' })}</div></div></div></div>
+      <div class="wiki-book-page wiki-book-page-right"><div class="recipe-copy"><h2>${escapeHtml(entry.titulo)}</h2><p>${escapeHtml(entry.descricao)}</p><p class="recipe-result-name">Resultado: ${escapeHtml(result.nome || 'Item')}</p>${adminEditButton(entry.id)}</div></div>
     </article>`;
   }
 
   function renderMob(entry) {
     const drop = entry.drop || {};
     return `<article class="wiki-entry bestiary-entry" data-entry-id="${escapeHtml(entry.id)}">
-      <h2 class="mob-title-mobile">${escapeHtml(entry.nome)}</h2><div class="mob-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'mob-placeholder', text: '🐲' })}</div>
-      <div class="mob-copy"><h2 class="mob-title-desktop">${escapeHtml(entry.nome)}</h2><p>${escapeHtml(entry.descricao)}</p><div class="mob-drop"><span class="mob-drop-icon">${imageOrFallback(drop.icone, drop.nome || 'Drop', { className: 'crafting-empty', text: '◆' })}</span><span>${escapeHtml(drop.nome || 'Sem drop cadastrado')}</span></div>${adminEditButton(entry.id)}</div>
+      <div class="wiki-book-page wiki-book-page-left"><div class="mob-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'mob-placeholder', text: '🐲' })}</div></div>
+      <div class="wiki-book-page wiki-book-page-right"><div class="mob-copy"><h2>${escapeHtml(entry.nome)}</h2><p>${escapeHtml(entry.descricao)}</p><div class="mob-drop"><span class="mob-drop-icon">${imageOrFallback(drop.icone, drop.nome || 'Drop', { className: 'crafting-empty', text: '◆' })}</span><span>${escapeHtml(drop.nome || 'Sem drop cadastrado')}</span></div>${adminEditButton(entry.id)}</div></div>
     </article>`;
   }
 
   function renderEnchantment(entry) {
     const materials = Array.isArray(entry.materiais) ? entry.materiais : [];
     const materialIcons = materials.map(material => `<span class="enchant-material" title="${escapeHtml(material.nome || 'Equipamento')}">${imageOrFallback(material.icone, material.nome || 'Equipamento', { className: 'enchant-material-fallback', text: material.fallback || '◆' })}<span class="sr-only">${escapeHtml(material.nome || 'Equipamento')}</span></span>`).join('');
-    return `<article class="wiki-entry enchant-entry" data-entry-id="${escapeHtml(entry.id)}"><div class="enchant-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'enchant-placeholder', text: '✨' })}</div><div class="enchant-copy"><h2>${escapeHtml(entry.nome)}</h2><p>${escapeHtml(entry.descricao)}</p><div class="enchant-materials">${materialIcons || '<span class="enchant-no-materials">Compatibilidade ainda não cadastrada.</span>'}</div>${adminEditButton(entry.id)}</div></article>`;
+    return `<article class="wiki-entry enchant-entry" data-entry-id="${escapeHtml(entry.id)}"><div class="wiki-book-page wiki-book-page-left"><div class="enchant-image-box">${imageOrFallback(entry.imagem, entry.nome, { className: 'enchant-placeholder', text: '✨' })}</div></div><div class="wiki-book-page wiki-book-page-right"><div class="enchant-copy"><h2>${escapeHtml(entry.nome)}</h2><p>${escapeHtml(entry.descricao)}</p><div class="enchant-materials">${materialIcons || '<span class="enchant-no-materials">Compatibilidade ainda não cadastrada.</span>'}</div>${adminEditButton(entry.id)}</div></div></article>`;
   }
 
   function renderArticle(entry) {
     const chips = (Array.isArray(entry.destaques) ? entry.destaques : []).map(fact => `<span class="article-chip">${escapeHtml(fact)}</span>`).join('');
-    return `<article class="wiki-entry article-entry" data-entry-id="${escapeHtml(entry.id)}"><div class="article-image-box">${imageOrFallback(entry.imagem, entry.titulo, { className: 'article-placeholder', text: entry.icone || '📖' })}</div><div class="article-copy"><p class="article-kicker">${escapeHtml(entry.subtitulo || '')}</p><h2>${escapeHtml(entry.titulo)}</h2><p>${escapeHtml(entry.descricao)}</p>${chips ? `<div class="article-chips">${chips}</div>` : ''}${adminEditButton(entry.id)}</div></article>`;
+    return `<article class="wiki-entry article-entry" data-entry-id="${escapeHtml(entry.id)}"><div class="wiki-book-page wiki-book-page-left"><div class="article-image-box">${imageOrFallback(entry.imagem, entry.titulo, { className: 'article-placeholder', text: entry.icone || '📖' })}</div></div><div class="wiki-book-page wiki-book-page-right"><div class="article-copy"><p class="article-kicker">${escapeHtml(entry.subtitulo || '')}</p><h2>${escapeHtml(entry.titulo)}</h2><p>${escapeHtml(entry.descricao)}</p>${chips ? `<div class="article-chips">${chips}</div>` : ''}${adminEditButton(entry.id)}</div></div></article>`;
   }
 
   function renderEntry(entry) {
@@ -167,14 +276,14 @@
       const ingredients = entry.ingredientes || {};
       const slotNames = grid.map(key => key ? (ingredients[key]?.nome || key) : '');
       const slotIcons = grid.map(key => key ? (ingredients[key]?.icone || '') : '');
-      return `<label>Título<input name="titulo" required value="${escapeHtml(entry.titulo || '')}"></label><label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label><label>Nome do resultado<input name="resultadoNome" required value="${escapeHtml(entry.resultado?.nome || '')}"></label><label>Imagem do resultado (.png ou caminho)<input name="resultadoIcone" value="${escapeHtml(entry.resultado?.icone || '')}"></label><fieldset><legend>Grade 3x3</legend><div class="wiki-editor-grid">${slotNames.map((name, i) => `<div class="editor-slot-pair"><label>Slot ${i + 1} — item<input name="slot${i}" value="${escapeHtml(name)}"></label><label>Imagem<input name="slotIcon${i}" value="${escapeHtml(slotIcons[i])}"></label></div>`).join('')}</div></fieldset>`;
+      return `<label>Título<input name="titulo" required value="${escapeHtml(entry.titulo || '')}"></label><label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label><label>Nome do resultado<input name="resultadoNome" required value="${escapeHtml(entry.resultado?.nome || '')}"></label>${imageField('Imagem do resultado', 'resultadoIcone', entry.resultado?.icone || '')}<fieldset><legend>Grade 3x3</legend><div class="wiki-editor-grid">${slotNames.map((name, i) => `<div class="editor-slot-pair"><label>Slot ${i + 1} — item<input name="slot${i}" value="${escapeHtml(name)}"></label>${imageField('Imagem', `slotIcon${i}`, slotIcons[i])}</div>`).join('')}</div></fieldset>`;
     }
-    if (type === 'mobs') return `<label>Nome do mob<input name="nome" required value="${escapeHtml(entry.nome || '')}"></label><label>Imagem do mob (.png ou caminho)<input name="imagem" value="${escapeHtml(entry.imagem || '')}"></label><label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label><label>Nome do drop<input name="dropNome" value="${escapeHtml(entry.drop?.nome || '')}"></label><label>Ícone do drop (.png ou caminho)<input name="dropIcone" value="${escapeHtml(entry.drop?.icone || '')}"></label>`;
+    if (type === 'mobs') return `<label>Nome do mob<input name="nome" required value="${escapeHtml(entry.nome || '')}"></label>${imageField('Imagem do mob', 'imagem', entry.imagem || '')}<label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label><label>Nome do drop<input name="dropNome" value="${escapeHtml(entry.drop?.nome || '')}"></label>${imageField('Ícone do drop', 'dropIcone', entry.drop?.icone || '')}`;
     if (type === 'encantamentos') {
       const mats = Array.isArray(entry.materiais) ? entry.materiais : [];
-      return `<label>Nome do encantamento<input name="nome" required value="${escapeHtml(entry.nome || '')}"></label><label>Imagem/ícone principal (.png ou caminho)<input name="imagem" value="${escapeHtml(entry.imagem || '')}"></label><label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label><label>Equipamentos compatíveis — separados por vírgula<input name="materiais" value="${escapeHtml(mats.map(item => item.nome).join(', '))}"></label><label>Ícones dos equipamentos — mesma ordem, separados por vírgula<input name="materiaisIcones" value="${escapeHtml(mats.map(item => item.icone || '').join(', '))}"></label>`;
+      return `<label>Nome do encantamento<input name="nome" required value="${escapeHtml(entry.nome || '')}"></label>${imageField('Imagem/ícone principal', 'imagem', entry.imagem || '')}<label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label><label>Equipamentos compatíveis — separados por vírgula<input name="materiais" value="${escapeHtml(mats.map(item => item.nome).join(', '))}"></label>${imageCollectionField('Ícones dos equipamentos — mesma ordem', 'materiaisIcones', mats.map(item => item.icone || '').join(', '))}`;
     }
-    return `<label>Título<input name="titulo" required value="${escapeHtml(entry.titulo || '')}"></label><label>Subtítulo/categoria<input name="subtitulo" value="${escapeHtml(entry.subtitulo || '')}"></label><label>Imagem (.png ou caminho)<input name="imagem" value="${escapeHtml(entry.imagem || '')}"></label><label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label><label>Destaques — separados por vírgula<input name="destaques" value="${escapeHtml((entry.destaques || []).join(', '))}"></label>`;
+    return `<label>Título<input name="titulo" required value="${escapeHtml(entry.titulo || '')}"></label><label>Subtítulo/categoria<input name="subtitulo" value="${escapeHtml(entry.subtitulo || '')}"></label>${imageField('Imagem', 'imagem', entry.imagem || '')}<label>Descrição<textarea name="descricao" required>${escapeHtml(entry.descricao || '')}</textarea></label><label>Destaques — separados por vírgula<input name="destaques" value="${escapeHtml((entry.destaques || []).join(', '))}"></label>`;
   }
 
   function openEditor(id = null) {
@@ -183,6 +292,7 @@
     const entry = id ? entries.find(item => item.id === id) : {};
     editorTitle.textContent = id ? `Editar ${typeLabel}` : `Adicionar ${typeLabel}`;
     editorFields.innerHTML = fieldsFor(entry);
+    bindUploadFields();
     editor.hidden = false;
     editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }

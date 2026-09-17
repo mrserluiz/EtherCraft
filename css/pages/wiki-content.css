@@ -1,5 +1,11 @@
 /* EtherCraft - Conteúdo interno da Wiki */
 
+@font-face {
+  font-family: "EtherCraft Minecraft";
+  src: url("../../assets/fonts/Minecraft.ttf") format("truetype");
+  font-display: swap;
+}
+
 .wiki-detail-page .site-nav { top: 0; }
 .wiki-detail-main { padding: 6.3rem 0 3rem; }
 .wiki-detail-header { padding: 2.4rem 0 1.4rem; text-align: center; }
@@ -181,6 +187,24 @@
 .wiki-editor-fields textarea { min-height: 7rem; resize: vertical; }
 .wiki-editor-fields fieldset { padding: .8rem; border: 1px solid var(--color-border); border-radius: .65rem; }
 .wiki-editor-fields legend { padding-inline: .4rem; color: var(--color-primary-strong); font-weight: 800; }
+.wiki-image-field { display: grid; gap: .55rem; align-content: start; }
+.wiki-upload-picker {
+  width: fit-content;
+  padding: .62rem .85rem;
+  border: 1px solid rgba(227,200,255,.38);
+  border-radius: .55rem;
+  color: var(--color-text);
+  background: rgba(141,101,209,.2);
+  cursor: pointer;
+}
+.wiki-upload-picker:hover { background: rgba(141,101,209,.3); }
+.wiki-upload-picker:focus-within { outline: 2px solid var(--color-primary-strong); outline-offset: 2px; }
+.wiki-upload-picker input[type="file"] { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.wiki-upload-picker:has(input:disabled) { opacity: .55; cursor: wait; }
+.wiki-upload-status,
+.wiki-upload-hint { color: var(--color-text-muted); font-size: .82rem; font-weight: 500; }
+.wiki-upload-status.is-success { color: #8de3a6; }
+.wiki-upload-status.is-error { color: #ff8fa3; }
 .wiki-editor-grid { display: grid; gap: .55rem; }
 .editor-slot-pair { display: grid; gap: .45rem; padding: .55rem; border: 1px solid rgba(255,255,255,.08); border-radius: .55rem; }
 .wiki-empty-panel { padding: 2rem; text-align: center; border: 1px dashed var(--color-border); border-radius: var(--radius-md); color: var(--color-text-muted); }
@@ -206,4 +230,111 @@
   .mob-title-mobile { display: block; margin-bottom: .15rem; }
   .mob-title-desktop { display: none; }
   .enchant-material { width: 2.8rem; height: 2.8rem; }
+}
+
+/* Livro temático aprovado para as categorias */
+.wiki-detail-header h1,
+.wiki-entry h2,
+.crafting-title {
+  font-family: "EtherCraft Minecraft", system-ui, sans-serif;
+}
+
+.wiki-content-list { gap: 2rem; }
+.wiki-entry {
+  border: 0;
+  border-radius: 0;
+  color: #382715;
+  background: none;
+  box-shadow: none;
+}
+.wiki-book-page { min-width: 0; }
+.wiki-entry h2 { color: #4c2b16; text-shadow: 1px 1px 0 rgba(255,255,255,.42); }
+.wiki-entry .recipe-copy p,
+.wiki-entry .mob-copy > p,
+.wiki-entry .enchant-copy > p,
+.wiki-entry .article-copy > p,
+.wiki-entry .enchant-no-materials { color: #59452e; }
+.wiki-entry .article-kicker,
+.wiki-entry .recipe-result-name { color: #713d21 !important; }
+.wiki-entry .article-chip,
+.wiki-entry .mob-drop,
+.wiki-entry .enchant-material {
+  border-color: rgba(83,53,29,.35);
+  color: #412d19;
+  background: rgba(116,75,38,.1);
+}
+.wiki-entry .wiki-entry-edit,
+.wiki-entry .wiki-entry-delete {
+  border-color: rgba(83,53,29,.42);
+  color: #3a2716;
+  background: rgba(255,247,211,.44);
+}
+.wiki-entry .wiki-entry-delete { color: #762d28; background: rgba(169,67,57,.1); }
+
+@media (min-width: 56rem) {
+  .recipe-entry,
+  .bestiary-entry,
+  .enchant-entry,
+  .article-entry {
+    min-height: 34rem;
+    aspect-ratio: 1871 / 943;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5.5%;
+    align-items: stretch;
+    padding: 6.6% 7.4% 7.7%;
+    background: url("../../assets/images/wiki/livro-aberto.png") center / 100% 100% no-repeat;
+    filter: drop-shadow(0 24px 24px rgba(6,2,12,.34));
+  }
+
+  .wiki-book-page { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .recipe-copy,
+  .mob-copy,
+  .enchant-copy,
+  .article-copy { width: 100%; max-height: 100%; overflow: auto; padding: .5rem; scrollbar-width: thin; }
+  .mob-image-box,
+  .enchant-image-box,
+  .article-image-box { width: 100%; height: 100%; min-height: 0; border: 0; background: transparent; }
+  .mob-image-box img,
+  .enchant-image-box img,
+  .article-image-box img { max-height: 22rem; }
+}
+
+@media (max-width: 55.99rem) {
+  .recipe-entry,
+  .bestiary-entry,
+  .enchant-entry,
+  .article-entry {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .9rem;
+    padding: 0;
+  }
+
+  .wiki-book-page {
+    width: 100%;
+    min-height: min(90vw, 35rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16% 12% 12%;
+    background-image: url("../../assets/images/wiki/livro-aberto.png");
+    background-repeat: no-repeat;
+    background-size: 200% 100%;
+    filter: drop-shadow(0 16px 18px rgba(6,2,12,.3));
+    overflow: hidden;
+  }
+  .wiki-book-page-left { background-position: left center; }
+  .wiki-book-page-right { background-position: right center; }
+  .recipe-copy,
+  .mob-copy,
+  .enchant-copy,
+  .article-copy { width: 100%; max-height: min(66vw, 25rem); overflow: auto; padding: .35rem; scrollbar-width: thin; }
+  .mob-image-box,
+  .enchant-image-box,
+  .article-image-box { width: 100%; height: 100%; min-height: 0; border: 0; background: transparent; }
+  .mob-image-box img,
+  .enchant-image-box img,
+  .article-image-box img { max-height: min(60vw, 22rem); }
+  .crafting-table { width: 100%; }
 }

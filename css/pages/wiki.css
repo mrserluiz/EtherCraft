@@ -1,5 +1,11 @@
 /* EtherCraft - Wiki Home */
 
+@font-face {
+  font-family: "EtherCraft Minecraft";
+  src: url("../../assets/fonts/Minecraft.ttf") format("truetype");
+  font-display: swap;
+}
+
 .wiki-page {
   min-height: 100vh;
 }
@@ -52,6 +58,7 @@
 
 .wiki-hero h1 {
   margin-top: 0.25rem;
+  font-family: "EtherCraft Minecraft", system-ui, sans-serif;
   font-size: clamp(2.4rem, 8vw, 5rem);
   line-height: 1;
 }
@@ -181,7 +188,8 @@
   position: relative;
   min-height: 13rem;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr) minmax(7rem, 8.5rem);
+  grid-template-areas: "content book";
   gap: 1rem;
   align-items: start;
   padding: 1.2rem;
@@ -229,20 +237,28 @@
   display: none;
 }
 
-.wiki-card-icon {
-  display: grid;
-  place-items: center;
-  width: 3rem;
-  height: 3rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.07);
-  font-size: 1.55rem;
+.wiki-card-book { position: relative; z-index: 1; grid-area: book; display: block; align-self: center; }
+.wiki-card-book img { width: 100%; height: auto; filter: drop-shadow(0 12px 14px rgba(5,2,11,.42)); transition: transform var(--transition-smooth), filter var(--transition-smooth); }
+.wiki-card-book span {
+  position: absolute;
+  top: 17%;
+  left: 14%;
+  right: 14%;
+  color: #ffd928;
+  font-family: "EtherCraft Minecraft", system-ui, sans-serif;
+  font-size: clamp(.5rem, 1vw, .68rem);
+  line-height: 1;
+  text-align: center;
+  text-shadow: 2px 2px 0 #5a270e, 0 0 5px rgba(255,217,40,.55);
+  transform: rotate(-1deg);
 }
+.wiki-card:hover .wiki-card-book img,
+.wiki-card:focus-visible .wiki-card-book img { transform: translateY(-4px) rotate(1deg) scale(1.035); filter: drop-shadow(0 17px 18px rgba(5,2,11,.5)); }
 
 .wiki-card-content {
   position: relative;
   z-index: 1;
+  grid-area: content;
 }
 
 .wiki-card-kicker {
@@ -255,6 +271,7 @@
 
 .wiki-card h3 {
   margin-top: 0.25rem;
+  font-family: "EtherCraft Minecraft", system-ui, sans-serif;
   font-size: 1.25rem;
 }
 
@@ -264,9 +281,10 @@
 }
 
 .wiki-card-arrow {
-  position: relative;
+  position: absolute;
+  left: 1.2rem;
+  bottom: .75rem;
   z-index: 1;
-  align-self: end;
   font-size: 1.4rem;
   opacity: 0.7;
   transition: transform var(--transition-fast), opacity var(--transition-fast);
