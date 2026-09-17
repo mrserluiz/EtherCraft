@@ -360,7 +360,7 @@
   display: grid;
   grid-template-columns: minmax(3.4rem, 22%) minmax(0, 1fr);
   align-items: center;
-  gap: .55rem;
+  gap: 1px;
 }
 .wiki-category-icon {
   display: grid;
