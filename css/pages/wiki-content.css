@@ -509,16 +509,16 @@
     margin-left: 3px;
     margin-right: -2px;
   }
-  .wiki-category-identity { padding: 0 3% 1.5%; }
+  .wiki-category-identity { padding: 0 3% 1.5% 10%; }
   .wiki-category-reading { padding: 1% 4% 0 2%; }
   .wiki-category-page-right {
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
-    padding: calc(1% - 7px) 3% 0 2%;
+    padding: calc(1% - 3px) 3% 0 2%;
     overflow: hidden;
   }
-  .wiki-category-menu-heading { padding-bottom: 1.8rem; }
-  .wiki-category-menu { padding-top: 2.5rem; }
+  .wiki-category-menu-heading { padding-bottom: .5rem; }
+  .wiki-category-menu { padding-top: 2rem; }
 
   .wiki-category-reading .recipe-entry,
   .wiki-category-reading .bestiary-entry,
