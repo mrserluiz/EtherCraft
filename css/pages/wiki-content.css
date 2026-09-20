@@ -520,7 +520,7 @@
     padding: calc(1% - 3px) 3% 0 2%;
     overflow: hidden;
   }
-  .wiki-category-menu-heading { padding-bottom: calc(.5rem + 35px); }
+  .wiki-category-menu-heading { padding-bottom: calc(.5rem + 40px); }
   .wiki-category-menu { padding-top: 2rem; }
 
   .wiki-category-reading .recipe-entry,
