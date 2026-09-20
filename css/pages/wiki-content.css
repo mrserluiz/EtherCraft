@@ -509,7 +509,10 @@
     margin-left: 3px;
     margin-right: -2px;
   }
-  .wiki-category-identity { padding: 0 3% 1.5% 10%; }
+  .wiki-category-identity {
+    padding: 0 3% 1.5% 10%;
+    transform: translateY(3px);
+  }
   .wiki-category-reading { padding: 1% 4% 0 2%; }
   .wiki-category-page-right {
     display: grid;
@@ -517,7 +520,7 @@
     padding: calc(1% - 3px) 3% 0 2%;
     overflow: hidden;
   }
-  .wiki-category-menu-heading { padding-bottom: .5rem; }
+  .wiki-category-menu-heading { padding-bottom: calc(.5rem + 30px); }
   .wiki-category-menu { padding-top: 2rem; }
 
   .wiki-category-reading .recipe-entry,
