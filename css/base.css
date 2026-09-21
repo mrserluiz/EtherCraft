@@ -3,6 +3,12 @@
   Cores principais do site: altere as variaveis abaixo para mudar a identidade visual.
   Imagens futuras: coloque arquivos em assets/images/ e referencie nos CSS especificos da pagina.
 */
+@font-face {
+  font-family: "EtherCraft Minecraft";
+  src: url("../assets/fonts/Minecraft.ttf") format("truetype");
+  font-display: swap;
+}
+
 :root {
   --color-bg-top: #0b0614;
   --color-bg-middle: #28104f;
@@ -40,7 +46,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   color: var(--color-text);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "EtherCraft Minecraft", system-ui, sans-serif;
   line-height: 1.6;
   background:
     radial-gradient(circle at 50% 8%, rgba(225, 190, 255, 0.18), transparent 28rem),

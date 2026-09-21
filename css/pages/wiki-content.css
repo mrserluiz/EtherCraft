@@ -373,7 +373,7 @@
 .wiki-category-title small,
 .wiki-category-menu-heading small {
   color: #784529;
-  font-family: system-ui, sans-serif;
+  font-family: "EtherCraft Minecraft", system-ui, sans-serif;
   font-size: clamp(.62rem, .85vw, .82rem);
   font-weight: 900;
   letter-spacing: .1em;
@@ -397,7 +397,7 @@
 .wiki-category-title > span {
   margin-top: .3rem;
   color: #fff4da;
-  font-family: system-ui, sans-serif;
+  font-family: "EtherCraft Minecraft", system-ui, sans-serif;
   font-size: clamp(.67rem, .82vw, .88rem);
   line-height: 1.3;
   text-shadow: 1px 1px 0 rgba(57,23,45,.68);
