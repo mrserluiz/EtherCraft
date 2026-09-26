@@ -106,7 +106,15 @@
     if (pageTurnAssetPromise) return pageTurnAssetPromise;
     pageTurnAssetPromise = fetch(pageTurnImageUrl(), { cache: 'force-cache' })
       .then(response => response.ok ? response.blob() : null)
-      .catch(() => null);
+      .then(blob => {
+        if (!blob) pageTurnAssetPromise = null;
+        return blob;
+      })
+      .catch(error => {
+        console.warn('EtherCraft Wiki: não foi possível pré-carregar a virada de página.', error);
+        pageTurnAssetPromise = null;
+        return null;
+      });
     return pageTurnAssetPromise;
   }
 
@@ -137,9 +145,8 @@
     if (targetPage < 0 || targetPage >= totalPages) return;
     pageTurnInProgress = true;
 
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const animationBlob = await ensurePageTurnAsset();
-    if (!desktopBookMedia.matches || reducedMotion || !animationBlob) {
+    if (!desktopBookMedia.matches || !animationBlob) {
       menuPageIndex = targetPage;
       render();
       pageTurnInProgress = false;
