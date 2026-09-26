@@ -55,6 +55,11 @@ body {
   background-attachment: fixed;
 }
 
+body,
+body * {
+  letter-spacing: 1px !important;
+}
+
 .container {
   width: min(100% - (var(--container-padding) * 2), var(--container-width));
   margin-inline: auto;
