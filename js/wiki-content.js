@@ -20,9 +20,11 @@
   let pendingUploads = 0;
   let savingEntry = false;
   let noticeTimer = null;
+  let menuPageIndex = null;
 
   const BOOK_WIDTH = 1412;
   const BOOK_HEIGHT = 833;
+  const MENU_ITEMS_PER_PAGE = 10;
   const desktopBookMedia = window.matchMedia('(min-width: 56rem)');
 
   const CLOUDINARY_CLOUD_NAME = 'uofznsju';
@@ -328,14 +330,30 @@
     }
     const hashId = decodeURIComponent(window.location.hash.replace(/^#/, ''));
     const hashEntry = entries.find(item => String(item.id) === hashId || slugify(item.nome || item.titulo) === hashId);
-    const activeEntry = entries.find(item => String(item.id) === String(activeEntryId)) || hashEntry || entries[0];
+    const sortedEntries = [...entries].sort((first, second) => {
+      const firstLabel = first.nome || first.titulo || 'Conteúdo';
+      const secondLabel = second.nome || second.titulo || 'Conteúdo';
+      return String(firstLabel).localeCompare(String(secondLabel), 'pt-BR', { sensitivity: 'base', numeric: true });
+    });
+    const activeEntry = entries.find(item => String(item.id) === String(activeEntryId)) || hashEntry || sortedEntries[0];
     activeEntryId = activeEntry.id;
-    const menuItems = entries.map(item => {
+    const totalMenuPages = Math.max(1, Math.ceil(sortedEntries.length / MENU_ITEMS_PER_PAGE));
+    const activeMenuIndex = sortedEntries.findIndex(item => String(item.id) === String(activeEntryId));
+    const activeMenuPage = Math.max(0, Math.floor(activeMenuIndex / MENU_ITEMS_PER_PAGE));
+    if (menuPageIndex === null) menuPageIndex = activeMenuPage;
+    menuPageIndex = Math.min(Math.max(0, menuPageIndex), totalMenuPages - 1);
+    const menuPageEntries = sortedEntries.slice(menuPageIndex * MENU_ITEMS_PER_PAGE, (menuPageIndex + 1) * MENU_ITEMS_PER_PAGE);
+    const menuItems = menuPageEntries.map(item => {
       const label = item.nome || item.titulo || 'Conteúdo';
       const slug = slugify(label);
       const isActive = String(item.id) === String(activeEntryId);
       return `<li><a href="#${escapeHtml(slug)}" class="wiki-category-menu-link${isActive ? ' is-active' : ''}" data-entry-select="${escapeHtml(item.id)}"${isActive ? ' aria-current="page"' : ''}>${escapeHtml(label)}</a></li>`;
     }).join('');
+    const menuPagination = totalMenuPages > 1 ? `<div class="wiki-category-menu-pagination" aria-label="Paginação do índice">
+      <button type="button" data-menu-page="previous" aria-label="Página anterior"${menuPageIndex === 0 ? ' disabled' : ''}>‹</button>
+      <span>Página ${menuPageIndex + 1} de ${totalMenuPages}</span>
+      <button type="button" data-menu-page="next" aria-label="Próxima página"${menuPageIndex === totalMenuPages - 1 ? ' disabled' : ''}>›</button>
+    </div>` : '';
 
     root.innerHTML = `<div class="wiki-category-book-frame"><article class="wiki-category-book">
       <section class="wiki-category-page wiki-category-page-left" aria-label="Conteúdo de ${escapeHtml(categoryMeta.title)}">
@@ -347,7 +365,10 @@
       </section>
       <aside class="wiki-category-page wiki-category-page-right">
         <header class="wiki-category-menu-heading"><small>Índice da categoria</small><h2>Menu</h2></header>
-        <nav class="wiki-category-menu" aria-label="Conteúdos de ${escapeHtml(categoryMeta.title)}"><ol>${menuItems}</ol></nav>
+        <nav class="wiki-category-menu" aria-label="Conteúdos de ${escapeHtml(categoryMeta.title)}">
+          <ol data-menu-page-number="${menuPageIndex + 1}">${menuItems}</ol>
+          ${menuPagination}
+        </nav>
       </aside>
     </article></div>`;
     root.querySelectorAll('[data-entry-select]').forEach(link => link.addEventListener('click', event => {
@@ -355,6 +376,10 @@
       activeEntryId = link.dataset.entrySelect;
       const selected = entries.find(item => String(item.id) === String(activeEntryId));
       history.replaceState(null, '', `#${slugify(selected?.nome || selected?.titulo || activeEntryId)}`);
+      render();
+    }));
+    root.querySelectorAll('[data-menu-page]').forEach(button => button.addEventListener('click', () => {
+      menuPageIndex += button.dataset.menuPage === 'next' ? 1 : -1;
       render();
     }));
     root.querySelectorAll('[data-edit-id]').forEach(button => button.addEventListener('click', () => openEditor(button.dataset.editId)));
@@ -383,7 +408,10 @@
       const storage = await ensureWikiStorage();
       await storage.deleteEntry(type, id);
       entries = entries.filter(item => item.id !== id);
-      if (String(activeEntryId) === String(id)) activeEntryId = entries[0]?.id || null;
+      if (String(activeEntryId) === String(id)) {
+        activeEntryId = entries[0]?.id || null;
+        menuPageIndex = null;
+      }
       render();
       showWikiNotice(`“${label}” foi excluído da Wiki.`, 'success');
     } catch (error) {
@@ -470,6 +498,7 @@
     const index = entries.findIndex(item => item.id === entry.id);
     if (index >= 0) entries[index] = entry; else entries.unshift(entry);
     activeEntryId = entry.id;
+    menuPageIndex = null;
     render();
   }
 

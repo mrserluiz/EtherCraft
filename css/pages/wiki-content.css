@@ -528,7 +528,13 @@ body.wiki-editor-open { overflow: hidden; }
   font-size: clamp(1.7rem, 3vw, 3rem);
   letter-spacing: .1em;
 }
-.wiki-category-menu { min-height: 0; overflow: auto; padding: 1rem .4rem 1rem 0; scrollbar-width: thin; }
+.wiki-category-menu {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  overflow: hidden;
+  padding: 1rem .4rem 1rem 0;
+}
 .wiki-category-menu ol { display: grid; gap: .45rem; list-style: none; }
 .wiki-category-menu-link {
   display: block;
@@ -551,6 +557,35 @@ body.wiki-editor-open { overflow: hidden; }
   background: rgba(122,76,40,.12);
   transform: translateX(.25rem);
 }
+.wiki-category-menu-pagination {
+  min-height: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding-top: .7rem;
+  color: #56351f;
+  font-family: "EtherCraft Minecraft", system-ui, sans-serif;
+  font-size: .78rem;
+  letter-spacing: .035em;
+}
+.wiki-category-menu-pagination button {
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(94,62,35,.34);
+  border-radius: .3rem;
+  color: #56351f;
+  background: rgba(122,76,40,.08);
+  font: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.wiki-category-menu-pagination button:hover,
+.wiki-category-menu-pagination button:focus-visible { background: rgba(122,76,40,.16); }
+.wiki-category-menu-pagination button:disabled { opacity: .3; cursor: default; }
 
 @media (min-width: 56rem) {
   .wiki-category-book-frame {
