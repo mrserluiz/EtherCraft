@@ -21,10 +21,14 @@
   let savingEntry = false;
   let noticeTimer = null;
   let menuPageIndex = null;
+  let pageTurnInProgress = false;
+  let pageTurnAssetPromise = null;
 
   const BOOK_WIDTH = 1412;
   const BOOK_HEIGHT = 833;
   const MENU_ITEMS_PER_PAGE = 8;
+  const PAGE_TURN_DURATION = 2200;
+  const PAGE_TURN_MIDPOINT = 1050;
   const desktopBookMedia = window.matchMedia('(min-width: 56rem)');
 
   const CLOUDINARY_CLOUD_NAME = 'uofznsju';
@@ -92,6 +96,76 @@
     if (path.includes('/pages/wiki/')) return '../../';
     if (path.includes('/pages/')) return '../';
     return './';
+  }
+
+  function pageTurnImageUrl() {
+    return new URL(`${getSitePrefix()}assets/images/wiki/page-turn.gif?v=20260926-turn1`, window.location.href).href;
+  }
+
+  function ensurePageTurnAsset() {
+    if (pageTurnAssetPromise) return pageTurnAssetPromise;
+    pageTurnAssetPromise = new Promise(resolve => {
+      const image = new Image();
+      image.onload = () => resolve(true);
+      image.onerror = () => resolve(false);
+      image.src = pageTurnImageUrl();
+    });
+    return pageTurnAssetPromise;
+  }
+
+  function createPageTurnOverlay(direction) {
+    const frame = root.querySelector('.wiki-category-book-frame');
+    if (!frame) return null;
+    const bounds = frame.getBoundingClientRect();
+    const overlay = document.createElement('img');
+    overlay.className = `wiki-page-turn-overlay is-${direction}`;
+    overlay.src = pageTurnImageUrl();
+    overlay.alt = '';
+    overlay.setAttribute('aria-hidden', 'true');
+    Object.assign(overlay.style, {
+      left: `${bounds.left}px`,
+      top: `${bounds.top}px`,
+      width: `${bounds.width}px`,
+      height: `${bounds.height}px`
+    });
+    document.body.appendChild(overlay);
+    return overlay;
+  }
+
+  async function turnMenuPage(direction) {
+    if (pageTurnInProgress) return;
+    const totalPages = Math.max(1, Math.ceil(entries.length / MENU_ITEMS_PER_PAGE));
+    const targetPage = menuPageIndex + (direction === 'next' ? 1 : -1);
+    if (targetPage < 0 || targetPage >= totalPages) return;
+    pageTurnInProgress = true;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!desktopBookMedia.matches || reducedMotion || !(await ensurePageTurnAsset())) {
+      menuPageIndex = targetPage;
+      render();
+      pageTurnInProgress = false;
+      return;
+    }
+
+    const overlay = createPageTurnOverlay(direction);
+    if (!overlay) {
+      pageTurnInProgress = false;
+      menuPageIndex = targetPage;
+      render();
+      return;
+    }
+
+    const changePage = () => {
+      menuPageIndex = targetPage;
+      render();
+    };
+    if (direction === 'next') requestAnimationFrame(changePage);
+    else window.setTimeout(changePage, PAGE_TURN_MIDPOINT);
+
+    window.setTimeout(() => {
+      overlay.remove();
+      pageTurnInProgress = false;
+    }, PAGE_TURN_DURATION + 100);
   }
 
   async function ensureWikiStorage() {
@@ -379,8 +453,7 @@
       render();
     }));
     root.querySelectorAll('[data-menu-page]').forEach(button => button.addEventListener('click', () => {
-      menuPageIndex += button.dataset.menuPage === 'next' ? 1 : -1;
-      render();
+      turnMenuPage(button.dataset.menuPage);
     }));
     root.querySelectorAll('[data-edit-id]').forEach(button => button.addEventListener('click', () => openEditor(button.dataset.editId)));
     root.querySelectorAll('[data-delete-id]').forEach(button => button.addEventListener('click', () => deleteEntry(button.dataset.deleteId)));
@@ -537,5 +610,6 @@
   window.addEventListener('resize', syncBookScale, { passive: true });
   desktopBookMedia.addEventListener?.('change', syncBookScale);
   window.EtherCraftWiki = { refreshAdmin: syncAdminState, reload: loadEntries };
+  ensurePageTurnAsset();
   loadEntries().then(syncAdminState);
 })();

@@ -592,6 +592,15 @@ body.wiki-editor-open { overflow: hidden; }
 .wiki-category-menu-pagination button:hover,
 .wiki-category-menu-pagination button:focus-visible { background: rgba(122,76,40,.16); }
 .wiki-category-menu-pagination button:disabled { opacity: .3; cursor: default; }
+.wiki-page-turn-overlay {
+  position: fixed;
+  z-index: 1000;
+  display: block;
+  object-fit: fill;
+  pointer-events: auto;
+  user-select: none;
+}
+.wiki-page-turn-overlay.is-previous { transform: scaleX(-1); }
 
 @media (min-width: 56rem) {
   .wiki-category-book-frame {
