@@ -43,7 +43,7 @@
   }[type] || 'conteúdo';
 
   const categoryMeta = {
-    mecanicas: { icon: '🧬', title: 'Mecânicas', eyebrow: 'Sistemas', description: 'Sistemas especiais, progressão e recursos próprios do EtherCraft.' },
+    mecanicas: { icon: '🧬', title: 'SISTEMA DE MECÂNICAS', eyebrow: '', description: 'Sistemas especiais, progressão e recursos próprios do EtherCraft.' },
     receitas: { icon: '🛠️', title: 'Receitas', eyebrow: 'Criação', description: 'Receitas especiais, materiais e formas de criação de itens.' },
     mobs: { icon: '🐲', title: 'Bestiário', eyebrow: 'Criaturas', description: 'Criaturas, chefes, características e recompensas encontradas pelo mundo.' },
     dimensoes: { icon: '🌌', title: 'Dimensões', eyebrow: 'Exploração', description: 'Mundos especiais, portais, perigos e recursos exclusivos.' },
@@ -299,7 +299,7 @@
       <section class="wiki-category-page wiki-category-page-left" aria-label="Conteúdo de ${escapeHtml(categoryMeta.title)}">
         <header class="wiki-category-identity">
           <span class="wiki-category-icon" aria-hidden="true">${escapeHtml(categoryMeta.icon)}</span>
-          <span class="wiki-category-title"><small>${escapeHtml(categoryMeta.eyebrow)}</small><strong>${escapeHtml(categoryMeta.title)}</strong><span>${escapeHtml(categoryMeta.description)}</span></span>
+          <span class="wiki-category-title">${categoryMeta.eyebrow ? `<small>${escapeHtml(categoryMeta.eyebrow)}</small>` : ''}<strong>${escapeHtml(categoryMeta.title)}</strong><span>${escapeHtml(categoryMeta.description)}</span></span>
         </header>
         <div class="wiki-category-reading">${renderEntry(activeEntry)}</div>
       </section>
