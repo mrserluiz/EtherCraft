@@ -594,7 +594,7 @@ body.wiki-editor-open { overflow: hidden; }
 .wiki-category-menu-pagination button:disabled { opacity: .3; cursor: default; }
 .wiki-page-turn-overlay {
   position: fixed;
-  z-index: 2147483647;
+  z-index: 10000;
   display: block;
   visibility: visible;
   opacity: 1;

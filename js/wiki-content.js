@@ -27,8 +27,8 @@
   const BOOK_WIDTH = 1412;
   const BOOK_HEIGHT = 833;
   const MENU_ITEMS_PER_PAGE = 8;
-  const PAGE_TURN_DURATION = 2200;
-  const PAGE_TURN_MIDPOINT = 1050;
+  const PAGE_TURN_DURATION = 1320;
+  const PAGE_TURN_MIDPOINT = 630;
   const desktopBookMedia = window.matchMedia('(min-width: 56rem)');
 
   const CLOUDINARY_CLOUD_NAME = 'uofznsju';
@@ -99,7 +99,7 @@
   }
 
   function pageTurnImageUrl() {
-    return new URL(`${getSitePrefix()}assets/images/wiki/page-turn.gif?v=20260926-turn1`, window.location.href).href;
+    return new URL(`${getSitePrefix()}assets/images/wiki/page-turn.gif?v=20260926-turn2`, window.location.href).href;
   }
 
   function ensurePageTurnAsset() {
