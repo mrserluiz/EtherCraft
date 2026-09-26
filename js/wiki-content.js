@@ -24,7 +24,7 @@
 
   const BOOK_WIDTH = 1412;
   const BOOK_HEIGHT = 833;
-  const MENU_ITEMS_PER_PAGE = 10;
+  const MENU_ITEMS_PER_PAGE = 8;
   const desktopBookMedia = window.matchMedia('(min-width: 56rem)');
 
   const CLOUDINARY_CLOUD_NAME = 'uofznsju';
