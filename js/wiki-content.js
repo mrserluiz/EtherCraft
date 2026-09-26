@@ -104,22 +104,20 @@
 
   function ensurePageTurnAsset() {
     if (pageTurnAssetPromise) return pageTurnAssetPromise;
-    pageTurnAssetPromise = new Promise(resolve => {
-      const image = new Image();
-      image.onload = () => resolve(true);
-      image.onerror = () => resolve(false);
-      image.src = pageTurnImageUrl();
-    });
+    pageTurnAssetPromise = fetch(pageTurnImageUrl(), { cache: 'force-cache' })
+      .then(response => response.ok ? response.blob() : null)
+      .catch(() => null);
     return pageTurnAssetPromise;
   }
 
-  function createPageTurnOverlay(direction) {
+  function createPageTurnOverlay(direction, animationBlob) {
     const frame = root.querySelector('.wiki-category-book-frame');
     if (!frame) return null;
     const bounds = frame.getBoundingClientRect();
     const overlay = document.createElement('img');
+    const objectUrl = URL.createObjectURL(animationBlob);
     overlay.className = `wiki-page-turn-overlay is-${direction}`;
-    overlay.src = pageTurnImageUrl();
+    overlay.src = objectUrl;
     overlay.alt = '';
     overlay.setAttribute('aria-hidden', 'true');
     Object.assign(overlay.style, {
@@ -129,7 +127,7 @@
       height: `${bounds.height}px`
     });
     document.body.appendChild(overlay);
-    return overlay;
+    return { overlay, objectUrl };
   }
 
   async function turnMenuPage(direction) {
@@ -140,15 +138,16 @@
     pageTurnInProgress = true;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!desktopBookMedia.matches || reducedMotion || !(await ensurePageTurnAsset())) {
+    const animationBlob = await ensurePageTurnAsset();
+    if (!desktopBookMedia.matches || reducedMotion || !animationBlob) {
       menuPageIndex = targetPage;
       render();
       pageTurnInProgress = false;
       return;
     }
 
-    const overlay = createPageTurnOverlay(direction);
-    if (!overlay) {
+    const animation = createPageTurnOverlay(direction, animationBlob);
+    if (!animation) {
       pageTurnInProgress = false;
       menuPageIndex = targetPage;
       render();
@@ -163,7 +162,8 @@
     else window.setTimeout(changePage, PAGE_TURN_MIDPOINT);
 
     window.setTimeout(() => {
-      overlay.remove();
+      animation.overlay.remove();
+      URL.revokeObjectURL(animation.objectUrl);
       pageTurnInProgress = false;
     }, PAGE_TURN_DURATION + 100);
   }
