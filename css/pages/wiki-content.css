@@ -522,8 +522,10 @@
     margin-right: -2px;
   }
   .wiki-category-identity {
+    height: 100%;
     padding: 0 3% 1.5% 10%;
     transform: translateY(5px);
+    overflow: hidden;
   }
   .wiki-category-reading { padding: 1% 4% 0 2%; }
   .wiki-category-page-right {
@@ -532,7 +534,22 @@
     padding: calc(1% - 3px) 3% 0 2%;
     overflow: hidden;
   }
-  .wiki-category-menu-heading { padding-bottom: calc(.5rem + 40px); }
+  .wiki-category-menu-heading {
+    position: relative;
+    width: 230px;
+    justify-self: center;
+    padding-bottom: calc(.5rem + 40px);
+    border-bottom: 0;
+  }
+  .wiki-category-menu-heading::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 550px;
+    border-bottom: 3px double rgba(84,57,32,.45);
+    transform: translateX(-50%);
+  }
   .wiki-category-menu { padding-top: 2rem; }
 
   .wiki-category-icon { font-size: 68px; }
