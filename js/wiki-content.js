@@ -43,12 +43,12 @@
   }[type] || 'conteúdo';
 
   const categoryMeta = {
-    mecanicas: { icon: '🧬', iconImage: 'assets/images/wiki/category-icons/mecanicas.png', title: 'SISTEMA DE MECÂNICAS', eyebrow: '', description: 'Sistemas especiais, progressão e recursos próprios do EtherCraft.' },
-    receitas: { icon: '🛠️', iconImage: 'assets/images/wiki/category-icons/receitas.png', title: 'Receitas', eyebrow: 'Criação', description: 'Receitas especiais, materiais e formas de criação de itens.' },
-    mobs: { icon: '🐲', iconImage: 'assets/images/wiki/category-icons/bestiario.png', title: 'Bestiário', eyebrow: 'Criaturas', description: 'Criaturas, chefes, características e recompensas encontradas pelo mundo.' },
-    dimensoes: { icon: '🌌', iconImage: 'assets/images/wiki/category-icons/dimensoes.png', title: 'Dimensões', eyebrow: 'Exploração', description: 'Mundos especiais, portais, perigos e recursos exclusivos.' },
-    encantamentos: { icon: '✨', iconImage: 'assets/images/wiki/category-icons/encantamentos.png', title: 'Encantamentos', eyebrow: 'Equipamentos', description: 'Efeitos especiais e os equipamentos em que podem ser aplicados.' },
-    economia: { icon: '💰', iconImage: 'assets/images/wiki/category-icons/economia.png', title: 'Economia', eyebrow: 'Comunidade', description: 'Comércio, recompensas, moedas e circulação de recursos.' }
+    mecanicas: { icon: '🧬', iconImage: 'assets/images/wiki/category-icons/mecanicas.png', title: 'MECÂNICAS', eyebrow: '', descriptionLines: ['Sistemas especiais, progressão e recursos', 'próprios do EtherCraft.'] },
+    receitas: { icon: '🛠️', iconImage: 'assets/images/wiki/category-icons/receitas.png', title: 'RECEITAS', eyebrow: '', descriptionLines: ['Receitas especiais, materiais e formas', 'de criação de itens.'] },
+    mobs: { icon: '🐲', iconImage: 'assets/images/wiki/category-icons/bestiario.png', title: 'BESTIÁRIO', eyebrow: '', descriptionLines: ['Criaturas, chefes, características e recompensas', 'encontradas pelo mundo.'] },
+    dimensoes: { icon: '🌌', iconImage: 'assets/images/wiki/category-icons/dimensoes.png', title: 'Dimensões', eyebrow: '', descriptionLines: ['Mundos especiais, portais, perigos', 'e recursos exclusivos.'] },
+    encantamentos: { icon: '✨', iconImage: 'assets/images/wiki/category-icons/encantamentos.png', title: 'Encantamentos', eyebrow: '', descriptionLines: ['Efeitos especiais e os equipamentos', 'em que podem ser aplicados.'] },
+    economia: { icon: '💰', iconImage: 'assets/images/wiki/category-icons/economia.png', title: 'Economia', eyebrow: '', descriptionLines: ['Comércio, recompensas, moedas e circulação de recursos.'] }
   }[type] || { icon: '📖', title: 'Wiki', eyebrow: 'Categoria', description: 'Conteúdo oficial do EtherCraft.' };
 
   function getSitePrefix() {
@@ -299,7 +299,7 @@
       <section class="wiki-category-page wiki-category-page-left" aria-label="Conteúdo de ${escapeHtml(categoryMeta.title)}">
         <header class="wiki-category-identity">
           <span class="wiki-category-icon" aria-hidden="true">${categoryMeta.iconImage ? `<img src="${getSitePrefix()}${escapeHtml(categoryMeta.iconImage)}" alt="">` : escapeHtml(categoryMeta.icon)}</span>
-          <span class="wiki-category-title">${categoryMeta.eyebrow ? `<small>${escapeHtml(categoryMeta.eyebrow)}</small>` : ''}<strong>${escapeHtml(categoryMeta.title)}</strong><span>${escapeHtml(categoryMeta.description)}</span></span>
+          <span class="wiki-category-title">${categoryMeta.eyebrow ? `<small>${escapeHtml(categoryMeta.eyebrow)}</small>` : ''}<strong>${escapeHtml(categoryMeta.title)}</strong><span>${(categoryMeta.descriptionLines || [categoryMeta.description]).map(line => escapeHtml(line)).join('<br>')}</span></span>
         </header>
         <div class="wiki-category-reading">${renderEntry(activeEntry)}</div>
       </section>
