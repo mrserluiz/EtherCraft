@@ -13,13 +13,43 @@
     if (!firebaseConfigured || !auth || !db) throw new Error('Firebase/Firestore não configurado.');
 
     await authPersistenceReady;
+    const authSdk = await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js');
     const fs = await import('https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js');
 
+    async function waitForAuthState() {
+      if (typeof auth.authStateReady === 'function') {
+        await auth.authStateReady();
+        return;
+      }
+      await new Promise((resolve) => {
+        let unsubscribe = () => {};
+        unsubscribe = authSdk.onAuthStateChanged(auth, () => {
+          unsubscribe();
+          resolve();
+        }, resolve);
+      });
+    }
+
     async function currentRole() {
+      await waitForAuthState();
       const user = auth.currentUser;
       if (!user) return 'guest';
       const snap = await fs.getDoc(fs.doc(db, 'usuarios', user.uid));
-      return snap.exists() ? (snap.data().role || 'player') : 'player';
+      return snap.exists() ? String(snap.data().role || 'player').trim().toLowerCase() : 'player';
+    }
+
+    async function assertAdmin() {
+      await waitForAuthState();
+      if (!auth.currentUser) {
+        const error = new Error('Entre na sua conta administrativa para alterar a Wiki.');
+        error.code = 'auth-required';
+        throw error;
+      }
+      if (await currentRole() !== 'admin') {
+        const error = new Error('Sua conta não possui permissão de administrador.');
+        error.code = 'permission-denied';
+        throw error;
+      }
     }
 
     function entriesCollection(type) {
@@ -60,17 +90,19 @@
     }
 
     async function saveEntry(type, entry) {
+      await assertAdmin();
       if (!entry?.id) throw new Error('Conteúdo da Wiki sem ID.');
       const { id, ...payload } = entry;
       await fs.setDoc(fs.doc(db, 'wiki', type, 'entries', id), {
         ...payload,
         atualizadoEm: fs.serverTimestamp(),
         atualizadoPor: auth.currentUser?.uid || null
-      }, { merge: true });
+      });
       return { id, ...payload };
     }
 
     async function deleteEntry(type, id) {
+      await assertAdmin();
       await fs.deleteDoc(fs.doc(db, 'wiki', type, 'entries', id));
     }
 

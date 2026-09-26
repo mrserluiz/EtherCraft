@@ -17,6 +17,9 @@
   let activeEntryId = null;
   let firestoreRole = 'guest';
   let bookResizeObserver = null;
+  let pendingUploads = 0;
+  let savingEntry = false;
+  let noticeTimer = null;
 
   const BOOK_WIDTH = 1412;
   const BOOK_HEIGHT = 833;
@@ -31,6 +34,37 @@
   const escapeHtml = (value = '') => String(value)
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+
+  function friendlyAdminError(error) {
+    const code = error?.code || '';
+    if (code === 'auth-required') return 'Entre na sua conta administrativa para alterar a Wiki.';
+    if (code === 'permission-denied' || code === 'firestore/permission-denied') return 'O Firestore recusou a alteração. Confirme se esta conta possui o cargo admin.';
+    if (code === 'unavailable' || code === 'firestore/unavailable') return 'O Firestore está temporariamente indisponível. Tente novamente.';
+    return error?.message || 'Não foi possível concluir a alteração.';
+  }
+
+  function showWikiNotice(message, kind = 'info') {
+    let notice = document.getElementById('wiki-system-notice');
+    if (!notice) {
+      notice = document.createElement('p');
+      notice.id = 'wiki-system-notice';
+      notice.className = 'wiki-system-notice';
+      notice.setAttribute('role', 'status');
+      notice.setAttribute('aria-live', 'polite');
+      document.body.appendChild(notice);
+    }
+    notice.textContent = message;
+    notice.className = `wiki-system-notice is-visible is-${kind}`;
+    clearTimeout(noticeTimer);
+    noticeTimer = setTimeout(() => notice.classList.remove('is-visible'), kind === 'error' ? 7000 : 4200);
+  }
+
+  function updateSaveButton() {
+    const saveButton = editorForm?.querySelector('[type="submit"]');
+    if (!saveButton) return;
+    saveButton.disabled = savingEntry || pendingUploads > 0;
+    saveButton.textContent = savingEntry ? 'Salvando…' : pendingUploads > 0 ? `Enviando ${pendingUploads} imagem(ns)…` : 'Salvar';
+  }
 
   const imageOrFallback = (src, alt, fallback) => {
     if (!src) return `<span class="${fallback.className}">${fallback.text}</span>`;
@@ -61,7 +95,7 @@
   async function ensureWikiStorage() {
     if (window.EtherCraftWikiStorage) return window.EtherCraftWikiStorage;
     const script = document.createElement('script');
-    script.src = new URL(`${getSitePrefix()}js/wiki-firestore.js?v=20260906-firestore1`, window.location.href).href;
+    script.src = new URL(`${getSitePrefix()}js/wiki-firestore.js?v=20260926-firestore2`, window.location.href).href;
     const loaded = new Promise((resolve, reject) => {
       script.onload = resolve;
       script.onerror = () => reject(new Error('Não foi possível carregar o módulo Firestore da Wiki.'));
@@ -149,6 +183,8 @@
         if (!targetInput || !status) return;
 
         fileInput.disabled = true;
+        pendingUploads += 1;
+        updateSaveButton();
         status.textContent = 'Enviando imagem…';
         status.classList.remove('is-error', 'is-success');
         try {
@@ -162,8 +198,10 @@
           status.classList.remove('is-success');
           status.classList.add('is-error');
         } finally {
+          pendingUploads = Math.max(0, pendingUploads - 1);
           fileInput.disabled = false;
           fileInput.value = '';
+          updateSaveButton();
         }
       });
     });
@@ -179,6 +217,8 @@
         if (!targetInput || !status) return;
 
         fileInput.disabled = true;
+        pendingUploads += 1;
+        updateSaveButton();
         status.classList.remove('is-error', 'is-success');
         try {
           const uploadedUrls = [];
@@ -195,8 +235,10 @@
           status.textContent = error?.message || 'Não foi possível enviar as imagens.';
           status.classList.add('is-error');
         } finally {
+          pendingUploads = Math.max(0, pendingUploads - 1);
           fileInput.disabled = false;
           fileInput.value = '';
+          updateSaveButton();
         }
       });
     });
@@ -326,7 +368,7 @@
       const api = await storage.ready;
       firestoreRole = await api.currentRole();
     } catch (error) {
-      firestoreRole = window.EtherCraftAuth?.currentUser?.role || 'guest';
+      firestoreRole = String(window.EtherCraftAuth?.currentUser?.role || 'guest').trim().toLowerCase();
     }
     toolbar?.classList.toggle('is-visible', isAdmin());
     render();
@@ -341,10 +383,12 @@
       const storage = await ensureWikiStorage();
       await storage.deleteEntry(type, id);
       entries = entries.filter(item => item.id !== id);
+      if (String(activeEntryId) === String(id)) activeEntryId = entries[0]?.id || null;
       render();
+      showWikiNotice(`“${label}” foi excluído da Wiki.`, 'success');
     } catch (error) {
       console.error('EtherCraft Wiki: falha ao excluir.', error);
-      alert(`Não foi possível excluir do Firestore. (${error?.code || error?.message || 'erro'})`);
+      showWikiNotice(friendlyAdminError(error), 'error');
     }
   }
 
@@ -368,38 +412,56 @@
     if (!isAdmin() || !editor || !editorFields) return;
     editingId = id;
     const entry = id ? entries.find(item => item.id === id) : {};
+    if (id && !entry) {
+      showWikiNotice('Este conteúdo não foi encontrado. Recarregue a página e tente novamente.', 'error');
+      return;
+    }
     editorTitle.textContent = id ? `Editar ${typeLabel}` : `Adicionar ${typeLabel}`;
     editorFields.innerHTML = fieldsFor(entry);
+    pendingUploads = 0;
+    savingEntry = false;
     bindUploadFields();
+    updateSaveButton();
+    editor.setAttribute('role', 'dialog');
+    editor.setAttribute('aria-modal', 'true');
+    editor.setAttribute('aria-labelledby', 'wiki-editor-title');
     editor.hidden = false;
-    editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.body.classList.add('wiki-editor-open');
+    editorFields.querySelector('input, textarea')?.focus();
   }
 
-  function closeEditor() { if (editor) editor.hidden = true; editingId = null; }
+  function closeEditor() {
+    if (savingEntry || pendingUploads > 0) return;
+    if (editor) editor.hidden = true;
+    if (editorFields) editorFields.innerHTML = '';
+    document.body.classList.remove('wiki-editor-open');
+    editingId = null;
+  }
   function slugify(value) { return String(value || 'item').toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+  function formValue(formData, name) { return String(formData.get(name) || '').trim(); }
 
   function formToEntry(formData) {
     if (type === 'receitas') {
-      const title = formData.get('titulo'); const grade = []; const ingredients = {};
+      const title = formValue(formData, 'titulo'); const grade = []; const ingredients = {};
       for (let i = 0; i < 9; i += 1) {
-        const name = String(formData.get(`slot${i}`) || '').trim(); const icon = String(formData.get(`slotIcon${i}`) || '').trim();
+        const name = formValue(formData, `slot${i}`); const icon = formValue(formData, `slotIcon${i}`);
         if (!name) { grade.push(null); continue; }
         const key = `${slugify(name)}-${i}`; grade.push(key); ingredients[key] = { nome: name, icone: icon };
       }
-      return { id: editingId || `${slugify(title)}-${Date.now()}`, titulo: title, descricao: formData.get('descricao'), resultado: { nome: formData.get('resultadoNome'), icone: formData.get('resultadoIcone') }, grade, ingredientes: ingredients };
+      return { id: editingId || `${slugify(title)}-${Date.now()}`, titulo: title, descricao: formValue(formData, 'descricao'), resultado: { nome: formValue(formData, 'resultadoNome'), icone: formValue(formData, 'resultadoIcone') }, grade, ingredientes: ingredients };
     }
     if (type === 'mobs') {
-      const name = formData.get('nome');
-      return { id: editingId || `${slugify(name)}-${Date.now()}`, nome: name, imagem: formData.get('imagem'), descricao: formData.get('descricao'), drop: { nome: formData.get('dropNome'), icone: formData.get('dropIcone') }, tags: [] };
+      const name = formValue(formData, 'nome');
+      return { id: editingId || `${slugify(name)}-${Date.now()}`, nome: name, imagem: formValue(formData, 'imagem'), descricao: formValue(formData, 'descricao'), drop: { nome: formValue(formData, 'dropNome'), icone: formValue(formData, 'dropIcone') }, tags: [] };
     }
     if (type === 'encantamentos') {
-      const name = formData.get('nome');
-      const names = String(formData.get('materiais') || '').split(',').map(item => item.trim()).filter(Boolean);
-      const icons = String(formData.get('materiaisIcones') || '').split(',').map(item => item.trim());
-      return { id: editingId || `${slugify(name)}-${Date.now()}`, nome: name, imagem: formData.get('imagem'), descricao: formData.get('descricao'), materiais: names.map((material, index) => ({ nome: material, icone: icons[index] || '', fallback: '◆' })) };
+      const name = formValue(formData, 'nome');
+      const names = formValue(formData, 'materiais').split(',').map(item => item.trim()).filter(Boolean);
+      const icons = formValue(formData, 'materiaisIcones').split(',').map(item => item.trim());
+      return { id: editingId || `${slugify(name)}-${Date.now()}`, nome: name, imagem: formValue(formData, 'imagem'), descricao: formValue(formData, 'descricao'), materiais: names.map((material, index) => ({ nome: material, icone: icons[index] || '', fallback: '◆' })) };
     }
-    const title = formData.get('titulo');
-    return { id: editingId || `${slugify(title)}-${Date.now()}`, titulo: title, subtitulo: formData.get('subtitulo'), imagem: formData.get('imagem'), descricao: formData.get('descricao'), destaques: String(formData.get('destaques') || '').split(',').map(item => item.trim()).filter(Boolean) };
+    const title = formValue(formData, 'titulo');
+    return { id: editingId || `${slugify(title)}-${Date.now()}`, titulo: title, subtitulo: formValue(formData, 'subtitulo'), imagem: formValue(formData, 'imagem'), descricao: formValue(formData, 'descricao'), destaques: formValue(formData, 'destaques').split(',').map(item => item.trim()).filter(Boolean) };
   }
 
   async function persistEntry(entry) {
@@ -407,6 +469,7 @@
     await storage.saveEntry(type, entry);
     const index = entries.findIndex(item => item.id === entry.id);
     if (index >= 0) entries[index] = entry; else entries.unshift(entry);
+    activeEntryId = entry.id;
     render();
   }
 
@@ -415,17 +478,30 @@
   editorForm?.addEventListener('submit', async event => {
     event.preventDefault();
     if (!isAdmin()) return;
-    const saveButton = editorForm.querySelector('[type="submit"]');
-    saveButton.disabled = true;
+    if (pendingUploads > 0) {
+      showWikiNotice('Aguarde o envio das imagens terminar antes de salvar.', 'error');
+      return;
+    }
+    savingEntry = true;
+    updateSaveButton();
     try {
-      await persistEntry(formToEntry(new FormData(editorForm)));
+      const entry = formToEntry(new FormData(editorForm));
+      await persistEntry(entry);
+      const label = entry.nome || entry.titulo || 'Conteúdo';
+      savingEntry = false;
       closeEditor();
+      showWikiNotice(`“${label}” foi publicado na Wiki.`, 'success');
     } catch (error) {
       console.error('EtherCraft Wiki: falha ao publicar.', error);
-      alert(`Não foi possível publicar no Firestore. (${error?.code || error?.message || 'erro'})`);
+      showWikiNotice(friendlyAdminError(error), 'error');
     } finally {
-      saveButton.disabled = false;
+      savingEntry = false;
+      updateSaveButton();
     }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && editor && !editor.hidden) closeEditor();
   });
 
   window.addEventListener('ethercraft:auth-changed', syncAdminState);
