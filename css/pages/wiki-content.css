@@ -535,7 +535,13 @@ body.wiki-editor-open { overflow: hidden; }
   overflow: hidden;
   padding: 1rem .4rem 1rem 0;
 }
-.wiki-category-menu ol { display: grid; gap: .45rem; list-style: none; }
+.wiki-category-menu ol {
+  display: grid;
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: .45rem;
+  list-style: none;
+}
 .wiki-category-menu-link {
   display: block;
   padding: .72rem .9rem;
