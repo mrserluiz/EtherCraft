@@ -371,6 +371,13 @@
   line-height: 1;
   filter: drop-shadow(2px 3px 0 rgba(55,29,18,.52));
 }
+.wiki-category-icon img {
+  display: block;
+  width: min(100%, 74px);
+  height: auto;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
 .wiki-category-title { min-width: 0; display: grid; align-content: center; }
 .wiki-category-title small,
 .wiki-category-menu-heading small {
