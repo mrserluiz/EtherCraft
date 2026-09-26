@@ -16,6 +16,11 @@
   let editingId = null;
   let activeEntryId = null;
   let firestoreRole = 'guest';
+  let bookResizeObserver = null;
+
+  const BOOK_WIDTH = 1412;
+  const BOOK_HEIGHT = 833;
+  const desktopBookMedia = window.matchMedia('(min-width: 56rem)');
 
   const CLOUDINARY_CLOUD_NAME = 'uofznsju';
   const CLOUDINARY_UPLOAD_PRESET = 'ethercraft_wiki';
@@ -246,6 +251,34 @@
     return renderArticle(entry);
   }
 
+  function syncBookScale() {
+    const frame = root.querySelector('.wiki-category-book-frame');
+    const book = frame?.querySelector('.wiki-category-book');
+    if (!frame || !book) return;
+
+    if (!desktopBookMedia.matches) {
+      frame.style.removeProperty('height');
+      book.style.removeProperty('--wiki-book-scale');
+      return;
+    }
+
+    const scale = frame.clientWidth / BOOK_WIDTH;
+    book.style.setProperty('--wiki-book-scale', String(scale));
+    frame.style.height = `${BOOK_HEIGHT * scale}px`;
+  }
+
+  function bindBookScale() {
+    bookResizeObserver?.disconnect();
+    const frame = root.querySelector('.wiki-category-book-frame');
+    if (!frame) return;
+
+    if ('ResizeObserver' in window) {
+      bookResizeObserver = new ResizeObserver(syncBookScale);
+      bookResizeObserver.observe(frame);
+    }
+    syncBookScale();
+  }
+
   function render() {
     if (!entries.length) {
       root.innerHTML = '<div class="wiki-empty-panel"><span>📚</span><p>Nenhum conteúdo cadastrado nesta área ainda.</p></div>';
@@ -262,7 +295,7 @@
       return `<li><a href="#${escapeHtml(slug)}" class="wiki-category-menu-link${isActive ? ' is-active' : ''}" data-entry-select="${escapeHtml(item.id)}"${isActive ? ' aria-current="page"' : ''}>${escapeHtml(label)}</a></li>`;
     }).join('');
 
-    root.innerHTML = `<article class="wiki-category-book">
+    root.innerHTML = `<div class="wiki-category-book-frame"><article class="wiki-category-book">
       <section class="wiki-category-page wiki-category-page-left" aria-label="Conteúdo de ${escapeHtml(categoryMeta.title)}">
         <header class="wiki-category-identity">
           <span class="wiki-category-icon" aria-hidden="true">${escapeHtml(categoryMeta.icon)}</span>
@@ -274,7 +307,7 @@
         <header class="wiki-category-menu-heading"><small>Índice da categoria</small><h2>Menu</h2></header>
         <nav class="wiki-category-menu" aria-label="Conteúdos de ${escapeHtml(categoryMeta.title)}"><ol>${menuItems}</ol></nav>
       </aside>
-    </article>`;
+    </article></div>`;
     root.querySelectorAll('[data-entry-select]').forEach(link => link.addEventListener('click', event => {
       event.preventDefault();
       activeEntryId = link.dataset.entrySelect;
@@ -284,6 +317,7 @@
     }));
     root.querySelectorAll('[data-edit-id]').forEach(button => button.addEventListener('click', () => openEditor(button.dataset.editId)));
     root.querySelectorAll('[data-delete-id]').forEach(button => button.addEventListener('click', () => deleteEntry(button.dataset.deleteId)));
+    bindBookScale();
   }
 
   async function syncAdminState() {
@@ -395,6 +429,8 @@
   });
 
   window.addEventListener('ethercraft:auth-changed', syncAdminState);
+  window.addEventListener('resize', syncBookScale, { passive: true });
+  desktopBookMedia.addEventListener?.('change', syncBookScale);
   window.EtherCraftWiki = { refreshAdmin: syncAdminState, reload: loadEntries };
   loadEntries().then(syncAdminState);
 })();

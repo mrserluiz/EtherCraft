@@ -348,9 +348,11 @@
   padding-inline: clamp(.4rem, 1.4vw, 1.5rem);
 }
 .wiki-content-list { display: block; }
-.wiki-category-book {
+.wiki-category-book-frame {
   width: min(100%, 106rem);
   margin-inline: auto;
+}
+.wiki-category-book {
   color: #382715;
   filter: drop-shadow(0 24px 24px rgba(6,2,12,.34));
 }
@@ -495,13 +497,23 @@
 }
 
 @media (min-width: 56rem) {
+  .wiki-category-book-frame {
+    position: relative;
+    height: 833px;
+  }
   .wiki-category-book {
-    aspect-ratio: 1412 / 833;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1412px;
+    height: 833px;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 2.4%;
     padding: calc(2.4% + 3px) 8% 3.5% calc(7.5% + 2px);
     background: url("../../assets/images/wiki/livro-aberto-cortado.png?v=2") center / 100% 100% no-repeat;
+    transform: scale(var(--wiki-book-scale, 1));
+    transform-origin: top left;
   }
   .wiki-category-page-left {
     display: grid;
@@ -523,6 +535,25 @@
   .wiki-category-menu-heading { padding-bottom: calc(.5rem + 40px); }
   .wiki-category-menu { padding-top: 2rem; }
 
+  .wiki-category-icon { font-size: 68px; }
+  .wiki-category-title small,
+  .wiki-category-menu-heading small { font-size: 12px; }
+  .wiki-category-title strong { font-size: 29px; }
+  .wiki-category-title > span { font-size: 12px; }
+  .wiki-category-reading .wiki-entry { gap: 20px; }
+  .wiki-entry-heading h2 { font-size: 24px; }
+  .wiki-category-reading .mob-image-box,
+  .wiki-category-reading .enchant-image-box,
+  .wiki-category-reading .article-image-box {
+    min-height: 123px;
+    max-height: 150px;
+  }
+  .wiki-category-reading .mob-image-box img,
+  .wiki-category-reading .enchant-image-box img,
+  .wiki-category-reading .article-image-box img { max-height: 150px; }
+  .wiki-category-menu-heading h2 { font-size: 42px; }
+  .wiki-category-menu-link { font-size: 18px; }
+
   .wiki-category-reading .recipe-entry,
   .wiki-category-reading .bestiary-entry,
   .wiki-category-reading .enchant-entry,
@@ -537,6 +568,7 @@
 
 @media (max-width: 55.99rem) {
   .wiki-detail-main { padding-top: 4.7rem; }
+  .wiki-category-book-frame { width: 100%; }
   .wiki-category-book { display: grid; gap: .85rem; filter: none; }
   .wiki-category-page {
     min-height: min(112vw, 43rem);
